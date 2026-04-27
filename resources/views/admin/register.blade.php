@@ -9,14 +9,10 @@
 
 <body class="min-h-screen bg-[#F4F1EE] flex items-center justify-center p-4">
 
-<div class="w-full max-w-md bg-white rounded-[30px] shadow-sm p-10">
+<div class="w-full max-w-md bg-white/80 backdrop-blur-sm rounded-[30px] shadow-sm p-10">
 
     <div class="flex items-center gap-3 mb-8 justify-center">
-        <img src="{{ asset('images/logo-raff.png') }}" class="w-12">
-        <div>
-            <h2 class="text-2xl font-bold text-[#F59A40]">RAFF</h2>
-            <p class="text-[11px] tracking-[4px] text-gray-500">ADMIN PANEL</p>
-        </div>
+        <img src="{{ asset('images/rafflogo.png') }}" class="h-[60px] w-auto object-contain">
     </div>
 
     <h1 class="text-xl font-semibold text-center mb-6">
@@ -63,6 +59,15 @@
             Daftar Admin
         </button>
     </form>
+    <p class="text-center text-sm text-gray-500 mt-6">
+    Sudah punya akun?
+</p>
+
+<a href="/admin/login"
+   class="mt-3 block w-full text-center rounded-full border border-gray-300 
+          hover:bg-gray-100 text-gray-700 font-medium py-3 transition duration-200">
+    Masuk ke Login Admin
+</a>
 
 </div>
 

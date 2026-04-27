@@ -9,20 +9,16 @@
 
 <body class="min-h-screen bg-[#F4F1EE] flex items-center justify-center p-4">
 
-<div class="w-full max-w-md bg-white rounded-[30px] shadow-sm p-10">
+<div class="w-full max-w-md bg-white/80 backdrop-blur-sm rounded-[30px] shadow-sm p-10">
 
     <!-- LOGO -->
     <div class="flex items-center gap-3 mb-10 justify-center">
-        <img src="{{ asset('images/logo-raff.png') }}" class="w-12">
-        <div class="leading-tight">
-            <h2 class="text-2xl font-bold text-[#F59A40]">RAFF</h2>
-            <p class="text-[11px] tracking-[4px] text-gray-500">ADMIN PANEL</p>
-        </div>
+        <img src="{{ asset('images/rafflogo.png') }}" class="h-[60px] w-auto object-contain">
     </div>
 
-    <h1 class="text-xl font-semibold text-center mb-6">
-        Masuk sebagai Admin
-    </h1>
+<h1 class="text-xl font-semibold text-center mb-6">
+    <span id="secretTrigger" class="cursor-pointer">Masuk</span> sebagai Admin
+</h1>
 
     <!-- ERROR GLOBAL -->
     @if ($errors->any())
@@ -62,6 +58,32 @@
     </form>
 
 </div>
+<!-- Hidden Admin Register -->
+<a href="{{ route('admin.register') }}"
+   id="adminRegisterBtn"
+   class="hidden fixed bottom-5 right-5 bg-orange-500 text-white px-4 py-2 rounded-full shadow-lg z-50">
+    Register Admin
+</a>
 
+<script>
+let clickCount = 0;
+let clickTimer;
+
+document.getElementById("secretTrigger").addEventListener("click", function() {
+    clickCount++;
+
+    clearTimeout(clickTimer);
+
+    clickTimer = setTimeout(() => {
+        clickCount = 0;
+    }, 2000);
+
+    // 10x klik kata "Masuk"
+    if (clickCount >= 10) {
+        document.getElementById("adminRegisterBtn").classList.remove("hidden");
+        clickCount = 0;
+    }
+});
+</script>
 </body>
 </html>

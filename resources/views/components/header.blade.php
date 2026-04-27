@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>RAFF Food & Cake</title>
+    <link rel="icon" href="/images/rafflogo.png?v=<?= time(); ?>" type="image/png">
+<link rel="shortcut icon" href="/images/rafflogo.png?v=<?= time(); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Google Font -->
@@ -39,132 +41,162 @@
     </div>
 </div>
 @endguest
-
-
-<!-- ================= NAVBAR ================= -->
 <header class="relative z-50 bg-white border-b border-gray-200">
 
-    <div class="max-w-[1320px] mx-auto px-6">
+    <div class="max-w-[1320px] mx-auto px-4 md:px-6">
 
         <!-- ================= BARIS ATAS ================= -->
         <div class="h-[60px] flex items-center justify-between text-[14px]">
 
-            <!-- MENU -->
-            <nav class="hidden md:flex items-center gap-10 text-gray-500">
-                <a href="{{ route('landing.home') }}" class="hover:text-black">Home</a>
-                <a href="{{ route('landing.menu') }}" class="hover:text-black">Menu</a>
-                <a href="#" class="hover:text-black">Food</a>
-                <a href="#" class="hover:text-black">Cake</a>
-                <a href="#" class="hover:text-black">Catering</a>
-                <a href="#" class="hover:text-black">Contact me</a>
-            </nav>
-
-            <!-- ICON KANAN -->
-<div class="flex items-center gap-6">
+            <!-- MENU DESKTOP -->
+<nav class="hidden md:flex items-center gap-10 text-gray-500">
+    <a href="{{ route('home') }}" class="hover:text-black">Home</a>
+    <a href="{{ route('menu') }}" class="hover:text-black">Menu</a>
+    <a href="{{ route('pesanan') }}" class="hover:text-black">Pesanan Saya</a>
+    <a href="{{ route('contact') }}" class="hover:text-black">Bantuan</a>
 
     @auth
-        <!-- NOTIF -->
-        <button class="relative">
-            🔔
-        </button>
+        @if(auth()->user()->role === 'admin')
+            <a href="{{ route('admin.dashboard') }}"
+               class="hover:text-blue-500 font-semibold">
+                Dashboard Admin
+            </a>
+        @endif
+    @endauth
+</nav>
 
-        <div class="relative">
-            <button id="profileBtn"
-                class="w-8 h-8 bg-[#F59A40] text-white rounded-full
-                       flex items-center justify-center text-sm font-semibold
-                       hover:scale-105 transition">
-                {{ strtoupper(substr(auth()->user()->name,0,1)) }}
+            <!-- HAMBURGER MOBILE -->
+            <button id="menuBtn" class="md:hidden text-2xl">
+                ☰
             </button>
 
-            <div id="profileDropdown"
-                class="hidden absolute right-0 top-full mt-3 w-44 bg-white
-                       border border-gray-200 rounded-xl shadow-xl
-                       overflow-hidden text-sm z-[999]">
+            <!-- ICON KANAN -->
+            <div class="flex items-center gap-4 md:gap-6">
 
-                <a href="{{ route('landing.profil') }}"
-                   class="block px-4 py-3 hover:bg-gray-50 transition">
-                    👤 Akun Saya
-                </a>
-
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit"
-                        class="w-full text-left px-4 py-3 hover:bg-red-50
-                               text-red-500 transition">
-                        🚪 Logout
+                @auth
+                    <button class="relative text-xl">
+                        🔔
                     </button>
-                </form>
+
+                    <!-- PROFILE -->
+                    <div class="relative">
+                        <button id="profileBtn"
+                            class="w-8 h-8 bg-[#F59A40] text-white rounded-full
+                                   flex items-center justify-center text-sm font-semibold">
+                            {{ strtoupper(substr(auth()->user()->name,0,1)) }}
+                        </button>
+
+                        <div id="profileDropdown"
+                            class="hidden absolute right-0 top-full mt-3 w-44 bg-white
+                                   border border-gray-200 rounded-xl shadow-xl
+                                   overflow-hidden text-sm z-[999]">
+
+                            <a href="{{ route('landing.profil') }}"
+                               class="block px-4 py-3 hover:bg-gray-50">
+                                👤 Akun Saya
+                            </a>
+
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit"
+                                    class="w-full text-left px-4 py-3 hover:bg-red-50 text-red-500">
+                                    🚪 Logout
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                @endauth
+
+                @guest
+                    <a href="{{ route('login') }}"
+                       class="px-4 py-2 bg-[#F59A40] text-white text-sm rounded-full">
+                        Masuk
+                    </a>
+                @endguest
+
             </div>
-        </div>
-    @endauth
-
-
-    @guest
-        <a href="{{ route('login') }}"
-           class="px-5 py-2 bg-[#F59A40] text-white text-sm
-                  rounded-full font-medium
-                  hover:opacity-90 transition">
-            Masuk
-        </a>
-    @endguest
-
-</div>
         </div>
 
         <!-- ================= BARIS BAWAH ================= -->
-        <div class="h-[90px] flex items-center justify-between">
+        <div class="h-[90px] flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-0">
 
             <!-- LOGO -->
-            <div class="flex items-center gap-4">
-                <img src="{{ asset('images/logo-raff.png') }}"
-                     class="w-[55px] object-contain">
-
-                <div class="leading-tight">
-                    <h1 class="text-[28px] font-bold text-[#F59A40]">
-                        RAFF
-                    </h1>
-                    <p class="text-[11px] tracking-[0.3em] text-[#F59A40]">
-                        FOOD & CAKE
-                    </p>
-                </div>
+            <div class="flex items-center gap-3 md:gap-4">
+                <img src="{{ asset('images/rafflogo.png') }}"
+                     class="h-[60px] w-auto object-contain ml-19">
             </div>
 
-<!-- SEARCH BAR -->
-<div class="flex-1 mx-16 relative">
+            <!-- SEARCH -->
+            <div class="w-full md:flex-1 md:mx-16 relative">
 
-    <input type="text"
-           placeholder="Cari paket catering atau kue kesukaan mu..."
-           class="w-full h-[50px] rounded-full border
-                  px-6 pr-14 text-sm outline-none
-                  focus:border-[#F59A40]">
+                <input type="text"
+                       placeholder="Cari makanan..."
+                       class="w-full h-[42px] md:h-[50px] rounded-full border
+                              px-4 md:px-6 pr-12 text-sm outline-none
+                              focus:border-[#F59A40]">
 
-    <button class="absolute right-2 top-1/2 -translate-y-1/2
-                   w-10 h-10 rounded-full
-                   bg-[#F59A40]
-                   flex items-center justify-center">
+                <button class="absolute right-2 top-1/2 -translate-y-1/2
+                               w-9 h-9 md:w-10 md:h-10 rounded-full bg-[#F59A40]
+                               flex items-center justify-center">
 
-        <img src="{{ asset('images/searchbar.png') }}"
-             class="w-6 h-6 object-contain">
+                    <img src="{{ asset('images/searchbar.png') }}"
+                         class="w-5 h-5 md:w-6 md:h-6">
+                </button>
 
-    </button>
-
-</div>
+            </div>
 
             <!-- CART -->
             @auth
-            <a href="{{ route('landing.cart') }}" class="relative">
+            <a href="{{ route('landing.cart') }}" class="relative self-end md:self-auto">
                 <img src="{{ asset('images/cart.png') }}"
-                     class="w-7 object-contain opacity-70">
+                     class="w-9 md:w-10 opacity-80">
 
-                <span class="absolute -top-2 -right-2 bg-[#F59A40]
-                             text-white text-[10px] px-1.5 rounded-full">
-                    10
+                <span id="cartCount"
+                      class="absolute -top-2 -right-2 bg-[#F59A40]
+                             text-white text-[10px] px-1.5 rounded-full hidden">
+                    0
                 </span>
             </a>
             @endauth
 
         </div>
+    </div>
+
+    <!-- ================= MOBILE MENU ================= -->
+    <div id="mobileMenu"
+         class="hidden md:hidden bg-white border-t border-gray-200 px-6 py-4 space-y-3">
+
+        <a href="{{ route('home') }}" class="block">Home</a>
+        <a href="{{ route('menu') }}" class="block">Menu</a>
+        <a href="{{ route('pesanan') }}" class="block">Pesanan Saya</a>
+        <a href="{{ route('contact') }}" class="block">Bantuan</a>
 
     </div>
 
 </header>
+<script>
+const menuBtn = document.getElementById('menuBtn');
+const mobileMenu = document.getElementById('mobileMenu');
+
+if (menuBtn) {
+    menuBtn.addEventListener('click', function () {
+        mobileMenu.classList.toggle('hidden');
+    });
+}
+</script>
+<script>
+const profileBtn = document.getElementById('profileBtn');
+const profileDropdown = document.getElementById('profileDropdown');
+
+if (profileBtn && profileDropdown) {
+    profileBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        profileDropdown.classList.toggle('hidden');
+    });
+
+    // klik luar = tutup dropdown
+    document.addEventListener('click', function () {
+        profileDropdown.classList.add('hidden');
+    });
+}
+</script>

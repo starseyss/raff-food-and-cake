@@ -88,7 +88,6 @@
                 <div>
                     <h4 class="font-semibold mb-5 text-[15px]">About</h4>
                     <ul class="space-y-3 text-[13px] text-white/90">
-                        <li>Contact</li>
                         <li>Service</li>
                         <li>Outlet</li>
                         <li>Testimony</li>
@@ -154,7 +153,7 @@
                 <img src="{{ asset('images/gosend.png') }}"
                      class="h-[28px] bg-white rounded px-3 py-1 object-contain">
 
-                <img src="{{ asset('images/logo-raff.png') }}"
+                <img src="{{ asset('images/rafflogo.png') }}"
                      class="h-[28px] bg-white rounded px-3 py-1 object-contain">
                      
             </div>
@@ -175,9 +174,9 @@
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 text-[12px] text-white/90">
 
                 <div class="flex gap-10">
-                    <a href="#">Kebijakan Privasi</a>
-                    <a href="#">Syarat dan ketentuan</a>
-                    <a href="#">Ikuti kami</a>
+                    <a href="{{ route('kebijakan.privasi') }}">Kebijakan Privasi</a>
+                    <a href="{{ route('syarat.ketentuan') }}">Syarat dan ketentuan</a>
+                    <a href="{{ route('contact') }}">Contact</a>
                 </div>
 
                 <p class="text-[11px]">

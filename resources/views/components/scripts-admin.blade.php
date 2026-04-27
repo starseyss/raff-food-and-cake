@@ -14,5 +14,29 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 </script>
+<script>
+function tambahVarian() {
+    let container = document.getElementById('varian-container');
+
+    let html = `
+        <div class="flex gap-2 mb-2">
+            <input type="text" name="varian[]" 
+                   class="w-full border rounded-lg p-2" 
+                   placeholder="Contoh: Hitam / L">
+
+            <button type="button" onclick="hapusVarian(this)" 
+                    class="bg-red-500 text-white px-3 rounded">
+                ✕
+            </button>
+        </div>
+    `;
+
+    container.insertAdjacentHTML('beforeend', html);
+}
+
+function hapusVarian(btn) {
+    btn.parentElement.remove();
+}
+</script>
 </body>
 </html>

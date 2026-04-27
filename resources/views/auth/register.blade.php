@@ -9,7 +9,7 @@
 
 <body class="min-h-screen bg-[#F4F6F8] flex items-center justify-center p-4">
 
-<div class="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 bg-white rounded-[30px] shadow-sm overflow-hidden">
+<div class="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 bg-white/80 backdrop-blur-sm rounded-[30px] shadow-sm overflow-hidden">
 
     <!-- LEFT SIDE -->
 <section class="relative hidden md:flex items-center justify-center p-2"> <!-- p-2 untuk jarak tipis -->
@@ -57,22 +57,12 @@
     <section class="px-8 sm:px-12 py-12 flex flex-col items-center text-center">
 
         <!-- Brand -->
-                <div class="flex items-center gap-3 mb-10">
+                <div class="flex items-center justify-center gap-3 mb-10">
 
             <!-- Logo -->
-            <img src="{{ asset('images/logo-raff.png') }}"
-                 alt="RC Logo"
-                 class="w-12">
-
-            <!-- Text -->
-            <div class="text-left leading-tight">
-                <h2 class="text-2xl font-bold text-[#F59A40] tracking-wide">
-                    RAFF
-                </h2>
-                <p class="text-[11px] tracking-[4px] text-gray-500">
-                    FOOD & CAKE
-                </p>
-            </div>
+            <img src="{{ asset('images/rafflogo.png') }}"
+                 id="logoTrigger"
+                 class="h-[60px] w-auto object-contain cursor-pointer">
 
         </div>
 
@@ -110,17 +100,63 @@
                           px-5 py-3 text-sm
                           focus:ring-2 focus:ring-[#F59A40] outline-none">
 
-            <input name="password" type="password"
-                   placeholder="Password"
-                   class="w-full rounded-full border border-gray-300
-                          px-5 py-3 text-sm
-                          focus:ring-2 focus:ring-[#F59A40] outline-none">
+<div class="relative">
+    <input id="password"
+           name="password"
+           type="password"
+           placeholder="Password"
+           class="w-full rounded-full border border-gray-300
+                  px-5 py-3 pr-12 text-sm
+                  focus:ring-2 focus:ring-[#F59A40] outline-none">
 
-            <input name="password_confirmation" type="password"
-                   placeholder="Konfirmasi password"
-                   class="w-full rounded-full border border-gray-300
-                          px-5 py-3 text-sm
-                          focus:ring-2 focus:ring-[#F59A40] outline-none">
+    <button type="button"
+            class="togglePassword absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
+            data-target="password">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             class="h-5 w-5"
+             fill="none"
+             viewBox="0 0 24 24"
+             stroke="currentColor">
+            <g class="eyeIcon">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 
+                         2.943 9.542 7-1.274 4.057-5.065 7-9.542 
+                         7-4.477 0-8.268-2.943-9.542-7z"/>
+            </g>
+        </svg>
+    </button>
+</div>
+
+<div class="relative">
+    <input id="password_confirmation"
+           name="password_confirmation"
+           type="password"
+           placeholder="Konfirmasi password"
+           class="w-full rounded-full border border-gray-300
+                  px-5 py-3 pr-12 text-sm
+                  focus:ring-2 focus:ring-[#F59A40] outline-none">
+
+    <button type="button"
+            class="togglePassword absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
+            data-target="password_confirmation">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             class="h-5 w-5"
+             fill="none"
+             viewBox="0 0 24 24"
+             stroke="currentColor">
+            <g class="eyeIcon">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 
+                         2.943 9.542 7-1.274 4.057-5.065 7-9.542 
+                         7-4.477 0-8.268-2.943-9.542-7z"/>
+            </g>
+        </svg>
+    </button>
+</div>
 
             <button type="submit"
                     class="w-full rounded-full bg-[#F59A40]
@@ -184,5 +220,57 @@
     </section>
 </div>
 
+<!-- Hidden Admin Button -->
+<a href="{{ route('admin.login') }}"
+   id="adminBtn"
+   class="hidden fixed bottom-5 right-5 bg-black text-white px-4 py-2 rounded-full shadow-lg z-50">
+    Admin
+</a>
+
+<script>
+document.querySelectorAll('.togglePassword').forEach(btn => {
+    btn.addEventListener('click', function () {
+        const inputId = this.getAttribute('data-target');
+        const input = document.getElementById(inputId);
+        const eyeIcon = this.querySelector('.eyeIcon');
+
+        const isPassword = input.type === 'password';
+        input.type = isPassword ? 'text' : 'password';
+
+        eyeIcon.innerHTML = isPassword 
+            ? `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                 d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 
+                    0-8.268-2.943-9.542-7a9.956 9.956 0 012.223-3.592M6.18 
+                    6.18A9.956 9.956 0 0112 5c4.477 0 8.268 2.943 
+                    9.542 7a9.956 9.956 0 01-4.132 5.411M15 
+                    12a3 3 0 11-6 0 3 3 0 016 0zm6 6L3 3" />`
+            : `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                 d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                 d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 
+                    2.943 9.542 7-1.274 4.057-5.065 7-9.542 
+                    7-4.477 0-8.268-2.943-9.542-7z" />`;
+    });
+});
+
+let clickCount = 0;
+let clickTimer;
+
+document.getElementById("logoTrigger").addEventListener("click", function() {
+    clickCount++;
+
+    clearTimeout(clickTimer);
+
+    // reset kalau jeda terlalu lama
+    clickTimer = setTimeout(() => {
+        clickCount = 0;
+    }, 2000);
+
+    if (clickCount >= 5) {
+        document.getElementById("adminBtn").classList.remove("hidden");
+        clickCount = 0;
+    }
+});
+</script>
 </body>
 </html>

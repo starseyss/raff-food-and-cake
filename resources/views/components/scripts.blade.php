@@ -150,6 +150,37 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 </script>
+<script>
+    function scrollSlider(id, amount) {
+        const slider = document.getElementById(id);
+        slider.scrollBy({
+            left: amount,
+            behavior: 'smooth'
+        });
+    }
+</script>
+<script>
+function updateCartCount() {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
+    let totalQty = 0;
+
+    cart.forEach(item => {
+        totalQty += item.qty;
+    });
+
+    const cartCount = document.getElementById('cartCount');
+
+    if (totalQty > 0) {
+        cartCount.textContent = totalQty;
+        cartCount.classList.remove('hidden');
+    } else {
+        cartCount.classList.add('hidden');
+    }
+}
+
+// jalankan saat halaman load
+document.addEventListener('DOMContentLoaded', updateCartCount);
+</script>
 </body>
 </html>
