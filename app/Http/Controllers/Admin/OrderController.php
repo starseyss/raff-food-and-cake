@@ -135,6 +135,159 @@ class OrderController extends Controller
 
     /**
      * =========================
+     * SHIPPING MANAGEMENT
+     * =========================
+     */
+    public function shipping(Request $request)
+    {
+        $query = DB::table('orders')
+            ->whereIn('order_status', ['packed', 'shipped', 'delivered', 'completed'])
+            ->where('payment_status', 'paid');
+
+        // Filter: status
+        if ($request->filled('status')) {
+            $query->where('order_status', $request->status);
+        }
+
+        // Filter: date (tanggal penerimaan)
+        if ($request->filled('date')) {
+            $query->whereDate('tanggal_penerimaan', $request->date);
+        }
+
+        // Filter: driver
+        if ($request->filled('driver')) {
+            $query->where('driver', $request->driver);
+        }
+
+        // Filter: search (nama / order id)
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_pemesan', 'like', "%{$search}%")
+                  ->orWhere('nama_penerima', 'like', "%{$search}%")
+                  ->orWhere('midtrans_order_id', 'like', "%{$search}%");
+            });
+        }
+
+        $orders = $query->orderBy('tanggal_penerimaan', 'asc')
+                        ->orderBy('delivery_time', 'asc')
+                        ->get();
+
+        $stats = [
+            'scheduled'     => DB::table('orders')
+                ->where('order_status', 'packed')
+                ->where('payment_status', 'paid')
+                ->count(),
+            'ready'         => DB::table('orders')
+                ->where('order_status', 'packed')
+                ->whereNotNull('driver')
+                ->where('payment_status', 'paid')
+                ->count(),
+            'on_delivery'   => DB::table('orders')
+                ->where('order_status', 'shipped')
+                ->where('payment_status', 'paid')
+                ->count(),
+            'delivered'     => DB::table('orders')
+                ->whereIn('order_status', ['delivered', 'completed'])
+                ->where('payment_status', 'paid')
+                ->count(),
+            'delivered_today' => DB::table('orders')
+                ->whereIn('order_status', ['delivered', 'completed'])
+                ->whereDate('delivered_at', today())
+                ->where('payment_status', 'paid')
+                ->count(),
+        ];
+
+        $drivers = DB::table('orders')->whereNotNull('driver')->select('driver')->distinct()->pluck('driver');
+
+        return view('admin.shipping', compact('orders', 'stats', 'drivers'));
+    }
+
+    /**
+     * =========================
+     * ASSIGN DRIVER
+     * =========================
+     */
+    public function assignDriver(Request $request, $id)
+    {
+        $request->validate([
+            'driver' => 'required|string|max:100',
+            'delivery_time' => 'required|string|max:20',
+        ]);
+
+        $order = DB::table('orders')->where('id', $id)->first();
+
+        if (!$order) {
+            return back()->with('error', 'Order tidak ditemukan');
+        }
+
+        if ($order->order_status !== 'packed') {
+            return back()->with('error', 'Order belum siap dikirim (status: ' . $order->order_status . ')');
+        }
+
+        DB::table('orders')->where('id', $id)->update([
+            'driver' => $request->driver,
+            'delivery_time' => $request->delivery_time,
+            'updated_at' => now(),
+        ]);
+
+        return back()->with('success', 'Driver berhasil di-assign');
+    }
+
+    /**
+     * =========================
+     * START DELIVERY
+     * =========================
+     */
+    public function startDelivery($id)
+    {
+        $order = DB::table('orders')->where('id', $id)->first();
+
+        if (!$order) {
+            return back()->with('error', 'Order tidak ditemukan');
+        }
+
+        if ($order->order_status !== 'packed') {
+            return back()->with('error', 'Order belum siap dikirim');
+        }
+
+        DB::table('orders')->where('id', $id)->update([
+            'order_status' => 'shipped',
+            'shipped_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return back()->with('success', 'Pengiriman dimulai - Order berstatus Shipped');
+    }
+
+    /**
+     * =========================
+     * MARK DELIVERED
+     * =========================
+     */
+    public function markDelivered($id)
+    {
+        $order = DB::table('orders')->where('id', $id)->first();
+
+        if (!$order) {
+            return back()->with('error', 'Order tidak ditemukan');
+        }
+
+        if ($order->order_status !== 'shipped') {
+            return back()->with('error', 'Order belum dalam pengiriman');
+        }
+
+        DB::table('orders')->where('id', $id)->update([
+            'order_status' => 'delivered',
+            'delivered_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return back()->with('success', 'Pesanan berhasil ditandai sebagai Delivered');
+    }
+
+    /**
+     * =========================
      * LIST PAYMENT + STATISTIK
      * =========================
      */

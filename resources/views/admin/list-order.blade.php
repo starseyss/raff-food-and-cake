@@ -342,27 +342,6 @@
                                             </div>
                         <span>Pesanan lagi dipacking siap kirim</span>
                 </button>
-
-                <!-- Shipping -->
-                <button type="button" onclick="setStatus('shipped')"
-                    class="status-card bg-cover bg-center"
-                    style="background-image: url('/images/shipping.png');">
-<div class="w-[90px] mx-auto mt-2 mb-1 bg-white/20 backdrop-blur-md rounded-full border border-white/20 py-1 flex justify-center">
-                        <p class="font-semibold text-xs">Shipping</p>
-                                            </div>
-                        <span>Pesanan lagi diantar ke lokasi</span>
-                </button>
-
-                <!-- Delivered -->
-                <button type="button" onclick="setStatus('delivered')"
-                    class="status-card bg-cover bg-center"
-                    style="background-image: url('/images/delivered.png');">
-<div class="w-[90px] mx-auto mt-2 mb-1 bg-white/20 backdrop-blur-md rounded-full border border-white/20 py-1 flex justify-center">
-                        <p class="font-semibold text-xs">Delivered</p>
-                                            </div>
-                        <span>Pesanan sudah sampai ke lokasi</span>
-                </button>
-
             </div>
 
             <button type="button"
@@ -589,7 +568,7 @@ function openStatusModal(id) {
     currentOrderId = id;
 
     const form = document.getElementById('statusFormGlobal');
-    form.action = `/admin/update-status/${id}`; // sesuaikan route kamu
+    form.action = `/admin/orders/${id}/status`;
 
     document.getElementById('statusModal').classList.remove('hidden');
 }

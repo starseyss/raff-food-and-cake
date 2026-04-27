@@ -24,6 +24,12 @@ class Order extends Model
         'payment_status',
         'order_status',
 
+        // ✅ SHIPPING
+        'driver',
+        'delivery_time',
+        'shipped_at',
+        'delivered_at',
+
         // ✅ MIDTRANS
         'midtrans_order_id',
         'midtrans_transaction_id',
