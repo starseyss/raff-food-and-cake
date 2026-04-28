@@ -185,7 +185,26 @@ body {
     <!-- RIGHT -->
     <div class="flex items-center gap-4">
 
-        <button class="text-lg">🔔</button>
+        <!-- NOTIFICATION BELL -->
+<!-- NOTIFICATION -->
+<div class="relative">
+
+    <a href="{{ route('admin.notifications') }}"
+       class="group relative w-11 h-11 flex items-center justify-center rounded-full bg-white border border-gray-200 shadow-sm hover:bg-orange-50 hover:border-orange-200 transition-all duration-300">
+
+        <!-- ICON -->
+        <img src="{{ asset('images/notif.png') }}"
+             class="w-5 icon-orange transition-all duration-300 group-hover:scale-110">
+
+        <!-- BADGE -->
+        <span id="headerNotifBadge"
+              class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center hidden">
+            0
+        </span>
+
+    </a>
+
+</div>
 
         <div class="relative">
             <button id="adminProfileBtn"

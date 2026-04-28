@@ -11,6 +11,7 @@ use App\Http\Controllers\Landing\CheckoutController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\PesananController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\ContactController;
@@ -109,6 +110,14 @@ Route::get('/pesanan', [OrderController::class, 'index'])
     Route::get('/profil', fn() => view('admin.profil'))->name('admin.profil');
     Route::put('/orders/{id}/status', [OrderController::class, 'updateStatus'])
         ->name('admin.updateStatus');
+
+    // ✅ NOTIFICATIONS
+    Route::get('/notifications', [AdminNotificationController::class, 'index'])->name('admin.notifications');
+    Route::post('/notifications/{id}/read', [AdminNotificationController::class, 'markAsRead'])->name('admin.notifications.read');
+    Route::post('/notifications/read-all', [AdminNotificationController::class, 'markAllAsRead'])->name('admin.notifications.read-all');
+    Route::get('/notifications/unread-count', [AdminNotificationController::class, 'unreadCount'])->name('admin.notifications.unread-count');
+    Route::get('/notifications/latest', [AdminNotificationController::class, 'latest'])->name('admin.notifications.latest');
+
 // 🔥 HALAMAN SUCCESS (PUBLIC, JANGAN DI ADMIN)
 });
 

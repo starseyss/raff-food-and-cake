@@ -58,6 +58,17 @@ class Order extends Model
 
     /**
      * =========================
+     * CHECK IF ORDER CAN BE RETRIED FOR REFUND
+     * =========================
+     */
+    public function isRefundRetryable(): bool
+    {
+        return $this->payment_status === 'refund_failed'
+            && in_array($this->order_status, ['order_created', 'processing', 'cancelled']);
+    }
+
+    /**
+     * =========================
      * CHECK IF ORDER IS PAID (NEEDS REFUND)
      * =========================
      */
