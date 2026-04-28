@@ -138,6 +138,7 @@ namespace App\Http\Controllers;
 
             // ================= SIMPAN ORDER =================
             DB::table('orders')->insert([
+                'user_id' => auth()->id(),
                 'nama_pemesan' => $request->nama,
                 'nama_penerima' => $request->nama_penerima,
                 'tanggal_penerimaan' => $request->tanggal_penerimaan,
@@ -632,3 +633,4 @@ namespace App\Http\Controllers;
         return view('landing.success');
     }
 }
+

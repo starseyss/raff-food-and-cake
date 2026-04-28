@@ -13,7 +13,9 @@ class PesananController extends Controller
     // =========================
     public function index()
     {
-        $orders = Order::latest()->get();
+        $orders = Order::where('user_id', auth()->id())
+            ->latest()
+            ->get();
 
         foreach ($orders as $order) {
             $order->cart_items = $this->decodeCart($order->cart_data);
@@ -28,7 +30,9 @@ class PesananController extends Controller
     // =========================
     public function show($id)
     {
-        $order = Order::findOrFail($id);
+        $order = Order::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
 
         $order->cart_items = $this->decodeCart($order->cart_data);
         $order->rating_data = $this->getRating($id);
@@ -41,6 +45,10 @@ class PesananController extends Controller
     // =========================
     public function rating(Request $request, $id)
     {
+        $order = Order::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
         $request->validate([
             'rating' => 'required|integer|min:1|max:5',
             'comment' => 'required|string',
@@ -56,13 +64,13 @@ class PesananController extends Controller
             return back()->with('error', 'Kamu sudah memberi rating untuk produk ini');
         }
 
-Rating::create([
-    'order_id' => $id,
-    'product_id' => $request->product_id, // 🔥 tambah ini
-    'user_id' => auth()->id(),
-    'rating' => $request->rating,
-    'comment' => $request->comment,
-]);
+        Rating::create([
+            'order_id' => $id,
+            'product_id' => $request->product_id,
+            'user_id' => auth()->id(),
+            'rating' => $request->rating,
+            'comment' => $request->comment,
+        ]);
 
         return back()->with('success', 'Terima kasih atas rating kamu!');
     }
@@ -92,8 +100,12 @@ Rating::create([
     // =========================
     public function cancel($id)
     {
+        $order = Order::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
         $paymentController = new \App\Http\Controllers\PaymentController();
-        $result = $paymentController->cancelOrder($id);
+        $result = $paymentController->cancelOrder($order->id);
 
         if ($result->success) {
             return back()->with('success', $result->message);
@@ -102,3 +114,4 @@ Rating::create([
         }
     }
 }
+
