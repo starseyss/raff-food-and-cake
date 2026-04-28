@@ -106,6 +106,7 @@ Route::get('/pesanan', [OrderController::class, 'index'])
     Route::post('/orders/{id}/start-delivery', [OrderController::class, 'startDelivery'])->name('admin.start-delivery');
     Route::post('/orders/{id}/mark-delivered', [OrderController::class, 'markDelivered'])->name('admin.mark-delivered');
     Route::get('/analisis', fn() => view('admin.analisis'))->name('admin.analisis');
+    Route::get('/profil', fn() => view('admin.profil'))->name('admin.profil');
     Route::put('/orders/{id}/status', [OrderController::class, 'updateStatus'])
         ->name('admin.updateStatus');
 // 🔥 HALAMAN SUCCESS (PUBLIC, JANGAN DI ADMIN)
