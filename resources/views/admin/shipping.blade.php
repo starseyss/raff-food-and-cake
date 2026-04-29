@@ -160,9 +160,11 @@ body { font-family: 'Poppins', sans-serif; }
                                     @if($order->driver)
                                         <span class="block text-[9px] text-orange-700 font-semibold bg-orange-50 px-2 py-0.5 rounded-full">👤 {{ $order->driver }}</span>
                                     @endif
-                                    @if($order->shipped_at)
-                                        <span class="block text-[9px] text-orange-800 bg-orange-50/80 px-2 py-0.5 rounded-full mt-0.5">{{ $order->shipped_at->format('d M Y H:i') }}</span>
-                                    @endif
+@if($order->shipped_at)
+    <span class="block text-[9px] text-orange-800 bg-orange-50/80 px-2 py-0.5 rounded-full mt-0.5">
+        {{ \Carbon\Carbon::parse($order->shipped_at)->format('d M Y H:i') }}
+    </span>
+@endif
                                 </div>
                             @elseif($orderStatus == 'delivered')
                                 <span class="px-4 py-1.5 rounded-full text-[10px] font-bold uppercase bg-green-100 text-green-600">Delivered</span>
