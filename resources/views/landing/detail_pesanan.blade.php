@@ -152,18 +152,116 @@
     </form>
 </div>
 @endif
-@if(in_array($order->order_status, ['order_created', 'processing']))
-<div class="mt-4">
-    <form action="{{ route('pesanan.cancel', $order->id) }}" method="POST">
-        @csrf
+@if($order->isPaid() && $order->isCancellable())
 
-        <button
-            onclick="return confirm('Yakin mau membatalkan pesanan?')"
-            class="w-full bg-red-500 text-white py-3 rounded-xl font-semibold hover:bg-red-600 transition">
-            Batalkan Pesanan ❌
-        </button>
-    </form>
+<div class="mt-4">
+
+    <!-- BUTTON -->
+    <button onclick="openRefundModal({{ $order->id }})"
+        class="w-full bg-red-500 text-white py-3 rounded-xl font-semibold hover:bg-red-600 transition">
+
+        📤 Kirim Permintaan Refund
+
+    </button>
+
 </div>
+
+<!-- MODAL -->
+<div id="refundFormPopup{{ $order->id }}"
+     class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+
+    <div class="bg-white rounded-2xl w-full max-w-md mx-4 p-6 relative">
+
+        <!-- CLOSE -->
+        <button onclick="closePopup({{ $order->id }})"
+            class="absolute top-4 right-4 text-gray-400 hover:text-black text-xl">
+
+            ✕
+
+        </button>
+
+        <h2 class="text-xl font-bold text-gray-800 mb-2">
+            Permintaan Refund
+        </h2>
+
+        <p class="text-sm text-gray-500 mb-6">
+            Order #{{ $order->midtrans_order_id }}
+        </p>
+
+        <!-- FORM -->
+        <form
+            action="{{ route('pesanan.refund', $order->id) }}"
+            method="POST"
+            enctype="multipart/form-data"
+            class="space-y-4">
+
+            @csrf
+
+            <!-- NO REK -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Nomor Rekening
+                </label>
+
+                <input
+                    type="text"
+                    name="no_rek"
+                    required
+                    class="w-full border rounded-xl p-3 text-sm"
+                    placeholder="1234567890">
+            </div>
+
+            <!-- NAMA -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Nama Pemilik Rekening
+                </label>
+
+                <input
+                    type="text"
+                    name="nama_pemilik"
+                    required
+                    class="w-full border rounded-xl p-3 text-sm"
+                    placeholder="Nama rekening">
+            </div>
+
+            <!-- FILE -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Upload Bukti Transfer
+                </label>
+
+                <input
+                    type="file"
+                    name="bukti_transfer"
+                    accept="image/*"
+                    required
+                    class="w-full border rounded-xl p-3 text-sm">
+            </div>
+
+            <!-- TOTAL -->
+            <div class="bg-gray-100 rounded-xl p-3 text-sm">
+                Total Refund:
+                <span class="font-semibold">
+                    Rp {{ number_format($order->total, 0, ',', '.') }}
+                </span>
+            </div>
+
+            <!-- BUTTON -->
+            <button
+                type="submit"
+                class="w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl font-semibold transition">
+
+                Kirim Permintaan Refund
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
 @endif
 @if($order->order_status == 'completed')
 
@@ -245,7 +343,14 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
+    let isProcessing = false;
+
     btn.addEventListener('click', async function () {
+        if (isProcessing) return;
+        isProcessing = true;
+        btn.disabled = true;
+        btn.textContent = 'Memproses... ⏳';
+        btn.classList.add('opacity-50', 'cursor-not-allowed');
 
         try {
 
@@ -265,10 +370,15 @@ document.addEventListener("DOMContentLoaded", function () {
             console.log(data);
 
             if (!data.snap_token) {
-    console.error("ERROR BACKEND:", data);
-    alert(data.error || "Snap token gagal dibuat");
-    return;
-}
+                console.error("ERROR BACKEND:", data);
+                alert(data.error || "Snap token gagal dibuat. Pastikan status pesanan masih pending.");
+                // Reset button
+                isProcessing = false;
+                btn.disabled = false;
+                btn.textContent = 'Bayar Sekarang';
+                btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                return;
+            }
 
             snap.pay(data.snap_token, {
 
@@ -286,6 +396,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 onClose: function() {
                     alert("⚠️ Kamu belum menyelesaikan pembayaran!");
+                    // Reset button after Midtrans close
+                    isProcessing = false;
+                    btn.disabled = false;
+                    btn.textContent = 'Bayar Sekarang';
+                    btn.classList.remove('opacity-50', 'cursor-not-allowed');
                 }
 
             });
@@ -327,5 +442,32 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 });
+</script>
+<script>
+
+function openRefundModal(orderId) {
+
+    const popup = document.getElementById('refundFormPopup' + orderId);
+
+    if (popup) {
+        popup.classList.remove('hidden');
+        popup.classList.add('flex');
+    }
+
+    document.body.style.overflow = 'hidden';
+}
+
+function closePopup(orderId) {
+
+    const popup = document.getElementById('refundFormPopup' + orderId);
+
+    if (popup) {
+        popup.classList.add('hidden');
+        popup.classList.remove('flex');
+    }
+
+    document.body.style.overflow = '';
+}
+
 </script>
 <x-footer />

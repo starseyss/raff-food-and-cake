@@ -115,6 +115,7 @@ Route::get('/pesanan', [OrderController::class, 'index'])
     Route::get('/notifications', [AdminNotificationController::class, 'index'])->name('admin.notifications');
     Route::post('/notifications/{id}/read', [AdminNotificationController::class, 'markAsRead'])->name('admin.notifications.read');
     Route::post('/notifications/read-all', [AdminNotificationController::class, 'markAllAsRead'])->name('admin.notifications.read-all');
+    Route::post('/notifications/{id}/process-refund', [AdminNotificationController::class, 'processRefund'])->name('admin.notifications.process-refund');
     Route::get('/notifications/unread-count', [AdminNotificationController::class, 'unreadCount'])->name('admin.notifications.unread-count');
     Route::get('/notifications/latest', [AdminNotificationController::class, 'latest'])->name('admin.notifications.latest');
 
@@ -135,8 +136,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan');
     Route::get('/pesanan/{id}', [PesananController::class, 'show'])->name('pesanan.detail');
     Route::post('/pesanan/{id}/cancel', [PesananController::class, 'cancel'])->name('pesanan.cancel');
+    Route::post('/pesanan/{id}/refund', [PesananController::class, 'requestRefund'])->name('pesanan.refund');
     Route::post('/pesanan/{id}/terima', [PesananController::class, 'terima'])->name('pesanan.terima');
     Route::post('/pesanan/{id}/rating', [PesananController::class, 'rating'])->name('pesanan.rating');
+    Route::post('/pesanan/{id}/refund', [PesananController::class, 'requestRefund'])
+    ->name('pesanan.refund');
         // ================= ALAMAT =================
 Route::get('/alamat', [AddressController::class, 'index']);
 Route::post('/alamat', [AddressController::class, 'store']);

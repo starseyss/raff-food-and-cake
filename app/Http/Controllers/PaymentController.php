@@ -27,15 +27,22 @@ class PaymentController extends Controller
                 return response()->json(['error' => 'Order tidak ditemukan'], 404);
             }
 
-            if (!$order->isPending()) {
+        if (!in_array($order->payment_status, ['pending', 'expired'])) {
                 return response()->json([
-                    'error' => 'Status pesanan tidak memungkinkan untuk dibayar'
+                    'error' => 'Status pesanan tidak memungkinkan untuk dibayar lagi. Status saat ini: ' . $order->payment_status
                 ], 400);
             }
 
-            $midtransOrderId = $order->midtrans_order_id ?? 'ODR-' . $order->id . '-' . time();
+            // Always generate NEW midtrans_order_id for retry attempts
+            $midtransOrderId = 'RETRY-ODR-' . $order->id . '-' . now()->format('His') . rand(1000, 9999);
             $order->midtrans_order_id = $midtransOrderId;
             $order->save();
+            
+            \Log::info('PAYMENT RETRY ATTEMPT', [
+                'order_id' => $order->id,
+                'new_midtrans_order_id' => $midtransOrderId,
+                'previous_id' => $order->getOriginal('midtrans_order_id')
+            ]);
 
             $items = json_decode($order->cart_data, true) ?? [];
             $midtrans_items = [];
@@ -191,137 +198,159 @@ class PaymentController extends Controller
     }
 
     // ================= CANCEL ORDER + REFUND =================
-    public function cancelOrder($orderId)
-    {
-        $order = Order::find($orderId);
+   public function cancelOrder($orderId)
+{
+    $order = Order::find($orderId);
 
-        if (!$order) {
-            return (object) [
-                'success' => false,
-                'message' => 'Order tidak ditemukan'
-            ];
-        }
-
-        $midtransStatus = $this->checkMidtransStatus($order->midtrans_order_id);
-
-        // --- CASE: Transaksi tidak ada di Midtrans (404) ---
-        if (!$midtransStatus) {
-            $order->payment_status = 'cancelled';
-            $order->order_status = 'cancelled';
-            $order->save();
-
-            return (object) [
-                'success' => true,
-                'message' => 'Pesanan dibatalkan (Belum ada transaksi)'
-            ];
-        }
-
-        $transactionStatus = $midtransStatus['transaction_status'];
-
-        // --- CASE: Status Pending (Cancel di Midtrans) ---
-        if ($transactionStatus == 'pending') {
-            $this->midtransCancel($order->midtrans_order_id);
-            $order->update(['payment_status' => 'cancelled', 'order_status' => 'cancelled']);
-            return (object) [
-                'success' => true,
-                'message' => 'Pesanan berhasil dibatalkan'
-            ];
-        }
-
-        // --- CASE: Status Settlement/Capture (Proses Refund) ---
-        if (in_array($transactionStatus, ['settlement', 'capture'])) {
-            $refundResponse = $this->midtransRefund($order->midtrans_order_id);
-
-            if (isset($refundResponse->status_code) && in_array($refundResponse->status_code, [200, 201, "200", "201"])) {
-                $order->update([
-                    'payment_status' => 'refunded',
-                    'order_status' => 'cancelled',
-                    'refund_at' => now(),
-                    'midtrans_response' => json_encode($refundResponse)
-                ]);
-                return (object) [
-                    'success' => true,
-                    'message' => 'Pesanan dibatalkan & refund diproses'
-                ];
-            }
-
-            $order->update(['payment_status' => 'refund_failed']);
-            return (object) [
-                'success' => false,
-                'message' => 'Refund gagal: ' . ($refundResponse->status_message ?? 'Error API')
-            ];
-        }
-
-        // --- CASE: Sudah Expire / Cancel / Deny / Refund ---
-        if (in_array($transactionStatus, ['expire', 'cancel', 'deny', 'refund'])) {
-            $order->update([
-                'payment_status' => ($transactionStatus == 'refund' ? 'refunded' : 'cancelled'),
-                'order_status' => 'cancelled'
-            ]);
-            return (object) [
-                'success' => true,
-                'message' => 'Status sinkron: Pesanan ditutup'
-            ];
-        }
-
-        return (object) [
+    if (!$order) {
+        return (object)[
             'success' => false,
-            'message' => 'Status tidak didukung: ' . $transactionStatus
+            'message' => 'Order tidak ditemukan'
         ];
     }
 
-    private function midtransRefund($refundId)
-    {
-        $serverKey = config('services.midtrans.server_key');
-        $isProduction = config('services.midtrans.is_production', false);
+    \Log::info('CANCEL ORDER DEBUG', [
+        'order_id' => $order->id,
+        'payment_status' => $order->payment_status,
+        'midtrans_order_id' => $order->midtrans_order_id
+    ]);
 
-        $baseUrl = $isProduction
-            ? 'https://api.midtrans.com'
-            : 'https://api.sandbox.midtrans.com';
+    // ================= 1. KONDISI: SUDAH DIBAYAR (REFUND) =================
+    if ($order->payment_status === 'paid') {
+        // Gunakan transaction_id jika ada (dari callback), fallback ke order_id
+        $identifier = $order->midtrans_transaction_id ?: $order->midtrans_order_id;
 
-        $url = $baseUrl . '/v2/' . $refundId . '/refund';
+        $refundResponse = $this->midtransRefund($order); // Kirim seluruh objek $order
 
-        $headers = [
-            'Authorization: Basic ' . base64_encode($serverKey . ':'),
-            'Content-Type: application/json',
-            'Accept: application/json'
-        ];
-
-        $body = json_encode([
-            'reason' => 'User cancelled order'
+        \Log::info('MIDTRANS REFUND RESPONSE', [
+            'order_id' => $order->id,
+            'response' => $refundResponse
         ]);
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        if (isset($refundResponse->status_code) && in_array((string)$refundResponse->status_code, ['200', '201'])) {
+            $order->update([
+                'payment_status' => 'refunded',
+                'order_status' => 'cancelled',
+                'refund_at' => now(),
+                'midtrans_response' => json_encode($refundResponse)
+            ]);
 
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $curlError = curl_error($ch);
-        curl_close($ch);
-
-        if ($curlError) {
-            \Log::error('MIDTRANS CURL ERROR:', ['error' => $curlError]);
-            return (object) [
-                'status_code' => 500,
-                'status_message' => 'Curl Error: ' . $curlError
+            return (object)[
+                'success' => true,
+                'message' => 'Refund berhasil diproses'
             ];
         }
 
-        $decoded = json_decode($response);
+        return (object)[
+            'success' => false,
+            'message' => 'Refund gagal: ' . ($refundResponse->status_message ?? 'Unknown Error')
+        ];
+    }
 
-        \Log::info('MIDTRANS REFUND RESPONSE:', [
-            'refund_id' => $refundId,
-            'http_code' => $httpCode,
-            'response' => $decoded
+    // ================= 2. KONDISI: MASIH PENDING (CANCEL) =================
+    if ($order->payment_status === 'pending') {
+        $cancelResponse = $this->midtransCancel($order->midtrans_order_id);
+
+        \Log::info('MIDTRANS CANCEL RESPONSE', [
+            'order_id' => $order->id,
+            'response' => $cancelResponse
         ]);
 
-        return $decoded;
+        $order->update([
+            'payment_status' => 'cancelled',
+            'order_status' => 'cancelled'
+        ]);
+
+        return (object)[
+            'success' => true,
+            'message' => 'Pesanan berhasil dibatalkan'
+        ];
     }
+
+    // ================= 3. KONDISI: SUDAH EXPIRED =================
+    if ($order->payment_status === 'expired') {
+        $order->update([
+            'order_status' => 'cancelled'
+        ]);
+
+        return (object)[
+            'success' => true,
+            'message' => 'Pesanan expired'
+        ];
+    }
+
+    // ================= 4. KONDISI: SUDAH REFUNDED =================
+    if ($order->payment_status === 'refunded') {
+        return (object)[
+            'success' => false,
+            'message' => 'Pesanan sudah direfund sebelumnya'
+        ];
+    }
+
+    // ================= DEFAULT: STATUS LAINNYA =================
+    return (object)[
+        'success' => false,
+        'message' => 'Status tidak didukung untuk pembatalan'
+    ];
+}
+   private function midtransRefund($order) // Parameter diubah menjadi $order
+{
+    $serverKey = config('services.midtrans.server_key');
+    $isProduction = config('services.midtrans.is_production', false);
+
+    // Ambil ID Transaksi (Prioritas transaction_id, fallback ke order_id)
+    $id = $order->midtrans_transaction_id ?: $order->midtrans_order_id;
+
+    $baseUrl = $isProduction
+        ? 'https://api.midtrans.com'
+        : 'https://api.sandbox.midtrans.com';
+
+    $url = $baseUrl . '/v2/' . $id . '/refund';
+
+    $headers = [
+        'Authorization: Basic ' . base64_encode($serverKey . ':'),
+        'Content-Type: application/json',
+        'Accept: application/json'
+    ];
+
+    $body = json_encode([
+        'refund_key' => 'REFUND-' . $order->id . '-' . time(), // Gunakan ID asli order agar unik
+        'amount' => (int) $order->total, // Sekarang $order->total sudah terbaca
+        'reason' => 'User cancelled order'
+    ]);
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlError = curl_error($ch);
+    curl_close($ch);
+
+    if ($curlError) {
+        \Log::error('MIDTRANS CURL ERROR:', ['error' => $curlError]);
+        return (object) [
+            'status_code' => 500,
+            'status_message' => 'Curl Error: ' . $curlError
+        ];
+    }
+
+    $decoded = json_decode($response);
+
+    \Log::info('MIDTRANS REFUND RESPONSE:', [
+        'order_id' => $order->id,
+        'midtrans_id' => $id,
+        'http_code' => $httpCode,
+        'response' => $decoded
+    ]);
+
+    return $decoded;
+}
 
     private function checkMidtransStatus($orderId)
     {

@@ -10,6 +10,7 @@ class AdminNotification extends Model
         'order_id',
         'title',
         'message',
+        'refund_data',
         'is_read',
         'read_at',
     ];
@@ -17,6 +18,7 @@ class AdminNotification extends Model
     protected $casts = [
         'is_read' => 'boolean',
         'read_at' => 'datetime',
+        'refund_data' => 'array',
     ];
 
     /**

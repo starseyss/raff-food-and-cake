@@ -26,6 +26,42 @@ class AdminNotificationController extends Controller
     }
 
     /**
+     * Process Refund Checkbox
+     */
+   public function processRefund($id)
+{
+    $notification = AdminNotification::with('order')->findOrFail($id);
+
+    if (!$notification->order) {
+        return back()->with('error', 'Order tidak ditemukan');
+    }
+
+    $order = $notification->order;
+
+    // kalau sudah refunded
+    if ($order->payment_status === 'refunded') {
+        return back()->with('info', 'Order sudah direfund sebelumnya');
+    }
+
+    // update order
+    $order->update([
+        'payment_status' => 'refunded',
+        'order_status' => 'cancelled',
+        'refund_at' => now(),
+    ]);
+
+    // mark notif as read
+    $notification->update([
+        'is_read' => true,
+        'read_at' => now(),
+    ]);
+
+    return back()->with(
+        'success',
+        'Refund order #' . $order->midtrans_order_id . ' berhasil diproses ✅'
+    );
+}
+    /**
      * =========================
      * MARK SINGLE NOTIFICATION AS READ
      * =========================

@@ -38,6 +38,8 @@ class Order extends Model
         // ✅ REFUND
         'refund_at',
         'refund_reason',
+        'refund_bank_no',
+        'refund_owner_name',
         'midtrans_response',
     ];
 

@@ -198,7 +198,8 @@ body {
 
         <!-- BADGE -->
         <span id="headerNotifBadge"
-              class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center hidden">
+              class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center hidden"
+              data-notif-badge>
             0
         </span>
 

@@ -158,15 +158,17 @@
         bg-green-100 text-green-600
     @elseif($payment == 'expired' || $payment == 'cancelled')
         bg-red-100 text-red-600
-    @elseif($payment == 'refunded')
-        bg-blue-100 text-blue-600
+@elseif($payment == 'refunded')
+        bg-green-100 text-green-600
+    @elseif($payment == 'processing_refund')
+        bg-yellow-100 text-yellow-700 font-bold
     @elseif($payment == 'refund_failed')
         bg-orange-100 text-orange-600
     @else
         bg-gray-100 text-gray-600
     @endif
 ">
-    {{ $payment }}
+    {{ $payment == 'processing_refund' ? 'Processing Refund' : ucfirst($payment) }}
 </span>
 </td>
 <td class="p-5">

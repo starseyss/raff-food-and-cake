@@ -43,11 +43,19 @@ function hapusVarian(btn) {
    NOTIFICATION SYSTEM
    ======================== */
 document.addEventListener("DOMContentLoaded", function () {
+    // Fix: Get elements properly
     const notifBtn = document.getElementById("notifBellBtn");
     const notifDropdown = document.getElementById("notifDropdown");
     const notifList = document.getElementById("notifList");
     const headerBadge = document.getElementById("headerNotifBadge");
     const sidebarBadge = document.getElementById("sidebarNotifBadge");
+
+    console.log('Admin scripts loaded, badge found:', !!headerBadge); // Debug
+
+    // Force immediate update
+    if (headerBadge) {
+        updateUnreadCount();
+    }
 
     // Toggle dropdown
     if (notifBtn) {
@@ -67,23 +75,31 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Load unread count
+    // Load unread count - FIXED for HTTPS/Cloudflare
     function updateUnreadCount() {
-        fetch("{{ route('admin.notifications.unread-count') }}")
+        // Fixed: Use root-relative path (works with Cloudflare tunnel)
+        const url = '/admin/notifications/unread-count';
+        
+        fetch(url)
             .then(r => r.json())
             .then(data => {
                 const count = data.count || 0;
+                console.log('Unread count:', count); // Debug log
+                
                 if (count > 0) {
                     headerBadge.textContent = count > 99 ? '99+' : count;
                     headerBadge.classList.remove("hidden");
-                    sidebarBadge.textContent = count > 99 ? '99+' : count;
-                    sidebarBadge.classList.remove("hidden");
+                    
+                    if (sidebarBadge) {
+                        sidebarBadge.textContent = count > 99 ? '99+' : count;
+                        sidebarBadge.classList.remove("hidden");
+                    }
                 } else {
                     headerBadge.classList.add("hidden");
-                    sidebarBadge.classList.add("hidden");
+                    if (sidebarBadge) sidebarBadge.classList.add("hidden");
                 }
             })
-            .catch(() => {});
+            .catch(err => console.error('Notification fetch error:', err));
     }
 
     // Load latest notifications for dropdown
@@ -91,7 +107,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!notifList) return;
         notifList.innerHTML = '<div class="p-4 text-center text-sm text-gray-400">Loading...</div>';
 
-        fetch("{{ route('admin.notifications.latest') }}")
+        fetch('/admin/notifications/latest')
             .then(r => r.json())
             .then(data => {
                 const notifs = data.notifications || [];
