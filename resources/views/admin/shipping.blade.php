@@ -154,8 +154,16 @@ body { font-family: 'Poppins', sans-serif; }
                                 <span class="px-4 py-1.5 rounded-full text-[10px] font-bold uppercase bg-yellow-100 text-yellow-600">Scheduled</span>
                             @elseif($orderStatus == 'packed' && $hasDriver)
                                 <span class="px-4 py-1.5 rounded-full text-[10px] font-bold uppercase bg-blue-100 text-blue-600">Ready</span>
-                            @elseif($orderStatus == 'shipped')
-                                <span class="px-4 py-1.5 rounded-full text-[10px] font-bold uppercase bg-orange-100 text-orange-600">On Delivery</span>
+@elseif($orderStatus == 'shipped')
+                                <div>
+                                    <span class="block px-4 py-1.5 rounded-full text-[10px] font-bold uppercase bg-orange-100 text-orange-600 mb-1">On Delivery</span>
+                                    @if($order->driver)
+                                        <span class="block text-[9px] text-orange-700 font-semibold bg-orange-50 px-2 py-0.5 rounded-full">👤 {{ $order->driver }}</span>
+                                    @endif
+                                    @if($order->shipped_at)
+                                        <span class="block text-[9px] text-orange-800 bg-orange-50/80 px-2 py-0.5 rounded-full mt-0.5">{{ $order->shipped_at->format('d M Y H:i') }}</span>
+                                    @endif
+                                </div>
                             @elseif($orderStatus == 'delivered')
                                 <span class="px-4 py-1.5 rounded-full text-[10px] font-bold uppercase bg-green-100 text-green-600">Delivered</span>
                             @elseif($orderStatus == 'completed')
@@ -272,7 +280,7 @@ body { font-family: 'Poppins', sans-serif; }
         <div class="flex justify-between items-center mb-6">
             <div class="flex items-center gap-2">
                 <span class="text-[10px] font-bold text-gray-400 uppercase">Status:</span>
-                <span id="detailStatus" class="px-3 py-1 rounded-full text-[10px] font-extrabold bg-gray-100 text-gray-600">
+                                <span id="detailStatus" class="px-3 py-1 rounded-full text-[10px] font-extrabold uppercase bg-gray-100 text-gray-600">
                     -
                 </span>
             </div>
@@ -287,6 +295,11 @@ body { font-family: 'Poppins', sans-serif; }
         <div class="mb-6">
             <span class="text-[10px] font-bold text-gray-400 uppercase">Delivery Time:</span>
             <span id="detailDeliveryTime" class="text-xs text-gray-600 ml-2">-</span>
+        </div>
+        
+        <!-- SHIPPED INFO -->
+        <div id="detailShippedInfo" class="hidden bg-orange-50 p-3 rounded-xl mb-6">
+            <!-- Dynamic JS content -->
         </div>
 
         <!-- NOTE -->
@@ -418,6 +431,15 @@ function openDetailModal(orderId) {
     document.getElementById('detailShipping').textContent = (order.shipping_method || '-').toUpperCase();
     document.getElementById('detailDriver').textContent = order.driver || '-';
     document.getElementById('detailDeliveryTime').textContent = order.delivery_time || '-';
+    
+    // Shipped info
+    const shippedInfo = document.getElementById('detailShippedInfo');
+    if (order.shipped_at && order.driver) {
+        shippedInfo.innerHTML = `<span class="text-xs font-bold text-orange-600">🚚 Dikirim oleh ${order.driver} pada ${new Date(order.shipped_at).toLocaleString('id-ID', {day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'})}</span>`;
+        shippedInfo.classList.remove('hidden');
+    } else {
+        shippedInfo.classList.add('hidden');
+    }
 
     const statusEl = document.getElementById('detailStatus');
     const orderStatus = (order.order_status || '').toLowerCase();

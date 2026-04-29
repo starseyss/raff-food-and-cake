@@ -112,15 +112,16 @@ public function requestRefund(Request $request, $id)
         ->whereIn('order_status', ['order_created', 'processing'])
         ->firstOrFail();
 
-    // Upload bukti transfer
-    $imageName = $order->midtrans_order_id . '_' . time() . '.' .
-        $request->file('bukti_transfer')->getClientOriginalExtension();
+$imageName = $order->midtrans_order_id . '_' . time() . '.' .
+    $request->file('bukti_transfer')->getClientOriginalExtension();
 
-    $path = $request->file('bukti_transfer')
-        ->storeAs('public/refund-proofs', $imageName);
+$path = $request->file('bukti_transfer')->storeAs(
+    'refund-proofs',
+    $imageName,
+    'public'
+);
 
-    $imageUrl = asset('storage/' . str_replace('public/', '', $path));
-
+$imageUrl = asset('storage/' . $path);
     // Update order
     $order->update([
         'payment_status' => 'processing_refund',

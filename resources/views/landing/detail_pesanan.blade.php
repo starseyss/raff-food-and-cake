@@ -117,6 +117,17 @@
         <p class="text-sm text-gray-600">
             <span class="font-medium">Pembayaran:</span> {{ $order->payment_method }}
         </p>
+        
+        @if($order->order_status == 'shipped' && $order->driver && $order->shipped_at)
+        <div class="bg-orange-50 border-l-4 border-orange-400 p-3 mt-2 rounded-r-lg">
+            <p class="text-sm font-semibold text-orange-800">
+                🚚 Pengiriman dimulai oleh <strong>{{ $order->driver }}</strong>
+            </p>
+            <p class="text-xs text-orange-700 mt-0.5">
+                ⏰ {{ $order->shipped_at->format('d M Y H:i') }}
+            </p>
+        </div>
+        @endif
 
     </div>
 
