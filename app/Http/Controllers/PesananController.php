@@ -98,59 +98,59 @@ class PesananController extends Controller
     // =========================
     // REQUEST REFUND (NEW FLOW)
     // =========================
-    public function requestRefund(Request $request, $id)
-    {
-        $request->validate([
-            'no_rek' => 'required|string|max:50',
-            'nama_pemilik' => 'required|string|max:100',
-            'bukti_transfer' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-        ]);
+public function requestRefund(Request $request, $id)
+{
+    $request->validate([
+        'no_rek' => 'required|string|max:50',
+        'nama_pemilik' => 'required|string|max:100',
+        'bukti_transfer' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+    ]);
 
-        $order = Order::where('id', $id)
-            ->where('user_id', auth()->id())
-            ->where('payment_status', 'paid')
-            ->whereIn('order_status', ['order_created', 'processing'])
-            ->firstOrFail();
+    $order = Order::where('id', $id)
+        ->where('user_id', auth()->id())
+        ->where('payment_status', 'paid')
+        ->whereIn('order_status', ['order_created', 'processing'])
+        ->firstOrFail();
 
-        // Store image
-        $imageName = $order->midtrans_order_id . '_' . time() . '.' . $request->file('bukti_transfer')->getClientOriginalExtension();
-        $path = $request->file('bukti_transfer')->storeAs('public/refund-proofs', $imageName);
-        $imageUrl = asset('storage/' . str_replace('public/', '', $path));
+    // Upload bukti transfer
+    $imageName = $order->midtrans_order_id . '_' . time() . '.' .
+        $request->file('bukti_transfer')->getClientOriginalExtension();
 
-        // Update order
-        $order->update([
-            'payment_status' => 'processing_refund',
-            'order_status' => 'cancelled',
-            'refund_reason' => 'User refund request',
-            'refund_bank_no' => $request->no_rek,
-            'refund_owner_name' => $request->nama_pemilik,
-        ]);
+    $path = $request->file('bukti_transfer')
+        ->storeAs('public/refund-proofs', $imageName);
 
-        // Create notification
-        $notification = \App\Models\AdminNotification::create([
-            'order_id' => $order->id,
-            'title' => '🪙 Permintaan Refund - #' . $order->midtrans_order_id,
-            'message' => 'User mengajukan refund. Detail: ' . $request->no_rek . ' a/n ' . $request->nama_pemilik,
-            'refund_data' => [
-                'bank_no' => $request->no_rek,
-                'owner_name' => $request->nama_pemilik,
-                'proof_url' => $imageUrl,
-                'proof_path' => $path,
-            ],
-        ]);
+    $imageUrl = asset('storage/' . str_replace('public/', '', $path));
 
-        // Send Email
-        \Illuminate\Support\Facades\Mail::to('raff.support@gmail.com')->send(new \App\Mail\RefundRequestMail($order, $notification));
+    // Update order
+    $order->update([
+        'payment_status' => 'processing_refund',
+        'order_status' => 'cancelled',
+        'refund_reason' => 'User refund request',
+        'refund_bank_no' => $request->no_rek,
+        'refund_owner_name' => $request->nama_pemilik,
+    ]);
 
-        // Send WA (simple link for now)
-        $waMessage = urlencode("🔴 REFUND REQUEST\n\nOrder: #{$order->midtrans_order_id}\nUser: {$order->nama_pemesan}\nTotal: Rp " . number_format($order->total, 0, ',', '.') . "\n\nBank: {$request->no_rek} a/n {$request->nama_pemilik}\nBukti: {$imageUrl}");
-        $waUrl = "https://wa.me/6283878851008?text=" . $waMessage;
+    // Create admin notification
+    \App\Models\AdminNotification::create([
+        'order_id' => $order->id,
+        'title' => '🪙 Permintaan Refund - #' . $order->midtrans_order_id,
+        'message' => 'User mengajukan refund.',
 
-        return back()->with([
-            'success' => 'Permintaan refund berhasil dikirim! Status: Processing Refund.',
-            'wa_url' => $waUrl
-        ]);
-    }
+        'refund_data' => [
+            'bank_no' => $request->no_rek,
+            'owner_name' => $request->nama_pemilik,
+            'proof_url' => $imageUrl,
+            'proof_path' => $path,
+        ],
+
+        'is_read' => false,
+    ]);
+
+    return back()->with(
+        'success',
+        'Permintaan refund berhasil dikirim!'
+    );
+}
 
     // =========================
     // USER CANCEL ORDER (MANUAL REFUND - DEPRECATED)
