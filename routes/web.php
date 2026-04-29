@@ -136,7 +136,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan');
     Route::get('/pesanan/{id}', [PesananController::class, 'show'])->name('pesanan.detail');
     Route::post('/pesanan/{id}/cancel', [PesananController::class, 'cancel'])->name('pesanan.cancel');
-    Route::post('/pesanan/{id}/refund', [PesananController::class, 'requestRefund'])->name('pesanan.refund');
     Route::post('/pesanan/{id}/terima', [PesananController::class, 'terima'])->name('pesanan.terima');
     Route::post('/pesanan/{id}/rating', [PesananController::class, 'rating'])->name('pesanan.rating');
     Route::post('/pesanan/{id}/refund', [PesananController::class, 'requestRefund'])
