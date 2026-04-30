@@ -236,12 +236,19 @@ body {
     </div>
 
     <!-- SEARCH (CENTER ABSOLUTE) - Hide on mobile -->
+<!-- SEARCH -->
+<div class="flex-1 px-3 lg:px-6">
     <input type="text"
         placeholder="Search..."
-        class="hidden lg:absolute lg:left-1/2 lg:-translate-x-1/2
-               w-[250px] md:w-[300px] lg:w-[600px]
+        class="w-full
                h-10 lg:h-[45px]
-               bg-[#EDEAE7] rounded-full px-4 lg:px-5 outline-none">
+               bg-[#EDEAE7]
+               rounded-full
+               px-4 lg:px-5
+               outline-none
+               text-sm
+               placeholder:text-gray-400">
+</div>
 
     <!-- RIGHT -->
     <div class="flex items-center gap-2 lg:gap-4">
