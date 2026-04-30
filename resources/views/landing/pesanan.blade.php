@@ -23,51 +23,127 @@
        class="block bg-white border rounded-2xl p-5 mb-6 hover:shadow-lg transition cursor-pointer">
 
         <!-- INFO ORDER -->
-        <div class="flex justify-between items-center mb-4">
-            <div>
-                <p class="text-sm text-gray-500">
-                    {{ $order->nama_pemesan }} • {{ $order->created_at->format('d M Y H:i') }}
-                </p>
-            </div>
+<div class="flex flex-col md:flex-row md:justify-between md:items-center gap-3 mb-4">
 
-<div class="flex gap-2">
+    <!-- LEFT -->
+    <div class="min-w-0">
+        <p class="text-xs md:text-sm text-gray-500 break-words">
+            {{ $order->nama_pemesan }} • {{ $order->created_at->format('d M Y H:i') }}
+        </p>
+    </div>
 
-    <!-- PAYMENT -->
-    <span class="px-3 py-1 text-xs rounded-full
-        @if($order->payment_status == 'pending') bg-yellow-100 text-yellow-600
-        @elseif($order->payment_status == 'paid') bg-green-100 text-green-600
-        @elseif($order->payment_status == 'cancelled') bg-red-100 text-red-600
-        @elseif($order->payment_status == 'refunded') bg-blue-100 text-blue-600
-        @elseif($order->payment_status == 'refund_failed') bg-orange-100 text-orange-600
-        @elseif($order->payment_status == 'expired') bg-gray-100 text-gray-600
-        @endif">
-        {{ strtoupper($order->payment_status) }}
-    </span>
+    <!-- RIGHT STATUS -->
+    <div class="flex flex-wrap items-center gap-2 md:justify-end">
 
-<!-- ORDER STATUS -->
-<span class="px-4 py-2 rounded-full text-sm
-    @if($order->order_status == 'order_created') bg-gray-100 text-gray-600
+        <!-- PAYMENT STATUS -->
+        <span class="px-3 py-1 rounded-full text-[11px] md:text-xs font-medium whitespace-nowrap
 
-    @elseif($order->order_status == 'processing') bg-blue-100 text-blue-600
+            @if($order->payment_status == 'pending')
+                bg-yellow-100 text-yellow-700
 
-    @elseif($order->order_status == 'packed') bg-purple-100 text-purple-600
+            @elseif($order->payment_status == 'paid')
+                bg-green-100 text-green-700
 
-    @elseif($order->order_status == 'shipped') bg-indigo-100 text-indigo-600
+            @elseif($order->payment_status == 'cancelled')
+                bg-red-100 text-red-700
 
-    @elseif($order->order_status == 'delivered') bg-green-100 text-green-600
+            @elseif($order->payment_status == 'refunded')
+                bg-blue-100 text-blue-700
 
-    @elseif($order->order_status == 'completed') bg-green-100 text-green-600
+            @elseif($order->payment_status == 'refund_failed')
+                bg-orange-100 text-orange-700
 
-    @elseif($order->order_status == 'cancelled') bg-red-100 text-red-600
+            @elseif($order->payment_status == 'expired')
+                bg-gray-100 text-gray-700
 
-    @else bg-gray-100 text-gray-600
-    @endif">
+            @else
+                bg-gray-100 text-gray-700
+            @endif
+        ">
 
-    {{ strtoupper(str_replace('_',' ', $order->order_status)) }}
-</span>
+            @if($order->payment_status == 'pending')
+                ⏳ Menunggu Pembayaran
+
+            @elseif($order->payment_status == 'paid')
+                ✅ Sudah Dibayar
+
+            @elseif($order->payment_status == 'cancelled')
+                ❌ Dibatalkan
+
+            @elseif($order->payment_status == 'refunded')
+                💸 Refund Berhasil
+
+            @elseif($order->payment_status == 'refund_failed')
+                ⚠️ Refund Gagal
+
+            @elseif($order->payment_status == 'expired')
+                🕒 Pembayaran Kadaluarsa
+
+            @else
+                {{ strtoupper($order->payment_status) }}
+            @endif
+
+        </span>
+
+        <!-- ORDER STATUS -->
+        <span class="px-3 md:px-4 py-1 md:py-2 rounded-full text-[11px] md:text-sm font-medium whitespace-nowrap
+
+            @if($order->order_status == 'order_created')
+                bg-gray-100 text-gray-700
+
+            @elseif($order->order_status == 'processing')
+                bg-blue-100 text-blue-700
+
+            @elseif($order->order_status == 'packed')
+                bg-purple-100 text-purple-700
+
+            @elseif($order->order_status == 'shipped')
+                bg-indigo-100 text-indigo-700
+
+            @elseif($order->order_status == 'delivered')
+                bg-green-100 text-green-700
+
+            @elseif($order->order_status == 'completed')
+                bg-emerald-100 text-emerald-700
+
+            @elseif($order->order_status == 'cancelled')
+                bg-red-100 text-red-700
+
+            @else
+                bg-gray-100 text-gray-700
+            @endif
+        ">
+
+            @if($order->order_status == 'order_created')
+                📝 Pesanan Dibuat
+
+            @elseif($order->order_status == 'processing')
+                👨‍🍳 Sedang Diproses
+
+            @elseif($order->order_status == 'packed')
+                📦 Sudah Dikemas
+
+            @elseif($order->order_status == 'shipped')
+                🚚 Sedang Dikirim
+
+            @elseif($order->order_status == 'delivered')
+                📍 Pesanan Sampai
+
+            @elseif($order->order_status == 'completed')
+                ✅ Pesanan Selesai
+
+            @elseif($order->order_status == 'cancelled')
+                ❌ Pesanan Dibatalkan
+
+            @else
+                {{ strtoupper(str_replace('_',' ', $order->order_status)) }}
+            @endif
+
+        </span>
+
+    </div>
 
 </div>
-        </div>
 
         <!-- ITEM CART -->
         <div class="space-y-3">

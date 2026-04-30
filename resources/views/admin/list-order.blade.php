@@ -54,257 +54,626 @@
 
 <x-admin-header />
 
-<div class="ml-[90px] p-8 bg-[#F8F9FB] min-h-screen">
-    
-    <div class="flex justify-between items-center mb-10">
+<div class="lg:ml-[90px] px-3 sm:px-4 md:px-6 lg:px-8 py-4 md:py-6 bg-[#F8F9FB] min-h-screen overflow-x-hidden">
+
+    <!-- ================= HEADER ================= -->
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6 md:mb-10">
+
+        <!-- TITLE -->
         <div>
-            <h1 class="text-3xl card-bold text-gray-800 flex items-center gap-3">
-                <span class="p-2.5 bg-[#F59A40] rounded-2xl text-white shadow-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            <h1 class="text-2xl md:text-3xl card-bold text-gray-800 flex items-center gap-3 flex-wrap">
+
+                <span class="p-2 md:p-2.5 bg-[#F59A40] rounded-2xl text-white shadow-lg shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         class="h-5 w-5 md:h-7 md:w-7"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke="currentColor">
+
+                        <path stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+
                     </svg>
                 </span>
-                Orders Management
+
+                <span>Orders Management</span>
+
             </h1>
-            <p class="text-sm text-gray-500 mt-2 font-medium">Manage and track all customer orders</p>
+
+            <p class="text-xs md:text-sm text-gray-500 mt-2 font-medium">
+                Manage and track all customer orders
+            </p>
         </div>
         
-        <div class="relative">
+         <!-- SEARCH -->
+        <div class="relative w-full lg:w-auto">
+
             <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">
-                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+
+                <svg class="h-5 w-5"
+                     fill="none"
+                     stroke="currentColor"
+                     viewBox="0 0 24 24">
+
+                    <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+
+                </svg>
+
             </span>
-            <input type="text" placeholder="Enter Keywords..." class="pl-12 pr-6 py-3 bg-white border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-orange-400 w-80 shadow-sm transition-all outline-none">
+
+            <input type="text"
+                   placeholder="Enter Keywords..."
+                   class="w-full lg:w-80 pl-12 pr-6 py-3 bg-white border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-orange-400 shadow-sm transition-all outline-none">
+
         </div>
+
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-6 gap-5 mb-10">
-        <div class="md:col-span-1 bg-[#F59A40] rounded-[2rem] p-6 text-white shadow-lg shadow-orange-200">
-            <p class="text-xs font-bold opacity-90 uppercase tracking-wider">Total Orders</p>
-            <h2 class="text-4xl stat-value my-2">{{ number_format($stats['total_orders']) }}</h2>
-            <div class="bg-white/20 inline-block px-3 py-1 rounded-full text-[10px] font-bold">+{{ $stats['today_orders'] }} today</div>
+    <!-- ================= STATS ================= -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-6 gap-4 md:gap-5 mb-6 md:mb-10">
+
+        <!-- TOTAL -->
+        <div class="sm:col-span-2 xl:col-span-1 bg-[#F59A40] rounded-[2rem] p-5 md:p-6 text-white shadow-lg shadow-orange-200">
+
+            <p class="text-xs font-bold opacity-90 uppercase tracking-wider">
+                Total Orders
+            </p>
+
+            <h2 class="text-3xl md:text-4xl stat-value my-2">
+                {{ number_format($stats['total_orders']) }}
+            </h2>
+
+            <div class="bg-white/20 inline-block px-3 py-1 rounded-full text-[10px] font-bold">
+                +{{ $stats['today_orders'] }} today
+            </div>
+
         </div>
 
-        <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-gray-100 flex flex-col justify-between">
-            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Pending Orders</p>
-            <h2 class="text-3xl stat-value text-gray-800">{{ number_format($stats['pending_orders']) }}</h2>
-            <p class="text-[10px] text-yellow-600 font-bold bg-yellow-50 px-2 py-1 rounded-lg self-start mt-2">Awaiting</p>
+
+         <!-- CARD -->
+        <div class="bg-white rounded-[2rem] p-5 md:p-6 shadow-sm border border-gray-100 flex flex-col justify-between">
+
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                Pending Orders
+            </p>
+
+            <h2 class="text-2xl md:text-3xl stat-value text-gray-800">
+                {{ number_format($stats['pending_orders']) }}
+            </h2>
+
+            <p class="text-[10px] text-yellow-600 font-bold bg-yellow-50 px-2 py-1 rounded-lg self-start mt-2">
+                Awaiting
+            </p>
+
+        </div>
+         <!-- CARD -->
+        <div class="bg-white rounded-[2rem] p-5 md:p-6 shadow-sm border border-gray-100 flex flex-col justify-between">
+
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                Processing
+            </p>
+
+            <h2 class="text-2xl md:text-3xl stat-value text-gray-800">
+                {{ number_format($stats['processing']) }}
+            </h2>
+
+            <p class="text-[10px] text-blue-600 font-bold bg-blue-50 px-2 py-1 rounded-lg self-start mt-2">
+                In Progress
+            </p>
+
+        </div>
+        <div class="bg-white rounded-[2rem] p-5 md:p-6 shadow-sm border border-gray-100 flex flex-col justify-between">
+
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                Completed
+            </p>
+
+            <h2 class="text-2xl md:text-3xl stat-value text-gray-800">
+                {{ number_format($stats['completed']) }}
+            </h2>
+
+            <p class="text-[10px] text-green-600 font-bold bg-green-50 px-2 py-1 rounded-lg self-start mt-2">
+                Delivered
+            </p>
+
         </div>
 
-        <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-gray-100 flex flex-col justify-between">
-            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Processing</p>
-            <h2 class="text-3xl stat-value text-gray-800">{{ number_format($stats['processing']) }}</h2>
-            <p class="text-[10px] text-blue-600 font-bold bg-blue-50 px-2 py-1 rounded-lg self-start mt-2">In Progress</p>
+        <div class="bg-white rounded-[2rem] p-5 md:p-6 shadow-sm border border-gray-100 flex flex-col justify-between">
+
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                Cancelled
+            </p>
+
+            <h2 class="text-2xl md:text-3xl stat-value text-gray-800">
+                {{ number_format($stats['cancelled']) }}
+            </h2>
+
+            <p class="text-[10px] text-red-600 font-bold bg-red-50 px-2 py-1 rounded-lg self-start mt-2">
+                Rejected
+            </p>
+
         </div>
 
-        <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-gray-100 flex flex-col justify-between">
-            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Completed</p>
-            <h2 class="text-3xl stat-value text-gray-800">{{ number_format($stats['completed']) }}</h2>
-            <p class="text-[10px] text-green-600 font-bold bg-green-50 px-2 py-1 rounded-lg self-start mt-2">Delivered</p>
+        <div class="bg-white rounded-[2rem] p-5 md:p-6 shadow-sm border border-gray-100 flex flex-col justify-between">
+
+            <p class="text-xs font-bold text-[#F59A40] uppercase tracking-wider">
+                Total Revenue
+            </p>
+
+            <h2 class="text-lg md:text-2xl stat-value text-gray-800 break-words">
+                Rp{{ number_format($stats['total_revenue'], 0, ',', '.') }}
+            </h2>
+
+            <p class="text-[10px] text-green-600 font-bold mt-2">
+                +Rp{{ number_format($stats['today_revenue'], 0, ',', '.') }} today
+            </p>
+
         </div>
 
-        <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-gray-100 flex flex-col justify-between">
-            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Cancelled</p>
-            <h2 class="text-3xl stat-value text-gray-800">{{ number_format($stats['cancelled']) }}</h2>
-            <p class="text-[10px] text-red-600 font-bold bg-red-50 px-2 py-1 rounded-lg self-start mt-2">Rejected</p>
-        </div>
-
-        <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-gray-100 flex flex-col justify-between">
-            <p class="text-xs font-bold text-[#F59A40] uppercase tracking-wider">Total Revenue</p>
-            <h2 class="text-2xl stat-value text-gray-800">Rp{{ number_format($stats['total_revenue'], 0, ',', '.') }}</h2>
-            <p class="text-[10px] text-green-600 font-bold">+Rp{{ number_format($stats['today_revenue'], 0, ',', '.') }} today</p>
-        </div>
     </div>
 
-    <div class="bg-white rounded-[2.5rem] shadow-sm p-8 border border-gray-100">
-        <div class="flex items-center gap-2 mb-8">
-            <span class="text-orange-500 text-xl font-bold">🛒</span>
-            <h2 class="text-xl font-bold text-gray-800">All Orders</h2>
+    <!-- ================= TABLE WRAPPER ================= -->
+<div class="bg-white rounded-[1.5rem] md:rounded-[2.5rem] shadow-sm p-4 md:p-8 border border-gray-100 overflow-hidden">
+
+    <!-- HEADER -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6 md:mb-8">
+
+        <div class="flex items-center gap-2">
+            <span class="text-orange-500 text-lg md:text-xl font-bold">🛒</span>
+
+            <h2 class="text-lg md:text-xl font-bold text-gray-800">
+                All Orders
+            </h2>
         </div>
 
-        <div class="overflow-visible">
-            <table class="w-full text-sm text-left border-separate border-spacing-y-4">
-                <thead>
-                    <tr class="bg-[#F2E8DA]/30">
-                        <th class="p-4 rounded-l-2xl text-gray-500 font-bold uppercase text-[11px] first:pl-10">Order ID</th>
-                        <th class="p-4 text-gray-500 font-bold uppercase text-[11px]">Customer</th>
-                        <th class="p-4 text-gray-500 font-bold uppercase text-[11px]">Date</th>
-                        <th class="p-4 text-gray-500 font-bold uppercase text-[11px]">Amount</th>
-                        <th class="p-4 text-gray-500 font-bold uppercase text-[11px]">Payment</th>
-                        <th class="p-4 text-gray-500 font-bold uppercase text-[11px]">Status</th>
-                        <th class="p-4 rounded-r-2xl text-gray-500 font-bold uppercase text-[11px] text-center">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($orders as $order)
-                    <tr class="bg-white hover:bg-gray-50 transition-all shadow-sm">
-                        <td class="p-5 first:pl-10 rounded-l-3xl font-bold text-orange-500">#{{ $order->midtrans_order_id }}</td>
-                        <td class="p-5">
-                            <div class="flex items-center gap-3">
-                                <img src="https://ui-avatars.com/api/?name={{ urlencode($order->nama_pemesan) }}&background=F59A40&color=fff&bold=true" class="w-10 h-10 rounded-2xl" alt="avatar">
-                                <span class="font-bold text-gray-700">{{ $order->nama_pemesan }}</span>
+        <!-- SEARCH -->
+        <div class="w-full md:w-auto">
+            <input type="text"
+                   placeholder="Search order..."
+                   class="w-full md:w-[260px]
+                          h-11
+                          rounded-2xl
+                          border border-gray-200
+                          bg-gray-50
+                          px-4
+                          text-sm
+                          outline-none
+                          focus:ring-2 focus:ring-orange-300">
+        </div>
+
+    </div>
+
+    <!-- ================= DESKTOP TABLE ================= -->
+    <div class="hidden lg:block overflow-x-auto">
+
+        <table class="w-full min-w-[1100px] text-sm text-left border-separate border-spacing-y-4">
+
+            <thead>
+                <tr class="bg-[#F2E8DA]/30">
+
+                    <th class="p-4 rounded-l-2xl text-gray-500 font-bold uppercase text-[11px]">
+                        Order ID
+                    </th>
+
+                    <th class="p-4 text-gray-500 font-bold uppercase text-[11px]">
+                        Customer
+                    </th>
+
+                    <th class="p-4 text-gray-500 font-bold uppercase text-[11px]">
+                        Date
+                    </th>
+
+                    <th class="p-4 text-gray-500 font-bold uppercase text-[11px]">
+                        Amount
+                    </th>
+
+                    <th class="p-4 text-gray-500 font-bold uppercase text-[11px]">
+                        Payment
+                    </th>
+
+                    <th class="p-4 text-gray-500 font-bold uppercase text-[11px]">
+                        Status
+                    </th>
+
+                    <th class="p-4 rounded-r-2xl text-gray-500 font-bold uppercase text-[11px] text-center">
+                        Action
+                    </th>
+
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @forelse($orders as $order)
+
+                <tr class="bg-white hover:bg-gray-50 transition-all shadow-sm">
+
+                    <!-- ORDER ID -->
+                    <td class="p-5 rounded-l-3xl font-bold text-orange-500 whitespace-nowrap">
+                        #{{ $order->midtrans_order_id }}
+                    </td>
+
+                    <!-- CUSTOMER -->
+                    <td class="p-5">
+
+                        <div class="flex items-center gap-3">
+
+                            <img src="https://ui-avatars.com/api/?name={{ urlencode($order->nama_pemesan) }}&background=F59A40&color=fff&bold=true"
+                                 class="w-10 h-10 rounded-2xl object-cover">
+
+                            <div>
+                                <p class="font-bold text-gray-700">
+                                    {{ $order->nama_pemesan }}
+                                </p>
+
+                                <p class="text-xs text-gray-400">
+                                    {{ $order->no_hp }}
+                                </p>
                             </div>
-                        </td>
-                        <td class="p-5 text-gray-500 font-medium">{{ \Carbon\Carbon::parse($order->created_at)->format('M d, Y') }}</td>
-                        <td class="p-5 font-extrabold text-gray-800">Rp{{ number_format($order->total, 0, ',', '.') }}</td>
-<td class="p-5">
-@php
-    $payment = strtolower($order->payment_status);
-@endphp
 
-<span class="px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase
-    @if($payment == 'pending')
-        bg-yellow-100 text-yellow-600
-    @elseif($payment == 'paid')
-        bg-green-100 text-green-600
-    @elseif($payment == 'expired' || $payment == 'cancelled')
-        bg-red-100 text-red-600
-@elseif($payment == 'refunded')
-        bg-green-100 text-green-600
-    @elseif($payment == 'processing_refund')
-        bg-yellow-100 text-yellow-700 font-bold
-    @elseif($payment == 'refund_failed')
-        bg-orange-100 text-orange-600
-    @else
-        bg-gray-100 text-gray-600
-    @endif
-">
-    {{ $payment == 'processing_refund' ? 'Processing Refund' : ucfirst($payment) }}
-</span>
-</td>
-<td class="p-5">
-@php
-    $orderStatus = strtolower($order->order_status);
-@endphp
+                        </div>
 
-<span class="px-4 py-1.5 rounded-full text-[10px] font-bold uppercase
-    @if($orderStatus == 'order_created')
-        bg-gray-100 text-gray-600
+                    </td>
 
-    @elseif($orderStatus == 'processing')
-        bg-blue-100 text-blue-600
+                    <!-- DATE -->
+                    <td class="p-5 text-gray-500 font-medium whitespace-nowrap">
+                        {{ \Carbon\Carbon::parse($order->created_at)->format('M d, Y') }}
+                    </td>
 
-    @elseif($orderStatus == 'packed')
-        bg-purple-100 text-purple-600
+                    <!-- AMOUNT -->
+                    <td class="p-5 font-extrabold text-gray-800 whitespace-nowrap">
+                        Rp{{ number_format($order->total, 0, ',', '.') }}
+                    </td>
 
-    @elseif($orderStatus == 'shipped')
-        bg-indigo-100 text-indigo-600
+                    <!-- PAYMENT -->
+                    <td class="p-5">
 
-    @elseif($orderStatus == 'delivered')
-        bg-green-100 text-green-600
+                        @php
+                            $payment = strtolower($order->payment_status);
+                        @endphp
 
-@elseif($orderStatus == 'completed')
-        bg-green-100 text-green-600
+                        <span class="px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase
 
-    @elseif($orderStatus == 'cancelled')
-        bg-red-100 text-red-600
+                            @if($payment == 'pending')
+                                bg-yellow-100 text-yellow-600
 
-    @else
-        bg-gray-100 text-gray-600
-    @endif
-">
-    {{ str_replace('_', ' ', $orderStatus) }}
-</span>
-</td>
-                        <td class="p-5 rounded-r-3xl text-center relative">
-                            <div class="action-container inline-block">
-                                <button class="p-2 text-gray-400 hover:text-orange-500 transition-colors">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            @elseif($payment == 'paid')
+                                bg-green-100 text-green-600
+
+                            @elseif($payment == 'expired' || $payment == 'cancelled')
+                                bg-red-100 text-red-600
+
+                            @elseif($payment == 'refunded')
+                                bg-blue-100 text-blue-600
+
+                            @elseif($payment == 'processing_refund')
+                                bg-yellow-100 text-yellow-700
+
+                            @elseif($payment == 'refund_failed')
+                                bg-orange-100 text-orange-600
+
+                            @else
+                                bg-gray-100 text-gray-600
+                            @endif">
+
+                            {{ $payment == 'processing_refund' ? 'Processing Refund' : ucfirst($payment) }}
+
+                        </span>
+
+                    </td>
+
+                    <!-- STATUS -->
+                    <td class="p-5">
+
+                        @php
+                            $orderStatus = strtolower($order->order_status);
+                        @endphp
+
+                        <span class="px-4 py-1.5 rounded-full text-[10px] font-bold uppercase
+
+                            @if($orderStatus == 'order_created')
+                                bg-gray-100 text-gray-600
+
+                            @elseif($orderStatus == 'processing')
+                                bg-blue-100 text-blue-600
+
+                            @elseif($orderStatus == 'packed')
+                                bg-purple-100 text-purple-600
+
+                            @elseif($orderStatus == 'shipped')
+                                bg-indigo-100 text-indigo-600
+
+                            @elseif($orderStatus == 'delivered' || $orderStatus == 'completed')
+                                bg-green-100 text-green-600
+
+                            @elseif($orderStatus == 'cancelled')
+                                bg-red-100 text-red-600
+
+                            @else
+                                bg-gray-100 text-gray-600
+                            @endif">
+
+                            {{ str_replace('_', ' ', $orderStatus) }}
+
+                        </span>
+
+                    </td>
+
+                    <!-- ACTION -->
+                    <td class="p-5 rounded-r-3xl text-center">
+
+                        <div class="flex items-center justify-center gap-2">
+
+                            <!-- DETAIL -->
+                            <button onclick="openOrderModal({{ $order->id }})"
+                                class="w-10 h-10 rounded-full bg-blue-500 hover:bg-blue-600
+                                       flex items-center justify-center text-white transition">
+
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     class="h-5 w-5"
+                                     fill="none"
+                                     viewBox="0 0 24 24"
+                                     stroke="currentColor">
+
+                                    <path stroke-linecap="round"
+                                          stroke-linejoin="round"
+                                          stroke-width="2"
+                                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+
+                                </svg>
+
+                            </button>
+
+                            <!-- UPDATE -->
+                            <button onclick="openStatusModal({{ $order->id }})"
+                                class="w-10 h-10 rounded-full bg-emerald-500 hover:bg-emerald-600
+                                       flex items-center justify-center text-white transition">
+
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     class="h-5 w-5"
+                                     fill="none"
+                                     viewBox="0 0 24 24"
+                                     stroke="currentColor">
+
+                                    <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+
+                                </svg>
+
+                            </button>
+
+                            <!-- CANCEL -->
+                            <form action="{{ route('admin.cancel', $order->id) }}"
+                                  method="POST"
+                                  onsubmit="return confirm('Yakin mau membatalkan pesanan ini?')">
+
+                                @csrf
+
+                                <button type="submit"
+                                    class="w-10 h-10 rounded-full bg-red-500 hover:bg-red-600
+                                           flex items-center justify-center text-white transition">
+
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         class="h-5 w-5"
+                                         fill="none"
+                                         viewBox="0 0 24 24"
+                                         stroke="currentColor">
+
+                                        <path stroke-linecap="round"
+                                              stroke-linejoin="round"
+                                              stroke-width="2"
+                                              d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636" />
+
                                     </svg>
+
                                 </button>
-                                
-                                <div class="action-menu">
-                                   <div class="flex flex-row gap-2 p-2 bg-white shadow-2xl rounded-2xl border border-gray-100 items-center">
-                                        <button onclick="openOrderModal({{ $order->id }})" title="Lihat Detail" class="w-10 h-10 flex items-center justify-center bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-all shadow-lg shadow-blue-200">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                        </button>
-<div class="relative">
 
-    <!-- Tombol -->
-    <button type="button"
-        onclick="openStatusModal({{ $order->id }})"
-        class="w-10 h-10 flex items-center justify-center bg-emerald-500 text-white rounded-full hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-200">
-        
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-        </svg>
-    </button>
+                            </form>
 
-</div>
-                                        <form action="{{ route('admin.cancel', $order->id) }}" method="POST" onsubmit="return confirm('Yakin mau membatalkan pesanan ini?')">
-                                            @csrf
-                                            <button type="submit" title="Cancel Pesanan" class="w-10 h-10 flex items-center justify-center bg-red-500 text-white rounded-full hover:bg-red-600 transition-all shadow-lg shadow-red-200">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636" /></svg>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr id="detail-{{ $order->id }}" class="hidden">
-<td colspan="6" class="p-8 bg-gray-50 rounded-b-3xl w-full">
+                        </div>
 
-    <!-- ================= INFO ORDER ================= -->
-    <div class="grid grid-cols-2 gap-6 text-sm">
+                    </td>
 
-        <div class="space-y-2">
-            <p><b>Nama Pemesan:</b> {{ $order->nama_pemesan }}</p>
-            <p><b>Nama Penerima:</b> {{ $order->nama_penerima }}</p>
-            <p><b>Tanggal Terima:</b> {{ $order->tanggal_penerimaan }}</p>
-            <p><b>No HP:</b> {{ $order->no_hp }}</p>
-            <p><b>Alamat:</b> {{ $order->alamat }}</p>
-        </div>
+                </tr>
 
-        <div class="space-y-2">
-            <p><b>Metode:</b> {{ $order->payment_method }}</p>
-            <p><b>Pengiriman:</b> {{ $order->shipping_method }}</p>
-            <p><b>Total:</b> Rp {{ number_format($order->total, 0, ',', '.') }}</p>
-            <p><b>Payment Status:</b> {{ $order->payment_status }}</p>
-            <p><b>Order Status:</b> {{ $order->order_status }}</p>
-        </div>
+                @empty
+
+                <tr>
+                    <td colspan="7" class="py-16 text-center text-gray-400">
+                        Tidak ada order
+                    </td>
+                </tr>
+
+                @endforelse
+
+            </tbody>
+
+        </table>
 
     </div>
 
-    <!-- ================= DETAIL PRODUK ================= -->
-    <hr class="my-6">
+    <!-- ================= MOBILE CARD ================= -->
+    <div class="grid grid-cols-1 gap-4 lg:hidden">
 
-    <h3 class="font-bold mb-3">Detail Produk</h3>
+        @forelse($orders as $order)
 
-    @php
-        $cart = json_decode($order->cart_data, true);
-    @endphp
+        @php
+            $payment = strtolower($order->payment_status);
+            $orderStatus = strtolower($order->order_status);
+        @endphp
 
-    <div class="space-y-3">
-        @foreach($cart as $item)
-            <div class="flex justify-between border-b pb-2">
-                <div>
-                    <p class="font-medium">{{ $item['name'] }}</p>
-<p class="text-xs text-gray-500">
-    Varian: {{ $item['variant'] ?? '-' }}
-</p>
+        <div class="bg-[#FAFAFA] border border-gray-100 rounded-[2rem] p-4 shadow-sm">
 
-<p class="text-xs text-gray-500">
-    Jumlah: {{ $item['qty'] }}
-</p>
+            <!-- TOP -->
+            <div class="flex items-start justify-between gap-3">
+
+                <div class="flex items-center gap-3 min-w-0">
+
+                    <img src="https://ui-avatars.com/api/?name={{ urlencode($order->nama_pemesan) }}&background=F59A40&color=fff&bold=true"
+                         class="w-12 h-12 rounded-2xl shrink-0">
+
+                    <div class="min-w-0">
+
+                        <p class="font-bold text-gray-800 truncate">
+                            {{ $order->nama_pemesan }}
+                        </p>
+
+                        <p class="text-xs text-gray-400 truncate">
+                            #{{ $order->midtrans_order_id }}
+                        </p>
+
+                    </div>
+
                 </div>
 
-                <p class="font-semibold text-orange-500">
-                    Rp {{ number_format($item['price'] * $item['qty'], 0, ',', '.') }}
+                <p class="text-xs text-gray-400 whitespace-nowrap">
+                    {{ \Carbon\Carbon::parse($order->created_at)->format('d M Y') }}
                 </p>
+
             </div>
-        @endforeach
+
+            <!-- INFO -->
+            <div class="mt-4 space-y-3">
+
+                <div class="flex justify-between items-center">
+                    <span class="text-xs text-gray-400">Amount</span>
+
+                    <span class="font-bold text-gray-800 text-sm">
+                        Rp{{ number_format($order->total,0,',','.') }}
+                    </span>
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <span class="text-xs text-gray-400">Payment</span>
+
+                    <span class="text-[10px] px-3 py-1 rounded-full font-bold
+
+                        @if($payment == 'pending')
+                            bg-yellow-100 text-yellow-600
+
+                        @elseif($payment == 'paid')
+                            bg-green-100 text-green-600
+
+                        @elseif($payment == 'expired' || $payment == 'cancelled')
+                            bg-red-100 text-red-600
+
+                        @else
+                            bg-gray-100 text-gray-600
+                        @endif">
+
+                        {{ ucfirst($payment) }}
+
+                    </span>
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <span class="text-xs text-gray-400">Status</span>
+
+                    <span class="text-[10px] px-3 py-1 rounded-full font-bold
+
+                        @if($orderStatus == 'processing')
+                            bg-blue-100 text-blue-600
+
+                        @elseif($orderStatus == 'packed')
+                            bg-purple-100 text-purple-600
+
+                        @elseif($orderStatus == 'shipped')
+                            bg-indigo-100 text-indigo-600
+
+                        @elseif($orderStatus == 'delivered' || $orderStatus == 'completed')
+                            bg-green-100 text-green-600
+
+                        @elseif($orderStatus == 'cancelled')
+                            bg-red-100 text-red-600
+
+                        @else
+                            bg-gray-100 text-gray-600
+                        @endif">
+
+                        {{ str_replace('_',' ',$orderStatus) }}
+
+                    </span>
+                </div>
+
+            </div>
+
+            <!-- ACTION -->
+            <div class="flex items-center justify-end gap-2 mt-5">
+
+                <button onclick="openOrderModal({{ $order->id }})"
+                    class="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center">
+
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         class="h-5 w-5"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke="currentColor">
+
+                        <path stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+
+                    </svg>
+
+                </button>
+
+                <button onclick="openStatusModal({{ $order->id }})"
+                    class="w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center">
+
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         class="h-5 w-5"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke="currentColor">
+
+                        <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+
+                    </svg>
+
+                </button>
+
+                <form action="{{ route('admin.cancel', $order->id) }}"
+                      method="POST"
+                      onsubmit="return confirm('Yakin mau membatalkan pesanan ini?')">
+
+                    @csrf
+
+                    <button type="submit"
+                        class="w-10 h-10 rounded-full bg-red-500 text-white flex items-center justify-center">
+
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             class="h-5 w-5"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke="currentColor">
+
+                            <path stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636" />
+
+                        </svg>
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        @empty
+
+        <div class="text-center py-14 text-gray-400">
+            Tidak ada order
+        </div>
+
+        @endforelse
+
     </div>
 
-</td>
-</tr>
-                    @empty
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
 </div>
 <!-- ================= MODAL UPDATE STATUS ================= -->
 <div id="statusModal"

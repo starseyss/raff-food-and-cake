@@ -5,31 +5,55 @@ body { font-family: 'Poppins', sans-serif; }
 
 <x-admin-header />
 
-<div class="ml-[90px] p-8 bg-[#F8F9FB] min-h-screen">
+<div class="ml-[0px] lg:ml-[90px] p-4 sm:p-6 lg:p-8 bg-[#F8F9FB] min-h-screen overflow-x-hidden">
 
     <!-- HEADER -->
-    <div class="flex justify-between items-center mb-8">
+    <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-5 mb-8">
+
+        <!-- LEFT -->
         <div>
-            <h1 class="text-3xl font-bold text-gray-800 flex items-center gap-3">
-                <span class="p-2.5 bg-[#F59A40] rounded-2xl text-white shadow-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
+            <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 flex items-start sm:items-center gap-3">
+                <span class="p-2.5 bg-[#F59A40] rounded-2xl text-white shadow-lg shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        class="h-6 w-6 sm:h-7 sm:w-7"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor">
+
+                        <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
                     </svg>
                 </span>
-                Shipping Management
+
+                <span>Shipping Management</span>
             </h1>
-            <p class="text-sm text-gray-500 mt-2 font-medium">Manage delivery execution, drivers and schedules</p>
+
+            <p class="text-sm text-gray-500 mt-2 font-medium">
+                Manage delivery execution, drivers and schedules
+            </p>
         </div>
-        <div class="flex items-center gap-3">
-            <div class="relative">
+         <!-- SEARCH -->
+        <div class="w-full xl:w-auto">
+            <div class="relative w-full">
                 <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">
-                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    <svg class="h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
                 </span>
-                <input type="text" id="searchInput" placeholder="Search Order / Customer..."
-                    class="pl-12 pr-6 py-3 bg-white border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-orange-400 w-72 shadow-sm transition-all outline-none"
+
+                <input type="text"
+                    id="searchInput"
+                    placeholder="Search Order / Customer..."
+                    class="w-full xl:w-72 pl-12 pr-6 py-3 bg-white border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-orange-400 shadow-sm transition-all outline-none"
                     onkeyup="filterTable()">
             </div>
         </div>
+
     </div>
 
     @if(session('success'))
@@ -46,79 +70,173 @@ body { font-family: 'Poppins', sans-serif; }
     </div>
     @endif
 
-    <!-- MINI STATS -->
-    <div class="grid grid-cols-4 gap-5 mb-8">
-        <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-gray-100">
+<!-- MINI STATS -->
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
+        <div class="bg-white rounded-[2rem] p-5 sm:p-6 shadow-sm border border-gray-100">
             <div class="flex items-center gap-3 mb-3">
-                <div class="w-10 h-10 rounded-xl bg-yellow-100 flex items-center justify-center">
-                    <svg class="h-5 w-5 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <div class="w-10 h-10 rounded-xl bg-yellow-100 flex items-center justify-center shrink-0">
+                    <svg class="h-5 w-5 text-yellow-600"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
                 </div>
-                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Scheduled</p>
+
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                    Scheduled
+                </p>
             </div>
-            <h2 class="text-3xl stat-value text-gray-800">{{ number_format($stats['scheduled']) }}</h2>
-            <p class="text-[10px] text-yellow-600 font-bold bg-yellow-50 px-2 py-1 rounded-lg mt-2 inline-block">Today</p>
+
+            <h2 class="text-2xl sm:text-3xl stat-value text-gray-800">
+                {{ number_format($stats['scheduled']) }}
+            </h2>
+
+            <p class="text-[10px] text-yellow-600 font-bold bg-yellow-50 px-2 py-1 rounded-lg mt-2 inline-block">
+                Today
+            </p>
         </div>
-        <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-gray-100">
+        <!-- CARD -->
+        <div class="bg-white rounded-[2rem] p-5 sm:p-6 shadow-sm border border-gray-100">
             <div class="flex items-center gap-3 mb-3">
-                <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
-                    <svg class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
+                    <svg class="h-5 w-5 text-blue-600"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                    </svg>
                 </div>
-                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Ready to Ship</p>
+
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                    Ready to Ship
+                </p>
             </div>
-            <h2 class="text-3xl stat-value text-gray-800">{{ number_format($stats['ready']) }}</h2>
-            <p class="text-[10px] text-blue-600 font-bold bg-blue-50 px-2 py-1 rounded-lg mt-2 inline-block">Packed</p>
+
+            <h2 class="text-2xl sm:text-3xl stat-value text-gray-800">
+                {{ number_format($stats['ready']) }}
+            </h2>
+
+            <p class="text-[10px] text-blue-600 font-bold bg-blue-50 px-2 py-1 rounded-lg mt-2 inline-block">
+                Packed
+            </p>
         </div>
-        <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-gray-100">
+         <div class="bg-white rounded-[2rem] p-5 sm:p-6 shadow-sm border border-gray-100">
             <div class="flex items-center gap-3 mb-3">
-                <div class="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center">
-                    <svg class="h-5 w-5 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg>
+                <div class="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center shrink-0">
+                    <svg class="h-5 w-5 text-orange-600"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
+                    </svg>
                 </div>
-                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">On Delivery</p>
+
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                    On Delivery
+                </p>
             </div>
-            <h2 class="text-3xl stat-value text-gray-800">{{ number_format($stats['on_delivery']) }}</h2>
-            <p class="text-[10px] text-orange-600 font-bold bg-orange-50 px-2 py-1 rounded-lg mt-2 inline-block">Active</p>
+
+            <h2 class="text-2xl sm:text-3xl stat-value text-gray-800">
+                {{ number_format($stats['on_delivery']) }}
+            </h2>
+
+            <p class="text-[10px] text-orange-600 font-bold bg-orange-50 px-2 py-1 rounded-lg mt-2 inline-block">
+                Active
+            </p>
         </div>
-        <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-gray-100">
+        <!-- CARD -->
+        <div class="bg-white rounded-[2rem] p-5 sm:p-6 shadow-sm border border-gray-100">
             <div class="flex items-center gap-3 mb-3">
-                <div class="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
-                    <svg class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                <div class="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center shrink-0">
+                    <svg class="h-5 w-5 text-green-600"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M5 13l4 4L19 7"/>
+                    </svg>
                 </div>
-                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Delivered</p>
+
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                    Delivered
+                </p>
             </div>
-            <h2 class="text-3xl stat-value text-gray-800">{{ number_format($stats['delivered']) }}</h2>
-            <p class="text-[10px] text-green-600 font-bold bg-green-50 px-2 py-1 rounded-lg mt-2 inline-block">+{{ $stats['delivered_today'] }} today</p>
+
+            <h2 class="text-2xl sm:text-3xl stat-value text-gray-800">
+                {{ number_format($stats['delivered']) }}
+            </h2>
+
+            <p class="text-[10px] text-green-600 font-bold bg-green-50 px-2 py-1 rounded-lg mt-2 inline-block">
+                +{{ $stats['delivered_today'] }} today
+            </p>
         </div>
+
     </div>
 
-    <!-- FILTER BAR -->
-    <form method="GET" action="{{ route('admin.shipping') }}" class="flex flex-wrap gap-3 mb-6 items-center">
-        <select name="status" class="bg-white px-4 py-2.5 rounded-xl shadow-sm border border-gray-100 text-sm outline-none focus:ring-2 focus:ring-orange-400">
+    <!-- FILTER -->
+    <form method="GET"
+        action="{{ route('admin.shipping') }}"
+        class="flex flex-col lg:flex-row lg:flex-wrap gap-3 mb-6">
+
+        <select name="status"
+            class="w-full sm:w-auto bg-white px-4 py-3 rounded-xl shadow-sm border border-gray-100 text-sm outline-none focus:ring-2 focus:ring-orange-400">
             <option value="">All Status</option>
-            <option value="packed" {{ request('status')=='packed'?'selected':'' }}>Scheduled / Ready</option>
-            <option value="shipped" {{ request('status')=='shipped'?'selected':'' }}>On Delivery</option>
-            <option value="delivered" {{ request('status')=='delivered'?'selected':'' }}>Delivered</option>
-            <option value="completed" {{ request('status')=='completed'?'selected':'' }}>Completed</option>
+            <option value="packed">Scheduled / Ready</option>
+            <option value="shipped">On Delivery</option>
+            <option value="delivered">Delivered</option>
+            <option value="completed">Completed</option>
         </select>
-        <input type="date" name="date" value="{{ request('date') }}" class="px-4 py-2.5 rounded-xl shadow-sm border border-gray-100 text-sm outline-none focus:ring-2 focus:ring-orange-400 bg-white">
-        <select name="driver" class="bg-white px-4 py-2.5 rounded-xl shadow-sm border border-gray-100 text-sm outline-none focus:ring-2 focus:ring-orange-400">
+
+        <input type="date"
+            name="date"
+            value="{{ request('date') }}"
+            class="w-full sm:w-auto px-4 py-3 rounded-xl shadow-sm border border-gray-100 text-sm outline-none focus:ring-2 focus:ring-orange-400 bg-white">
+
+        <select name="driver"
+            class="w-full sm:w-auto bg-white px-4 py-3 rounded-xl shadow-sm border border-gray-100 text-sm outline-none focus:ring-2 focus:ring-orange-400">
+
             <option value="">All Drivers</option>
+
             @foreach($drivers as $d)
-            <option value="{{ $d }}" {{ request('driver')==$d?'selected':'' }}>{{ $d }}</option>
+            <option value="{{ $d }}">{{ $d }}</option>
             @endforeach
+
         </select>
-        <input type="hidden" name="search" value="{{ request('search') }}">
-        <button type="submit" class="bg-gray-800 hover:bg-gray-900 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all">Filter</button>
-        <a href="{{ route('admin.shipping') }}" class="text-gray-400 hover:text-gray-600 text-sm px-3 py-2.5">Clear</a>
+
+        <button type="submit"
+            class="w-full sm:w-auto bg-gray-800 hover:bg-gray-900 text-white px-5 py-3 rounded-xl text-sm font-semibold transition-all">
+            Filter
+        </button>
+
     </form>
 
     <!-- TABLE -->
-    <div class="bg-white rounded-[2.5rem] shadow-sm p-8 border border-gray-100">
+    <div class="bg-white rounded-[2rem] sm:rounded-[2.5rem] shadow-sm p-4 sm:p-6 lg:p-8 border border-gray-100 overflow-hidden">
+
         <div class="flex items-center gap-2 mb-6">
             <span class="text-orange-500 text-xl font-bold">📦</span>
-            <h2 class="text-xl font-bold text-gray-800">Shipping Orders</h2>
+            <h2 class="text-lg sm:text-xl font-bold text-gray-800">
+                Shipping Orders
+            </h2>
         </div>
-        <div class="overflow-visible">
-            <table class="w-full text-sm text-left border-separate border-spacing-y-3" id="shippingTable">
+
+        <!-- RESPONSIVE TABLE -->
+        <div class="overflow-x-auto">
+
+            <table class="min-w-[1100px] w-full text-sm text-left border-separate border-spacing-y-3"
+                id="shippingTable">
                 <thead>
                     <tr class="bg-[#F2E8DA]/30">
                         <th class="p-4 rounded-l-2xl text-gray-500 font-bold uppercase text-[11px] first:pl-10">Order ID</th>
@@ -212,7 +330,13 @@ body { font-family: 'Poppins', sans-serif; }
 <!-- DETAIL MODAL -->
 <div id="detailModal" class="fixed inset-0 bg-black/30 hidden items-center justify-center z-[9999] backdrop-blur-sm">
 
-    <div class="bg-white rounded-[2rem] shadow-2xl w-[600px] max-w-[95%] max-h-[90vh] overflow-y-auto p-8 relative">
+    <!-- DETAIL MODAL -->
+<div class="bg-white rounded-[2rem] shadow-2xl
+w-[95%] sm:w-[600px]
+max-h-[90vh]
+overflow-y-auto
+p-5 sm:p-8
+relative">
 
         <!-- CLOSE -->
         <button onclick="closeDetailModal()"
@@ -341,7 +465,10 @@ body { font-family: 'Poppins', sans-serif; }
 <div id="quickAssignModal"
      class="fixed inset-0 bg-black/30 hidden items-center justify-center z-[9999] backdrop-blur-sm">
 
-    <div class="bg-white rounded-[2rem] shadow-2xl w-[420px] max-w-[95%] p-8 relative">
+<div class="bg-white rounded-[2rem] shadow-2xl
+w-[95%] sm:w-[420px]
+p-5 sm:p-8
+relative">
 
         <!-- CLOSE -->
         <button onclick="closeQuickAssign()"

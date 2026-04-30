@@ -9,7 +9,11 @@
 
 <body class="min-h-screen bg-[#F4F6F8] flex items-center justify-center p-4">
 
-<div class="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 bg-white/80 backdrop-blur-sm rounded-[30px] shadow-sm overflow-hidden">
+<div class="w-full max-w-6xl 
+            grid grid-cols-1 md:grid-cols-2
+            bg-white/80 backdrop-blur-sm 
+            rounded-[24px] md:rounded-[30px] 
+            shadow-sm overflow-hidden">
 
     <!-- LEFT SIDE -->
 <section class="relative hidden md:flex items-center justify-center p-2"> <!-- p-2 untuk jarak tipis -->
@@ -54,7 +58,9 @@
 </section>
 
     <!-- RIGHT SIDE -->
-    <section class="px-8 sm:px-12 py-12 flex flex-col items-center text-center">
+    <section class="px-5 sm:px-8 md:px-12 
+                py-8 sm:py-10 md:py-12 
+                flex flex-col items-center text-center">
 
         <!-- Brand -->
                 <div class="flex items-center justify-center gap-3 mb-10">
@@ -66,11 +72,11 @@
 
         </div>
 
-        <h1 class="text-[28px] font-semibold text-gray-800 mb-2">
+        <h1 class="text-2xl sm:text-[28px] font-semibold text-gray-800 mb-2 leading-tight">
             Hallo, Selamat Datang!!!
         </h1>
 
-        <p class="text-sm text-gray-500 mb-8 max-w-md">
+        <p class="text-sm sm:text-base text-gray-500 mb-6 sm:mb-8 max-w-md leading-relaxed">
             Daftar dulu, biar kamu bisa pesen aneka kue dan catering semuanya dan sepuasnya
         </p>
 
@@ -80,7 +86,7 @@
               method="POST">
             @csrf
 
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <input name="first_name" type="text"
                        placeholder="Nama depan"
                        class="rounded-full border border-gray-300
@@ -158,12 +164,20 @@
     </button>
 </div>
 
-            <button type="submit"
-                    class="w-full rounded-full bg-[#F59A40]
-                           hover:bg-orange-600
-                           text-white font-semibold py-3 transition">
-                Daftar
-            </button>
+<button type="submit"
+        class="w-full rounded-full bg-[#F59A40]
+               hover:bg-orange-600
+               text-white font-semibold py-3 transition">
+    Daftar
+</button>
+
+<!-- MOBILE LOGIN -->
+<div class="md:hidden text-center pt-2">
+    <a href="{{ route('login') }}"
+       class="text-sm font-semibold text-[#F59A40] hover:text-orange-600 transition">
+        Sudah punya akun? Masuk
+    </a>
+</div>
         </form>
 
         <!-- Divider -->
@@ -176,11 +190,11 @@
         </div>
 
 <!-- Social -->
-<div class="grid grid-cols-2 gap-3 w-full max-w-md">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-md">
 
     <!-- Google -->
     <a href="{{ url('/auth/google') }}"
-       class="flex items-center justify-center gap-3 border rounded-full py-3 bg-white hover:bg-gray-50 transition">
+       class="flex items-center justify-center gap-3 border rounded-full py-3 px-4 bg-white hover:bg-gray-50 transition text-sm">
         <svg class="w-5 h-5" viewBox="0 0 48 48">
             <path fill="#EA4335" d="M24 9.5c3.15 0 5.94 1.08 8.16 3.2l6.1-6.1C34.63 2.6 29.74 0 24 0 14.82 0 6.73 5.3 2.69 13l7.98 6.2C12.42 13.08 17.74 9.5 24 9.5z"/>
             <path fill="#4285F4" d="M46.5 24.5c0-1.7-.15-3.33-.44-4.9H24v9.3h12.7c-.55 2.9-2.2 5.36-4.7 7.04l7.3 5.67C43.9 37.6 46.5 31.6 46.5 24.5z"/>

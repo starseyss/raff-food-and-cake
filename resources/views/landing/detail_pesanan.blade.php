@@ -1,6 +1,6 @@
 <x-header />
 
-<section class="max-w-[900px] mx-auto px-6 mt-10 mb-20">
+<section class="max-w-[900px] mx-auto px-3 md:px-6 mt-6 md:mt-10 mb-12 md:mb-20">
 
     @php
         $cart = $order->cart_items;
@@ -17,87 +17,182 @@
     </div>
 
     <!-- STATUS -->
-    <div class="mb-6 flex justify-between items-center">
-<div class="flex gap-2">
+<div class="mb-6 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
 
-    <!-- PAYMENT STATUS -->
-    <span class="px-4 py-2 rounded-full text-sm
-        @if($order->payment_status == 'pending') bg-yellow-100 text-yellow-600
-        @elseif($order->payment_status == 'paid') bg-green-100 text-green-600
-        @elseif($order->payment_status == 'cancelled') bg-red-100 text-red-600
-        @elseif($order->payment_status == 'refunded') bg-blue-100 text-blue-600
-        @elseif($order->payment_status == 'refund_failed') bg-orange-100 text-orange-600
-        @elseif($order->payment_status == 'expired') bg-gray-100 text-gray-600
-        @else bg-gray-100 text-gray-600 @endif">
+    <!-- STATUS BADGE -->
+    <div class="flex flex-wrap items-center gap-2">
 
-        {{ strtoupper($order->payment_status) }}
-    </span>
+        <!-- PAYMENT STATUS -->
+        <span class="px-3 md:px-4 py-2 rounded-full text-[11px] md:text-sm font-medium whitespace-nowrap
 
-    <!-- ORDER STATUS -->
-<span class="px-4 py-2 rounded-full text-sm
-    @if($order->order_status == 'order_created') bg-gray-100 text-gray-600
+            @if($order->payment_status == 'pending')
+                bg-yellow-100 text-yellow-700
 
-    @elseif($order->order_status == 'processing') bg-blue-100 text-blue-600
+            @elseif($order->payment_status == 'paid')
+                bg-green-100 text-green-700
 
-    @elseif($order->order_status == 'packed') bg-purple-100 text-purple-600
+            @elseif($order->payment_status == 'cancelled')
+                bg-red-100 text-red-700
 
-    @elseif($order->order_status == 'shipped') bg-indigo-100 text-indigo-600
+            @elseif($order->payment_status == 'refunded')
+                bg-blue-100 text-blue-700
 
-    @elseif($order->order_status == 'delivered') bg-green-100 text-green-600
+            @elseif($order->payment_status == 'refund_failed')
+                bg-orange-100 text-orange-700
 
-    @elseif($order->order_status == 'completed') bg-green-100 text-green-600
+            @elseif($order->payment_status == 'expired')
+                bg-gray-100 text-gray-700
 
-    @elseif($order->order_status == 'cancelled') bg-red-100 text-red-600
+            @else
+                bg-gray-100 text-gray-700
+            @endif
+        ">
 
-    @else bg-gray-100 text-gray-600
-    @endif">
+            @if($order->payment_status == 'pending')
+                ⏳ Menunggu Pembayaran
 
-    {{ strtoupper(str_replace('_',' ', $order->order_status)) }}
-</span>
+            @elseif($order->payment_status == 'paid')
+                ✅ Sudah Dibayar
+
+            @elseif($order->payment_status == 'cancelled')
+                ❌ Pembayaran Dibatalkan
+
+            @elseif($order->payment_status == 'refunded')
+                💸 Refund Berhasil
+
+            @elseif($order->payment_status == 'refund_failed')
+                ⚠️ Refund Gagal
+
+            @elseif($order->payment_status == 'expired')
+                🕒 Pembayaran Kadaluarsa
+
+            @else
+                {{ strtoupper($order->payment_status) }}
+            @endif
+
+        </span>
+
+        <!-- ORDER STATUS -->
+        <span class="px-3 md:px-4 py-2 rounded-full text-[11px] md:text-sm font-medium whitespace-nowrap
+
+            @if($order->order_status == 'order_created')
+                bg-gray-100 text-gray-700
+
+            @elseif($order->order_status == 'processing')
+                bg-blue-100 text-blue-700
+
+            @elseif($order->order_status == 'packed')
+                bg-purple-100 text-purple-700
+
+            @elseif($order->order_status == 'shipped')
+                bg-indigo-100 text-indigo-700
+
+            @elseif($order->order_status == 'delivered')
+                bg-green-100 text-green-700
+
+            @elseif($order->order_status == 'completed')
+                bg-emerald-100 text-emerald-700
+
+            @elseif($order->order_status == 'cancelled')
+                bg-red-100 text-red-700
+
+            @else
+                bg-gray-100 text-gray-700
+            @endif
+        ">
+
+            @if($order->order_status == 'order_created')
+                📝 Pesanan Dibuat
+
+            @elseif($order->order_status == 'processing')
+                👨‍🍳 Sedang Diproses
+
+            @elseif($order->order_status == 'packed')
+                📦 Sudah Dikemas
+
+            @elseif($order->order_status == 'shipped')
+                🚚 Sedang Dikirim
+
+            @elseif($order->order_status == 'delivered')
+                📍 Pesanan Sampai
+
+            @elseif($order->order_status == 'completed')
+                ✅ Pesanan Selesai
+
+            @elseif($order->order_status == 'cancelled')
+                ❌ Pesanan Dibatalkan
+
+            @else
+                {{ strtoupper(str_replace('_',' ', $order->order_status)) }}
+            @endif
+
+        </span>
+
+    </div>
+
+    <!-- BACK BUTTON -->
+    <a href="{{ route('pesanan') }}"
+       class="text-sm text-gray-500 hover:text-[#F59A40] transition whitespace-nowrap">
+        ← Kembali
+    </a>
 
 </div>
 
-        <a href="{{ route('pesanan') }}"
-           class="text-sm text-gray-500 hover:underline">
-            ← Kembali
-        </a>
-    </div>
+<!-- LIST PRODUK -->
+<div class="bg-white border rounded-2xl p-4 md:p-5 space-y-4">
 
-    <!-- LIST PRODUK -->
-    <div class="bg-white border rounded-2xl p-5 space-y-4">
+    @forelse($cart as $item)
 
-        @forelse($cart as $item)
-        <div class="flex items-center gap-4 border-b pb-3 last:border-none">
+    <div class="flex gap-3 md:gap-4 border-b pb-4 last:border-none">
 
-            <img src="{{ $item['image'] ?? '' }}"
-                 class="w-20 h-20 rounded-xl object-cover bg-gray-100">
+        <!-- IMAGE -->
+        <img src="{{ $item['image'] ?? '' }}"
+             class="w-16 h-16 md:w-20 md:h-20 rounded-xl object-cover bg-gray-100 shrink-0">
 
-            <div class="flex-1">
-                <h3 class="font-semibold text-gray-800">
-                    {{ $item['name'] ?? '-' }}
-                </h3>
+        <!-- CONTENT -->
+        <div class="flex-1 min-w-0">
 
-                <p class="text-sm text-gray-500">
-                    Varian: {{ $item['variant'] ?? '-' }}
-                </p>
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
 
-                <p class="text-sm text-gray-500">
-                    Qty: {{ $item['qty'] ?? 0 }}
-                </p>
-            </div>
+                <div class="min-w-0">
 
-            <div class="text-right">
-                <p class="font-semibold text-[#F59A40]">
-                    Rp {{ number_format(($item['price'] ?? 0) * ($item['qty'] ?? 0), 0, ',', '.') }}
-                </p>
+                    <h3 class="font-semibold text-gray-800 text-sm md:text-base break-words">
+                        {{ $item['name'] ?? '-' }}
+                    </h3>
+
+                    <p class="text-xs md:text-sm text-gray-500 mt-1">
+                        Varian: {{ $item['variant'] ?? '-' }}
+                    </p>
+
+                    <p class="text-xs md:text-sm text-gray-500">
+                        Qty: {{ $item['qty'] ?? 0 }}
+                    </p>
+
+                </div>
+
+                <div class="sm:text-right">
+
+                    <p class="font-semibold text-[#F59A40] text-sm md:text-base whitespace-nowrap">
+                        Rp {{ number_format(($item['price'] ?? 0) * ($item['qty'] ?? 0), 0, ',', '.') }}
+                    </p>
+
+                </div>
+
             </div>
 
         </div>
-        @empty
-        <p class="text-sm text-gray-500">Tidak ada item</p>
-        @endforelse
 
     </div>
+
+    @empty
+
+    <p class="text-sm text-gray-500">
+        Tidak ada item
+    </p>
+
+    @endforelse
+
+</div>
 
     <!-- INFORMASI -->
     <div class="bg-white border rounded-2xl p-5 mt-6 space-y-2">
@@ -130,18 +225,30 @@
         @endif
 
     </div>
+<!-- TOTAL -->
+<div class="mt-6 bg-white border rounded-2xl p-4 md:p-5">
 
-    <!-- TOTAL -->
-    <div class="flex justify-between items-center mt-6 bg-white border rounded-2xl p-5">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+
         <div>
-            <p class="text-sm text-gray-500">Total Pembayaran</p>
-            <p class="text-xs text-gray-400">Sudah termasuk ongkir</p>
+            <p class="text-sm text-gray-500">
+                Total Pembayaran
+            </p>
+
+            <p class="text-xs text-gray-400 mt-1">
+                Sudah termasuk ongkir
+            </p>
         </div>
 
-        <p class="text-2xl font-bold text-[#F59A40]">
-            Rp {{ number_format($order->total, 0, ',', '.') }}
-        </p>
+        <div class="text-left sm:text-right">
+            <p class="text-xl md:text-2xl font-bold text-[#F59A40] break-all">
+                Rp {{ number_format($order->total, 0, ',', '.') }}
+            </p>
+        </div>
+
     </div>
+
+</div>
 <!-- ACTION -->
 @if(in_array($order->payment_status, ['pending', 'expired']))
 <div class="mt-6">

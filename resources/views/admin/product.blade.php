@@ -1,7 +1,96 @@
 <x-admin-header />
-
 <style>
-/* Custom Dropdown Animation for Product Actions */
+
+/* =========================
+   RESPONSIVE LAYOUT
+========================= */
+
+@media (max-width: 1024px){
+    .dashboard-cards{
+        grid-template-columns: repeat(2, minmax(0,1fr));
+    }
+}
+
+@media (max-width: 768px){
+
+    .main-wrapper{
+        margin-left:0 !important;
+        padding:16px !important;
+    }
+
+    .top-header{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:16px;
+    }
+
+    .top-header button{
+        width:100%;
+    }
+
+    .filter-wrapper{
+        flex-direction:column;
+        align-items:stretch;
+        gap:14px;
+    }
+
+    .filter-left{
+        width:100%;
+        overflow-x:auto;
+        padding-bottom:4px;
+    }
+
+    .filter-left::-webkit-scrollbar{
+        height:4px;
+    }
+
+    .filter-left select{
+        min-width:170px;
+        flex-shrink:0;
+    }
+
+    .search-box{
+        width:100% !important;
+    }
+
+    .dashboard-cards{
+        grid-template-columns:1fr;
+    }
+
+    .desktop-table{
+        display:none;
+    }
+
+    .mobile-card{
+        display:block !important;
+    }
+
+    .product-modal-content,
+    .detail-modal-content{
+        width:95% !important;
+        border-radius:24px;
+        padding:20px;
+    }
+
+    .action-menu{
+        right:0 !important;
+        top:110% !important;
+        transform:none !important;
+    }
+}
+
+/* =========================
+   DESKTOP / MOBILE
+========================= */
+
+.mobile-card{
+    display:none;
+}
+
+/* =========================
+   ACTION MENU
+========================= */
+
 .action-menu {
     display: none;
     position: absolute;
@@ -13,8 +102,14 @@
 }
 
 @keyframes slideSide {
-    from { opacity: 0; transform: translateX(-10px); }
-    to { opacity: 1; transform: translateX(0); }
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 .action-container:hover .action-menu,
@@ -22,98 +117,104 @@
     display: block;
     animation: slideSide 0.2s ease-out;
 }
+
 </style>
 
-<div class="flex-1 p-6 ml-20">
+<div class="flex-1 p-6 ml-20 main-wrapper">
 
-    <!-- TITLE + BUTTON -->
-    <div class="flex justify-between items-center mb-6">
+    <!-- ================= HEADER ================= -->
+    <div class="flex justify-between items-center mb-6 top-header">
+
         <div>
-            <h1 class="text-2xl font-bold">Product Management</h1>
-            <p class="text-sm text-gray-500">Manage and add new product</p>
+            <h1 class="text-2xl font-bold">
+                Product Management
+            </h1>
+
+            <p class="text-sm text-gray-500">
+                Manage and add new product
+            </p>
         </div>
 
         <button onclick="openModal()"
-            class="bg-[#F59A40] text-white px-5 py-2 rounded-full shadow">
+            class="bg-[#F59A40] text-white px-5 py-3 rounded-full shadow hover:scale-[1.02] transition">
             + Add Product
         </button>
+
     </div>
 
-<!-- CARDS -->
-<div class="grid grid-cols-4 gap-4 mb-6">
+<!-- ================= CARDS ================= -->
+    <div class="grid grid-cols-4 gap-4 mb-6 dashboard-cards">
 
-    <div class="bg-white p-5 rounded-2xl shadow-sm border border-[#EEE]">
-        <p class="text-gray-400 text-sm">Total Product</p>
-        <h2 class="text-2xl font-bold">{{ count($produk) }}</h2>
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-[#EEE]">
+            <p class="text-gray-400 text-sm">Total Product</p>
+            <h2 class="text-2xl font-bold">{{ count($produk) }}</h2>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-[#EEE]">
+            <p class="text-gray-400 text-sm">Active Product</p>
+            <h2 class="text-2xl font-bold">{{ $activeProduct }}</h2>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-[#EEE]">
+            <p class="text-gray-400 text-sm">Unavailable Product</p>
+            <h2 class="text-2xl font-bold">{{ $unavailableProduct }}</h2>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-[#EEE]">
+            <p class="text-gray-400 text-sm">Best Seller</p>
+            <h2 class="text-2xl font-bold text-[#F59A40]">{{ $bestSeller }}</h2>
+        </div>
+
     </div>
+ <!-- ================= FILTER ================= -->
+    <div class="flex justify-between items-center mb-6 filter-wrapper">
 
-    <div class="bg-white p-5 rounded-2xl shadow-sm border border-[#EEE]">
-        <p class="text-gray-400 text-sm">Active Product</p>
-        <h2 class="text-2xl font-bold">{{ $activeProduct }}</h2>
+        <div class="flex gap-3 filter-left">
+
+            <select class="bg-[#F2D7BD]/60 px-4 py-3 rounded-full text-[#F59A40]">
+                <option>All Category</option>
+            </select>
+
+            <select class="bg-[#F2D7BD]/60 px-4 py-3 rounded-full text-[#F59A40]">
+                <option>Availability</option>
+            </select>
+
+            <select class="bg-[#F2D7BD]/60 px-4 py-3 rounded-full text-[#F59A40]">
+                <option>Price Range</option>
+            </select>
+
+        </div>
+
+        <div class="relative w-[250px] search-box">
+
+            <img src="/icons/search.png"
+                class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 opacity-60">
+
+            <input type="text"
+                placeholder="Search Product..."
+                class="pl-10 pr-4 py-3 rounded-full bg-[#F2D7BD]/60 text-[#F59A40] w-full outline-none">
+
+        </div>
+
     </div>
-
-    <div class="bg-white p-5 rounded-2xl shadow-sm border border-[#EEE]">
-        <p class="text-gray-400 text-sm">Unavailable Product</p>
-        <h2 class="text-2xl font-bold">{{ $unavailableProduct }}</h2>
-    </div>
-
-    <div class="bg-white p-5 rounded-2xl shadow-sm border border-[#EEE]">
-        <p class="text-gray-400 text-sm">Best Seller</p>
-        <h2 class="text-2xl font-bold text-[#F59A40]">{{ $bestSeller }}</h2>
-    </div>
-
-</div> <!-- ✅ WAJIB ADA INI -->
-
-<!-- FILTER + SEARCH -->
-<div class="flex justify-between items-center mb-6">
-
-    <!-- LEFT (FILTER) -->
-    <div class="flex gap-3">
-        <select class="bg-[#F2D7BD]/60 px-4 py-2 rounded-full text-[#F59A40]">
-            <option>All Category</option>
-        </select>
-
-        <select class="bg-[#F2D7BD]/60 px-4 py-2 rounded-full text-[#F59A40]">
-            <option>Availability</option>
-        </select>
-
-        <select class="bg-[#F2D7BD]/60 px-4 py-2 rounded-full text-[#F59A40]">
-            <option>Price Range</option>
-        </select>
-    </div>
-
-    <!-- RIGHT (SEARCH) -->
-    <div class="relative w-[250px]">
-
-        <img src="/icons/search.png"
-             class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 opacity-60">
-
-        <input type="text"
-            placeholder="Search Product..."
-            class="pl-10 pr-4 py-2 rounded-full bg-[#F2D7BD]/60 text-[#F59A40] w-full">
-    </div>
-
-</div>
-
-    <!-- TABLE -->
-    <div class="bg-white rounded-3xl p-6 shadow-sm border border-[#EEE]">
+<!-- ================= TABLE / CARD ================= -->
+    <div class="bg-white rounded-3xl p-4 md:p-6 shadow-sm border border-[#EEE]">
 
         <!-- TITLE -->
-<h2 class="font-bold mb-5 flex items-center gap-3 text-lg">
+        <h2 class="font-bold mb-5 flex items-center gap-3 text-lg">
 
-    <img src="/images/cart-yellow.png"
-         class="w-10 h-10 object-contain">
+            <img src="/images/cart-yellow.png"
+                class="w-10 h-10 object-contain">
 
-    All Product
+            All Product
 
-</h2>
+        </h2>
 
-        <!-- TABLE -->
-        <div class="overflow-x-auto">
+        <!-- ================= DESKTOP TABLE ================= -->
+        <div class="overflow-x-auto desktop-table">
 
             <table class="w-full text-base">
 
-                <!-- HEADER -->
                 <thead>
                     <tr class="bg-[#F2D7BD] text-gray-700">
                         <th class="p-4 text-center rounded-l-full">Picture</th>
@@ -126,100 +227,236 @@
                     </tr>
                 </thead>
 
-                <!-- BODY -->
                 <tbody>
+
                     @foreach($produk as $item)
+
                     <tr class="border-b hover:bg-[#F9F7F5] transition">
 
-                        <!-- IMAGE -->
                         <td class="p-4 text-center">
                             <img src="{{ asset('image-product/' . $item->foto) }}"
-                                 class="w-12 h-12 rounded-xl object-cover mx-auto">
+                                class="w-12 h-12 rounded-xl object-cover mx-auto">
                         </td>
 
-                        <!-- PRODUCT ID -->
                         <td class="p-4 text-[#F59A40] text-center font-medium">
                             #{{ $item->product_id }}
                         </td>
 
-                        <!-- NAME -->
                         <td class="p-4 font-medium text-left">
                             {{ $item->nama_produk }}
                         </td>
 
-                        <!-- CATEGORY -->
                         <td class="p-4 text-center">
                             <span class="bg-gray-100 px-3 py-1 rounded-full text-xs">
                                 {{ ucfirst($item->kategori) }}
                             </span>
                         </td>
 
-                        <!-- PRICE -->
                         <td class="p-4 text-[#F59A40] font-bold text-center">
                             Rp {{ number_format($item->harga,0,',','.') }}
                         </td>
 
-                        <!-- STATUS -->
                         <td class="p-4 text-center">
+
                             @if($item->is_available)
-                                <span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-xs font-medium">
-                                    Available
-                                </span>
+
+                            <span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-xs font-medium">
+                                Available
+                            </span>
+
                             @else
-                                <span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-xs font-medium">
-                                    Unavailable
-                                </span>
+
+                            <span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-xs font-medium">
+                                Unavailable
+                            </span>
+
                             @endif
+
                         </td>
 
                         <!-- ACTION -->
                         <td class="p-4 text-center relative">
+
                             <div class="action-container inline-block">
+
                                 <button class="p-2 text-gray-400 hover:text-orange-500 transition-colors">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        class="h-6 w-6"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor">
+
+                                        <path stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+
                                     </svg>
+
                                 </button>
 
                                 <div class="action-menu">
-                                   <div class="flex flex-row gap-2 p-2 bg-white shadow-2xl rounded-2xl border border-gray-100 items-center">
-                                        <button onclick="openDetailModal({{ $item->id }})" title="Lihat Detail" class="w-10 h-10 flex items-center justify-center bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-all shadow-lg shadow-blue-200">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+
+                                    <div class="flex flex-row gap-2 p-2 bg-white shadow-2xl rounded-2xl border border-gray-100 items-center">
+
+                                        <!-- DETAIL -->
+                                        <button onclick="openDetailModal({{ $item->id }})"
+                                            class="w-10 h-10 flex items-center justify-center bg-blue-500 text-white rounded-full">
+
+                                            👁
+
                                         </button>
-                                        <a href="?edit={{ $item->id }}" title="Edit Produk" class="w-10 h-10 flex items-center justify-center bg-emerald-500 text-white rounded-full hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-200">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                            </svg>
+
+                                        <!-- EDIT -->
+                                        <a href="?edit={{ $item->id }}"
+                                            class="w-10 h-10 flex items-center justify-center bg-emerald-500 text-white rounded-full">
+
+                                            ✏️
+
                                         </a>
-                                        <form method="POST" action="{{ route('produk.destroy', $item->id) }}" class="inline" onsubmit="return confirm('Hapus produk ini?')">
+
+                                        <!-- DELETE -->
+                                        <form method="POST"
+                                            action="{{ route('produk.destroy', $item->id) }}"
+                                            class="inline">
+
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" title="Hapus Produk" class="w-10 h-10 flex items-center justify-center bg-red-500 text-white rounded-full hover:bg-red-600 transition-all shadow-lg shadow-red-200">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+
+                                            <button type="submit"
+                                                class="w-10 h-10 flex items-center justify-center bg-red-500 text-white rounded-full">
+
+                                                🗑
+
                                             </button>
+
                                         </form>
+
                                     </div>
+
+                                </div>
+
                             </div>
+
                         </td>
 
                     </tr>
+
                     @endforeach
+
                 </tbody>
 
             </table>
 
         </div>
 
+        <!-- ================= MOBILE CARD ================= -->
+        <div class="space-y-4 mobile-card">
+
+            @foreach($produk as $item)
+
+            <div class="border border-gray-100 rounded-3xl p-4 shadow-sm">
+
+                <div class="flex items-start gap-4">
+
+                    <img src="{{ asset('image-product/' . $item->foto) }}"
+                        class="w-20 h-20 rounded-2xl object-cover">
+
+                    <div class="flex-1 min-w-0">
+
+                        <div class="flex justify-between gap-3">
+
+                            <div>
+
+                                <h3 class="font-bold text-gray-800 line-clamp-1">
+                                    {{ $item->nama_produk }}
+                                </h3>
+
+                                <p class="text-sm text-[#F59A40] font-semibold mt-1">
+                                    #{{ $item->product_id }}
+                                </p>
+
+                            </div>
+
+                            @if($item->is_available)
+
+                            <span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-[10px] h-fit">
+                                Available
+                            </span>
+
+                            @else
+
+                            <span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-[10px] h-fit">
+                                Unavailable
+                            </span>
+
+                            @endif
+
+                        </div>
+
+                        <div class="mt-3 flex items-center justify-between">
+
+                            <span class="bg-gray-100 px-3 py-1 rounded-full text-xs">
+                                {{ ucfirst($item->kategori) }}
+                            </span>
+
+                            <p class="font-bold text-[#F59A40]">
+                                Rp {{ number_format($item->harga,0,',','.') }}
+                            </p>
+
+                        </div>
+
+                        <div class="flex gap-2 mt-4">
+
+                            <button onclick="openDetailModal({{ $item->id }})"
+                                class="flex-1 bg-blue-500 text-white py-2 rounded-xl text-sm">
+                                Detail
+                            </button>
+
+                            <a href="?edit={{ $item->id }}"
+                                class="flex-1 bg-emerald-500 text-white py-2 rounded-xl text-sm text-center">
+                                Edit
+                            </a>
+
+                            <form method="POST"
+                                action="{{ route('produk.destroy', $item->id) }}"
+                                class="flex-1">
+
+                                @csrf
+                                @method('DELETE')
+
+                                <button type="submit"
+                                    class="w-full bg-red-500 text-white py-2 rounded-xl text-sm">
+
+                                    Hapus
+
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            @endforeach
+
+        </div>
+
+    </div>
+
 </div>
 
 <!-- ================= MODAL TAMBAH/EDIT PRODUK ================= -->
 <div id="productModal"
-     class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center hidden z-50">
+    class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center hidden z-50 p-4">
 
-    <div class="bg-white w-[500px] max-h-[90vh] overflow-y-auto rounded-3xl p-6 relative">
+    <div class="bg-white w-[500px] max-h-[90vh] overflow-y-auto rounded-3xl p-6 relative product-modal-content">
 
-        <!-- CLOSE -->
         <button onclick="closeModal()"
             class="absolute top-4 right-4 text-xl text-gray-400 hover:text-black">
             ✕
@@ -445,9 +682,9 @@
 
 <!-- ================= MODAL DETAIL PRODUK ================= -->
 <div id="detailModal"
-     class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center hidden z-50">
+    class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center hidden z-50 p-4">
 
-    <div class="bg-white w-[480px] max-h-[90vh] overflow-y-auto rounded-3xl p-6 relative shadow-2xl">
+    <div class="bg-white w-[480px] max-h-[90vh] overflow-y-auto rounded-3xl p-6 relative shadow-2xl detail-modal-content">
 
         <!-- CLOSE -->
         <button onclick="closeDetailModal()"

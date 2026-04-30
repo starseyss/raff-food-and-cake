@@ -22,12 +22,12 @@
 @csrf
 <input type="hidden" name="cart_data" id="cartDataInput">
 <!-- ================= CHECKOUT WRAPPER ================= -->
-<section class="max-w-[1200px] mx-auto mt-16 mb-20 px-6">
+<section class="max-w-[1200px] mx-auto mt-8 md:mt-16 mb-12 md:mb-20 px-3 md:px-6">
 
-    <div class="bg-white/80 backdrop-blur-sm rounded-[30px] shadow-sm border border-gray-200/50 p-10">
+    <div class="bg-white/80 backdrop-blur-sm rounded-2xl md:rounded-[30px] shadow-sm border border-gray-200/50 p-4 md:p-10">
 
         <!-- ================= FORM ATAS ================= -->
-<div class="mb-10">
+<div class="mb-6 md:mb-10">
 
     <p class="text-sm font-medium mb-3 text-gray-600">
         Alamat Pengiriman
@@ -36,7 +36,7 @@
     <div id="alamatContainer">
 
         <!-- ================= DEFAULT (KOSONG) ================= -->
-        <div class="border border-dashed rounded-xl p-6 text-center">
+        <div class="border border-dashed rounded-xl p-4 md:p-6 text-center">
 
             <p class="text-sm text-gray-500 mb-3">
                 📍 Belum tambah alamat
@@ -52,8 +52,8 @@
     </div>
 
 </div>
-        <!-- ================= TABLE HEADER ================= -->
-        <div class="grid grid-cols-4 text-sm text-gray-500 pb-4 border-b">
+        <!-- ================= TABLE HEADER - Desktop Only ================= -->
+        <div class="hidden md:grid grid-cols-4 text-sm text-gray-500 pb-4 border-b">
             <div>Pesanan</div>
             <div class="text-center">Harga per pax</div>
             <div class="text-center">Jumlah</div>
@@ -63,13 +63,13 @@
        <div id="checkoutItems"></div>
 
         <!-- ================= CATATAN + PENGIRIMAN ================= -->
-<div class="grid grid-cols-2 gap-10 mt-10">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 mt-8 md:mt-10">
 
     <!-- CATATAN -->
     <div>
         <textarea
             placeholder="Masukan Catatan..." name="catatan"
-            class="w-full h-[200px] px-5 py-3
+            class="w-full h-[150px] md:h-[200px] px-4 md:px-5 py-3
                    rounded-xl border border-gray-200
                    outline-none focus:border-[#F59A40]
                    text-sm resize-none
@@ -83,7 +83,7 @@
             Opsi Pengiriman :
         </p>
 
-        <div class="space-y-4">
+        <div class="space-y-3 md:space-y-4">
 
             <!-- GOSEND -->
             <label class="cursor-pointer block">
@@ -92,18 +92,18 @@
                        value="gosend"
                        class="hidden peer" required>
 
-                <div class="border rounded-xl p-4 flex items-center justify-between
+                <div class="border rounded-xl p-3 md:p-4 flex items-center justify-between
                             peer-checked:border-[#F59A40]
                             peer-checked:ring-2 peer-checked:ring-[#F59A40]
                             transition">
 
-                    <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-3 md:gap-4">
                         <img src="{{ asset('images/gosend.png') }}"
-                             class="h-8 object-contain">
-                        <span class="text-sm">GoSend Instant</span>
+                             class="h-6 md:h-8 object-contain">
+                        <span class="text-xs md:text-sm">GoSend Instant</span>
                     </div>
 
-                    <span class="text-[#F59A40] font-semibold text-sm">
+                    <span class="text-[#F59A40] font-semibold text-xs md:text-sm">
                         Rp15.000
                     </span>
 
@@ -117,18 +117,18 @@
                        value="pickup"
                        class="hidden peer">
 
-                <div class="border rounded-xl p-4 flex items-center justify-between
+                <div class="border rounded-xl p-3 md:p-4 flex items-center justify-between
                             peer-checked:border-[#F59A40]
                             peer-checked:ring-2 peer-checked:ring-[#F59A40]
                             transition">
 
-                    <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-3 md:gap-4">
                         <img src="{{ asset('images/rafflogo.png') }}"
-                             class="h-[50px] w-auto object-contain ml-19">
-                        <span class="text-sm">Ambil Sendiri</span>
+                             class="h-8 md:h-[50px] w-auto object-contain ml-2 md:ml-19">
+                        <span class="text-xs md:text-sm">Ambil Sendiri</span>
                     </div>
 
-                    <span class="text-[#F59A40] font-semibold text-sm">
+                    <span class="text-[#F59A40] font-semibold text-xs md:text-sm">
                         Gratis
                     </span>
 
@@ -138,7 +138,7 @@
         </div>
 
         <!-- TOTAL -->
-        <div class="mt-6 text-right text-sm">
+        <div class="mt-4 md:mt-6 text-right text-xs md:text-sm">
             Total pesanan (<span id="totalItem">0</span> Produk) :
             <span id="totalHargaAtas" class="text-[#F59A40] font-semibold">
                 Rp 0
@@ -175,11 +175,11 @@
 </div>
 
 <!-- ================= METODE PEMBAYARAN ================= -->
-<div class="mt-8 border-t pt-6">
+<div class="mt-6 md:mt-8 border-t pt-4 md:pt-6">
 
-    <p class="font-medium mb-4">Metode Pembayaran</p>
+    <p class="font-medium mb-3 md:mb-4 text-sm md:text-base">Metode Pembayaran</p>
 
-    <div class="grid grid-cols-4 gap-4">
+    <div class="grid grid-cols-3 md:grid-cols-4 gap-2 md:gap-4">
 
         <!-- QRIS -->
         <label class="cursor-pointer">
@@ -305,10 +305,10 @@
 
 </div>
 
-        <!-- ================= TOTAL SECTION ================= -->
-        <div class="mt-8 flex justify-end">
+<!-- ================= TOTAL SECTION ================= -->
+        <div class="mt-6 md:mt-8 flex justify-end">
 
-            <div class="w-[350px] space-y-2 text-sm">
+            <div class="w-full md:w-[350px] space-y-2 text-sm">
 
                 <div class="flex justify-between">
                     <span>Subtotal Pemesanan</span>

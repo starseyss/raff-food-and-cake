@@ -1,9 +1,9 @@
 <x-header />
 
-<section class="max-w-[1320px] mx-auto px-6 mt-10 mb-20">
+<section class="max-w-[1320px] mx-auto px-3 md:px-6 mt-6 md:mt-10 mb-12 md:mb-20">
 
-    <!-- HEADER -->
-    <div class="grid grid-cols-12 text-sm text-gray-500 pb-4 border-b">
+    <!-- HEADER - Hidden on mobile, shown on desktop -->
+    <div class="hidden md:grid grid-cols-12 text-xs md:text-sm text-gray-500 pb-4 border-b">
         <div class="col-span-5">Produk</div>
         <div class="col-span-2 text-center">Harga per pcs</div>
         <div class="col-span-2 text-center">Kuantitas</div>
@@ -15,49 +15,87 @@
     <div id="cartContainer"></div>
 
     <!-- EMPTY -->
-    <div id="emptyCart" class="hidden text-center py-20">
-        <img src="{{ asset('images/box.png') }}" class="w-20 mx-auto opacity-30 mb-4">
-        <h3 class="text-lg font-semibold text-gray-700">Keranjang kosong</h3>
+    <div id="emptyCart" class="hidden text-center py-16 md:py-20">
+        <img src="{{ asset('images/box.png') }}" class="w-16 md:w-20 mx-auto opacity-30 mb-4">
+        <h3 class="text-base md:text-lg font-semibold text-gray-700">Keranjang kosong</h3>
         <p class="text-sm text-gray-500 mt-2">
             Yuk pilih produk dulu dari menu 😊
         </p>
     </div>
 
-    <!-- TOTAL -->
-    <div class="mt-10 bg-white rounded-2xl border p-6">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+<!-- TOTAL -->
+<div class="mt-6 md:mt-10 bg-white rounded-2xl border border-gray-200 p-4 md:p-6 shadow-sm">
 
-            <div class="flex items-center gap-4">
-                <input type="checkbox" id="selectAll"
-                       class="w-4 h-4 accent-[#F59A40]">
-                <span class="text-sm">Pilih semua</span>
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
 
-                <button onclick="clearCart()"
-                        class="text-red-500 text-sm hover:underline">
-                    Hapus semua
-                </button>
-            </div>
+        <!-- LEFT -->
+        <div class="flex flex-wrap items-center gap-3 md:gap-4">
 
-            <div class="flex items-center gap-6">
+            <label class="flex items-center gap-2 cursor-pointer">
 
-                <div class="text-sm">
-                    Total (<span class="totalItem">0</span> produk):
-                    <span class="text-[#F59A40] font-semibold text-lg totalHarga">
-                        Rp 0
-                    </span>
-                </div>
+                <input type="checkbox"
+                       id="selectAll"
+                       class="w-4 h-4 accent-[#F59A40] shrink-0">
 
-                <button onclick="goToCheckout()"
-                    class="px-8 py-2 border border-[#F59A40]
-                           text-[#F59A40] rounded-full
-                           hover:bg-[#F59A40] hover:text-white transition">
-                    Checkout
-                </button>
+                <span class="text-sm text-gray-700">
+                    Pilih semua
+                </span>
 
-            </div>
+            </label>
+
+            <button onclick="clearCart()"
+                    class="
+                        text-red-500
+                        text-sm
+                        hover:underline
+                        transition
+                    ">
+                Hapus semua
+            </button>
 
         </div>
+
+        <!-- RIGHT -->
+        <div class="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+
+            <!-- TOTAL -->
+            <div class="text-sm text-gray-700">
+
+                Total
+                (<span class="totalItem font-semibold">0</span> produk):
+
+                <div class="text-[#F59A40] font-bold text-xl mt-1 totalHarga">
+                    Rp 0
+                </div>
+
+            </div>
+
+            <!-- BUTTON -->
+            <button onclick="goToCheckout()"
+                class="
+                    w-full
+                    sm:w-auto
+                    px-6 md:px-8
+                    py-3
+                    bg-[#F59A40]
+                    text-white
+                    rounded-full
+                    font-medium
+                    text-sm
+                    hover:opacity-90
+                    transition
+                    shadow-sm
+                ">
+
+                Checkout
+
+            </button>
+
+        </div>
+
     </div>
+
+</div>
 
 </section>
 
@@ -96,8 +134,9 @@ function loadCart() {
         let price = toNumber(item.price);
         let total = price * item.qty;
 
-        container.innerHTML += `
-        <div class="grid grid-cols-12 items-center py-6 border-b">
+container.innerHTML += `
+        <!-- Desktop Grid View -->
+        <div class="hidden md:grid grid-cols-12 items-center py-6 border-b">
 
             <div class="col-span-5 flex items-center gap-4">
                 <input type="checkbox"
@@ -146,7 +185,99 @@ function loadCart() {
                 </button>
             </div>
 
-        </div>`;
+        </div>
+
+        <!-- Mobile Card View -->
+<div class="md:hidden bg-white border border-gray-200 rounded-2xl p-3 mb-4 shadow-sm">
+
+    <!-- TOP -->
+    <div class="flex items-start gap-3">
+
+        <!-- CHECKBOX -->
+        <input type="checkbox"
+               class="productCheckbox w-4 h-4 accent-[#F59A40] mt-1 shrink-0"
+               checked>
+
+        <!-- IMAGE -->
+        <img src="${item.image}"
+             class="w-[72px] h-[72px] rounded-xl object-cover shrink-0">
+
+        <!-- INFO -->
+        <div class="flex-1 min-w-0">
+
+            <p class="font-semibold text-sm text-gray-800 line-clamp-2">
+                ${item.name}
+            </p>
+
+            <p class="text-xs text-gray-500 mt-1">
+                Varian:
+                <span class="font-medium text-gray-700">
+                    ${item.variant || 'Default'}
+                </span>
+            </p>
+
+            <p class="text-xs text-gray-500 mt-1">
+                Rp ${formatRupiah(price)} / pcs
+            </p>
+
+            <p class="text-[#F59A40] font-bold text-sm mt-2">
+                Rp ${formatRupiah(total)}
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- BOTTOM -->
+    <div class="flex items-center justify-between mt-4 pl-7">
+
+        <!-- QTY -->
+        <div class="flex items-center gap-3">
+
+            <button onclick="changeQty(${index}, -1)"
+                class="
+                    w-7 h-7
+                    bg-[#F59A40]
+                    text-white
+                    rounded-full
+                    text-sm
+                    flex items-center justify-center
+                ">
+                -
+            </button>
+
+            <span class="text-sm font-medium min-w-[20px] text-center">
+                ${item.qty}
+            </span>
+
+            <button onclick="changeQty(${index}, 1)"
+                class="
+                    w-7 h-7
+                    bg-[#F59A40]
+                    text-white
+                    rounded-full
+                    text-sm
+                    flex items-center justify-center
+                ">
+                +
+            </button>
+
+        </div>
+
+        <!-- DELETE -->
+        <button onclick="removeItem(${index})"
+            class="
+                text-red-500
+                text-xs
+                hover:underline
+                transition
+            ">
+            Hapus
+        </button>
+
+    </div>
+
+</div>`;
     });
 
     // AUTO SELECT ALL

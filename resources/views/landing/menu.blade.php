@@ -17,79 +17,209 @@
 </section>
 
 <!-- ================= FILTER ================= -->
-<section class="max-w-[1320px] mx-auto px-6 mt-10 relative z-20">
+<!-- ================= FILTER ================= -->
+<section class="max-w-[1320px] mx-auto px-4 md:px-6 mt-8 md:mt-10 relative z-20">
 
-    <div class="flex items-center gap-2">
+    <div class="flex flex-col gap-4">
 
-        <!-- TOGGLE BUTTON -->
-        <button id="filterToggle" type="button"
-            class="px-5 py-2 bg-[#F59A40] text-white rounded-full flex items-center gap-2 transition hover:opacity-90 shrink-0">
-            <span>Filter</span>
-            <svg id="filterArrow" class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-        </button>
+        <!-- TOGGLE -->
+        <div class="flex items-center">
 
-        <!-- SIDE PANEL -->
+            <button id="filterToggle" type="button"
+                class="
+                    px-4 md:px-5
+                    py-2.5
+                    bg-[#F59A40]
+                    text-white
+                    rounded-full
+                    flex items-center gap-2
+                    transition hover:opacity-90
+                    text-sm md:text-base
+                ">
+
+                <span>Filter</span>
+
+                <svg id="filterArrow"
+                    class="w-4 h-4 transition-transform duration-300"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+
+                    <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 5l7 7-7 7" />
+                </svg>
+
+            </button>
+
+        </div>
+
+        <!-- PANEL -->
         <div id="filterPanel"
-             class="transition-all duration-300 ease-out max-w-0 opacity-0 pointer-events-none">
+             class="
+                transition-all duration-300 ease-out
+                max-h-0 opacity-0 overflow-hidden
+                pointer-events-none
+             ">
 
-            <form method="GET" action="{{ route('menu') }}" class="flex items-center gap-3 flex-nowrap">
+            <form method="GET"
+                  action="{{ route('menu') }}"
+                  class="
+                    flex flex-wrap
+                    items-center
+                    gap-3
+                    bg-white
+                    border border-gray-200
+                    rounded-2xl
+                    p-4
+                    shadow-sm
+                  ">
 
-                <!-- KATEGORI CUSTOM DROPDOWN -->
-                <div class="relative shrink-0" id="kategoriDropdownWrapper">
-                    <button type="button" id="kategoriDropdownBtn"
-                        class="px-5 py-2 rounded-full bg-gray-100 text-sm flex items-center gap-2 hover:bg-gray-200 transition">
-                        <span id="kategoriSelectedText">{{ request('kategori') ? ucfirst(request('kategori')) : 'Semua kategori' }}</span>
-                        <svg class="w-4 h-4 transition-transform duration-200" id="kategoriArrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                <!-- ================= DROPDOWN ================= -->
+                <div class="relative w-full sm:w-auto min-w-[220px]" id="kategoriDropdownWrapper">
+
+                    <button type="button"
+                        id="kategoriDropdownBtn"
+                        class="
+                            w-full
+                            px-5 py-2.5
+                            rounded-full
+                            bg-gray-100
+                            text-sm
+                            flex items-center justify-between
+                            gap-2
+                            hover:bg-gray-200
+                            transition
+                        ">
+
+                        <span id="kategoriSelectedText"
+                            class="truncate">
+                            {{ request('kategori') ? ucfirst(request('kategori')) : 'Semua kategori' }}
+                        </span>
+
+                        <svg class="w-4 h-4 transition-transform duration-200 shrink-0"
+                            id="kategoriArrow"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24">
+
+                            <path stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M19 9l-7 7-7-7" />
                         </svg>
+
                     </button>
 
-                    <!-- Dropdown Menu -->
+                    <!-- MENU -->
                     <div id="kategoriDropdownMenu"
-                        class="absolute left-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-xl z-50 hidden max-h-[240px] overflow-y-auto">
-                        <div class="py-1">
-                            <button type="button" class="kategori-option w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition {{ request('kategori') == '' ? 'bg-[#FFF3E8] text-[#F59A40] font-medium' : '' }}"
-                                data-value="">Semua kategori</button>
+                        class="
+                            absolute left-0 top-full mt-2
+                            w-full sm:w-64
+                            bg-white
+                            border border-gray-200
+                            rounded-2xl
+                            shadow-xl
+                            z-50
+                            hidden
+                            max-h-[240px]
+                            overflow-y-auto
+                        ">
 
-                            @php $kategoriList = [
-                                'masakan','kue','kue kering','kue basah','gorengan','snack kecil',
-                                'lauk','ayam','ikan','daging','nasi','mie',
-                                'sayuran & sup','tumisan','sup / kuah',
-                                'kerupuk','sambal',
-                                'dessert','buah','pudding','manis',
-                                'minuman','pondoka'
-                            ]; @endphp
+                        <div class="py-1">
+
+                            <button type="button"
+                                class="kategori-option w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition {{ request('kategori') == '' ? 'bg-[#FFF3E8] text-[#F59A40] font-medium' : '' }}"
+                                data-value="">
+                                Semua kategori
+                            </button>
+
+                            @php
+                                $kategoriList = [
+                                    'masakan','kue','kue kering','kue basah',
+                                    'gorengan','snack kecil','lauk','ayam',
+                                    'ikan','daging','nasi','mie',
+                                    'sayuran & sup','tumisan','sup / kuah',
+                                    'kerupuk','sambal','dessert','buah',
+                                    'pudding','manis','minuman','pondoka'
+                                ];
+                            @endphp
 
                             @foreach($kategoriList as $kat)
-                                <button type="button" class="kategori-option w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition {{ request('kategori') == $kat ? 'bg-[#FFF3E8] text-[#F59A40] font-medium' : '' }}"
-                                    data-value="{{ $kat }}">{{ ucfirst($kat) }}</button>
+                                <button type="button"
+                                    class="kategori-option w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition {{ request('kategori') == $kat ? 'bg-[#FFF3E8] text-[#F59A40] font-medium' : '' }}"
+                                    data-value="{{ $kat }}">
+
+                                    {{ ucfirst($kat) }}
+
+                                </button>
                             @endforeach
+
                         </div>
+
                     </div>
 
-                    <input type="hidden" name="kategori" id="kategoriInput" value="{{ request('kategori') }}">
+                    <input type="hidden"
+                        name="kategori"
+                        id="kategoriInput"
+                        value="{{ request('kategori') }}">
+
                 </div>
 
-                <!-- FILTER BUTTON -->
-                <button name="filter" value="promo"
-                    class="px-4 py-2 bg-gray-100 rounded-full text-sm hover:bg-gray-200 transition shrink-0">
+                <!-- ================= FILTER BUTTONS ================= -->
+
+                <button name="filter"
+                    value="promo"
+                    class="
+                        px-4 py-2.5
+                        bg-gray-100
+                        rounded-full
+                        text-sm
+                        hover:bg-gray-200
+                        transition
+                    ">
                     Promo
                 </button>
 
-                <button name="filter" value="termurah"
-                    class="px-4 py-2 bg-gray-100 rounded-full text-sm hover:bg-gray-200 transition shrink-0">
+                <button name="filter"
+                    value="termurah"
+                    class="
+                        px-4 py-2.5
+                        bg-gray-100
+                        rounded-full
+                        text-sm
+                        hover:bg-gray-200
+                        transition
+                    ">
                     Termurah
                 </button>
 
-                <button name="filter" value="terlaris"
-                    class="px-4 py-2 bg-gray-100 rounded-full text-sm hover:bg-gray-200 transition shrink-0">
+                <button name="filter"
+                    value="terlaris"
+                    class="
+                        px-4 py-2.5
+                        bg-gray-100
+                        rounded-full
+                        text-sm
+                        hover:bg-gray-200
+                        transition
+                    ">
                     Terlaris
                 </button>
 
+                <!-- APPLY -->
                 <button type="submit"
-                    class="px-4 py-2 bg-[#F59A40] text-white rounded-full text-sm hover:opacity-90 transition shrink-0">
+                    class="
+                        w-full sm:w-auto
+                        px-5 py-2.5
+                        bg-[#F59A40]
+                        text-white
+                        rounded-full
+                        text-sm
+                        hover:opacity-90
+                        transition
+                    ">
                     Terapkan
                 </button>
 
@@ -102,36 +232,73 @@
 </section>
 
 <script>
-    const filterToggle = document.getElementById('filterToggle');
-    const filterPanel = document.getElementById('filterPanel');
-    const filterArrow = document.getElementById('filterArrow');
-    let isOpen = false;
+const filterToggle = document.getElementById('filterToggle');
+const filterPanel = document.getElementById('filterPanel');
+const filterArrow = document.getElementById('filterArrow');
 
-    filterToggle.addEventListener('click', function(e) {
-        e.stopPropagation();
-        isOpen = !isOpen;
-        if (isOpen) {
-            filterPanel.classList.remove('max-w-0', 'opacity-0', 'pointer-events-none');
-            filterPanel.classList.add('max-w-[1000px]', 'opacity-100');
-            filterArrow.classList.add('rotate-180');
-        } else {
-            filterPanel.classList.add('max-w-0', 'opacity-0', 'pointer-events-none');
-            filterPanel.classList.remove('max-w-[1000px]', 'opacity-100');
-            filterArrow.classList.remove('rotate-180');
-        }
-    });
+let isOpen = false;
 
-    // Klik luar panel = tutup
-    document.addEventListener('click', function(e) {
-        if (!filterPanel.contains(e.target) && !filterToggle.contains(e.target)) {
-            isOpen = false;
-            filterPanel.classList.add('max-w-0', 'opacity-0', 'pointer-events-none');
-            filterPanel.classList.remove('max-w-[1000px]', 'opacity-100');
-            filterArrow.classList.remove('rotate-180');
-        }
-    });
+filterToggle.addEventListener('click', function(e) {
+    e.stopPropagation();
+
+    isOpen = !isOpen;
+
+    if (isOpen) {
+        filterPanel.classList.remove(
+            'max-h-0',
+            'opacity-0',
+            'pointer-events-none'
+        );
+
+        filterPanel.classList.add(
+            'max-h-[600px]',
+            'opacity-100'
+        );
+
+        filterArrow.classList.add('rotate-90');
+
+    } else {
+
+        filterPanel.classList.add(
+            'max-h-0',
+            'opacity-0',
+            'pointer-events-none'
+        );
+
+        filterPanel.classList.remove(
+            'max-h-[600px]',
+            'opacity-100'
+        );
+
+        filterArrow.classList.remove('rotate-90');
+    }
+});
+
+// klik luar
+document.addEventListener('click', function(e) {
+
+    if (
+        !filterPanel.contains(e.target) &&
+        !filterToggle.contains(e.target)
+    ) {
+
+        isOpen = false;
+
+        filterPanel.classList.add(
+            'max-h-0',
+            'opacity-0',
+            'pointer-events-none'
+        );
+
+        filterPanel.classList.remove(
+            'max-h-[600px]',
+            'opacity-100'
+        );
+
+        filterArrow.classList.remove('rotate-90');
+    }
+});
 </script>
-
 <script>
     // KATEGORI CUSTOM DROPDOWN
     const kategoriDropdownBtn = document.getElementById('kategoriDropdownBtn');
