@@ -12,6 +12,7 @@ use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\AdminNotificationController;
+use App\Http\Controllers\AnalisisController;
 use App\Http\Controllers\PesananController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\ContactController;
@@ -106,7 +107,7 @@ Route::get('/pesanan', [OrderController::class, 'index'])
     Route::post('/orders/{id}/assign-driver', [OrderController::class, 'assignDriver'])->name('admin.assign-driver');
     Route::post('/orders/{id}/start-delivery', [OrderController::class, 'startDelivery'])->name('admin.start-delivery');
     Route::post('/orders/{id}/mark-delivered', [OrderController::class, 'markDelivered'])->name('admin.mark-delivered');
-    Route::get('/analisis', fn() => view('admin.analisis'))->name('admin.analisis');
+Route::get('/analisis', [AnalisisController::class, 'index'])->name('admin.analisis');
     Route::get('/profil', fn() => view('admin.profil'))->name('admin.profil');
     Route::put('/orders/{id}/status', [OrderController::class, 'updateStatus'])
         ->name('admin.updateStatus');
