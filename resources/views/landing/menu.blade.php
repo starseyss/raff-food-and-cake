@@ -1,5 +1,8 @@
 <x-header />
 
+<!-- Login status for JavaScript -->
+<input type="hidden" id="loginStatus" value="{{ auth()->check() ? '1' : '0' }}" />
+
 <!-- ================= HERO ================= -->
 <section class="max-w-[1320px] mx-auto mt-8 px-6">
     <div class="relative h-[360px] rounded-[30px] overflow-hidden">
@@ -521,6 +524,57 @@ document.addEventListener('click', function(e) {
         </div>
     </div>
 </div>
+<!-- ================= LOGIN REQUIRED POPUP ================= -->
+<div id="loginRequiredPopup"
+     class="fixed inset-0 bg-black/60 backdrop-blur-sm
+            flex items-center justify-center
+            z-[9999] hidden">
+
+    <div class="bg-[#F2F2F2] w-[900px] max-w-[95%]
+                rounded-[30px] p-10 relative">
+
+        <button id="closeLoginRequiredPopup"
+                class="absolute top-5 right-5 text-xl font-bold">
+            ✕
+        </button>
+
+        <div class="grid md:grid-cols-2 gap-8 items-center">
+
+            <div class="flex justify-center">
+                <img src="{{ asset('images/keranjang.png') }}"
+                     class="w-[220px] object-contain opacity-50">
+            </div>
+
+            <div>
+                <h2 class="text-xl font-semibold mb-4">
+                    Login dulu ya! 👋
+                </h2>
+
+                <p class="text-sm text-gray-600 mb-6">
+                    Untuk menambahkan produk ke keranjang, kamu perlu login terlebih dahulu.
+                </p>
+
+                <a href="{{ route('login') }}"
+                   class="inline-block w-full text-center py-3
+                          bg-[#F59A40] text-white
+                          rounded-full font-medium
+                          hover:opacity-90 transition">
+                    Masuk / Login
+                </a>
+
+                <p class="text-xs text-gray-500 mt-4 text-center">
+                    Belum punya akun? 
+                    <a href="{{ route('register') }}" class="text-[#F59A40] font-medium">
+                        Daftar sekarang
+                    </a>
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
 <!-- ================= SUCCESS POPUP ================= -->
 <div id="successPopup"
      class="fixed inset-0 bg-black/60 backdrop-blur-sm
@@ -591,6 +645,42 @@ document.addEventListener('click', function(e) {
 <script>
 let modalQty = 1;
 let selectedVariant = '-';
+
+// Get login status from hidden input
+const loginStatusInput = document.getElementById('loginStatus');
+const isLoggedIn = loginStatusInput && loginStatusInput.value === '1';
+
+// Login required popup functions
+function showLoginRequiredPopup() {
+    const popup = document.getElementById('loginRequiredPopup');
+    if (popup) {
+        popup.classList.remove('hidden');
+    }
+}
+
+function hideLoginRequiredPopup() {
+    const popup = document.getElementById('loginRequiredPopup');
+    if (popup) {
+        popup.classList.add('hidden');
+    }
+}
+
+// Setup login popup close handlers
+document.addEventListener('DOMContentLoaded', function() {
+    const closeBtn = document.getElementById('closeLoginRequiredPopup');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', hideLoginRequiredPopup);
+    }
+    
+    const popup = document.getElementById('loginRequiredPopup');
+    if (popup) {
+        popup.addEventListener('click', function(e) {
+            if (e.target === popup) {
+                hideLoginRequiredPopup();
+            }
+        });
+    }
+});
 
 const productModal = document.getElementById('productModal');
 const closeProductModalBtn = document.getElementById('closeProductModal');
@@ -757,6 +847,12 @@ modalPlusQty.addEventListener('click', () => {
 
 // ================= ADD TO CART (FIXED 🔥) =================
 addToCartBtn.addEventListener('click', () => {
+    
+    // Check if user is logged in first
+    if (!isLoggedIn) {
+        showLoginRequiredPopup();
+        return;
+    }
 
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
 

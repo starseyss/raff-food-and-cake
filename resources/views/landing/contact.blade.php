@@ -86,5 +86,4 @@
 
 </section>
 
-<x-footer />
-
+<x-scripts />
