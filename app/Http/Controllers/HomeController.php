@@ -101,10 +101,48 @@ class HomeController extends Controller
         return view('landing.details', compact('produk', 'produkLain'));
     }
 
-    // ================= MENU / FILTER =================
+// ================= SEARCH =================
+public function search(Request $request)
+{
+    $q = $request->query('q', $request->query('search', ''));
+    
+    $query = Produk::query()->where('is_available', true);
+    
+    if (!empty($q)) {
+        $query->where(function($builder) use ($q) {
+            $builder->where('nama_produk', 'LIKE', "%{$q}%")
+                   ->orWhere('deskripsi', 'LIKE', "%{$q}%")
+                   ->orWhere('kategori', 'LIKE', "%{$q}%");
+        });
+    }
+    
+    $produk = $query->latest()->get();
+    
+    $terjual = $this->getTerjualData();
+    $rating = $this->getRatingData();
+    
+    foreach ($produk as $p) {
+        $p->total_terjual = $terjual[$p->id] ?? 0;
+        $p->rating = $rating[$p->id] ?? 0;
+    }
+    
+    return view('landing.menu', compact('produk', 'q'));
+}
+
+// ================= MENU / FILTER =================
 public function menu(Request $request)
 {
     $query = Produk::query()->where('is_available', true);
+    
+    // ================= SEARCH =================
+    $q = $request->query('search', '');
+    if (!empty($q)) {
+        $query->where(function($builder) use ($q) {
+            $builder->where('nama_produk', 'LIKE', "%{$q}%")
+                   ->orWhere('deskripsi', 'LIKE', "%{$q}%")
+                   ->orWhere('kategori', 'LIKE', "%{$q}%");
+        });
+    }
 
     // ================= FILTER KATEGORI (ANTI GAGAL 🔥) =================
     if ($request->filled('kategori')) {

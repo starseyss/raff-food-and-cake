@@ -30,6 +30,7 @@ Route::view('/register', 'auth.register')->name('register');
 Route::view('/otp', 'auth.otp')->name('otp');
 
 Route::get('/menu', [HomeController::class, 'menu'])->name('menu');
+Route::get('/search', [HomeController::class, 'search'])->name('search');
 Route::get('/cart', fn() => view('landing.cart'))->name('landing.cart');
 Route::post('/checkout', [CheckoutController::class, 'store'])
     ->name('landing.checkout.store');

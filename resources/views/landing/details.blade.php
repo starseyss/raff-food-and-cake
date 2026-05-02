@@ -21,14 +21,37 @@
                 {{ $produk->nama_produk }}
             </h1>
 
-            <!-- Rating / Dummy -->
-            <div class="flex items-center gap-2 mt-3">
-                <span class="text-[14px] text-gray-500">
-                    Produk tersedia
+<!-- Kategori & Rating -->
+            <div class="flex items-center gap-4 mt-3">
+                @if($produk->kategori)
+                <span class="text-[14px] px-3 py-1 bg-[#FFF3E8] text-[#F59A40] rounded-full border border-[#F59A40]/20">
+                    {{ $produk->kategori }}
                 </span>
+                @endif
 
-                <div class="flex text-yellow-400 text-sm">
-                    ★★★★★
+                @php
+                    $rating = $produk->rating ?? 0;
+                    $fullStars = floor($rating);
+                    $hasHalfStar = ($rating - $fullStars) >= 0.5;
+                @endphp
+
+                <div class="flex items-center gap-1">
+                    <div class="flex text-yellow-400 text-sm">
+                        @for($i = 1; $i <= 5; $i++)
+                            @if($i <= $fullStars)
+                                ★
+                            @elseif($i == $fullStars + 1 && $hasHalfStar)
+                                ★
+                            @else
+                                <span class="text-gray-300">★</span>
+                            @endif
+                        @endfor
+                    </div>
+                    @if($rating > 0)
+                    <span class="text-[14px] text-gray-500">
+                        ({{ number_format($rating, 1) }})
+                    </span>
+                    @endif
                 </div>
             </div>
 

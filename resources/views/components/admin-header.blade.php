@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Admin - RAFF</title>
-<link rel="icon" href="/images/rafflogo.png?v=<?= time(); ?>" type="image/png">
-<link rel="shortcut icon" href="/images/rafflogo.png?v=<?= time(); ?>">
+    <link rel="icon" href="/images/logo-raff.png?v=<?= time(); ?>" type="image/png">
+<link rel="shortcut icon" href="/images/logo-raff.png?v=<?= time(); ?>">
     @vite('resources/css/app.css')
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 

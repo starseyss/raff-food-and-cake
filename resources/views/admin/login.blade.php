@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login Admin • RAFF</title>
-        <link rel="icon" href="/images/rafflogo.png?v=<?= time(); ?>" type="image/png">
-<link rel="shortcut icon" href="/images/rafflogo.png?v=<?= time(); ?>">
+    <link rel="icon" href="/images/logo-raff.png?v=<?= time(); ?>" type="image/png">
+<link rel="shortcut icon" href="/images/logo-raff.png?v=<?= time(); ?>">
     @vite('resources/css/app.css')
 </head>
 

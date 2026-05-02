@@ -59,12 +59,10 @@
         </div>
 
         <!-- PANEL -->
-        <div id="filterPanel"
-             class="
-                transition-all duration-300 ease-out
-                max-h-0 opacity-0 overflow-hidden
-                pointer-events-none
-             ">
+<div id="filterPanel"
+     class="transition-all duration-300 ease-out
+            max-h-0 opacity-0
+            pointer-events-none">
 
             <form method="GET"
                   action="{{ route('menu') }}"
@@ -79,7 +77,7 @@
                     shadow-sm
                   ">
 
-                <!-- ================= DROPDOWN ================= -->
+<!-- ================= DROPDOWN ================= -->
                 <div class="relative w-full sm:w-auto min-w-[220px]" id="kategoriDropdownWrapper">
 
                     <button type="button"
@@ -168,6 +166,24 @@
                         id="kategoriInput"
                         value="{{ request('kategori') }}">
 
+                </div>
+
+                <!-- ================= SEARCH INPUT ================= -->
+                <div class="relative w-full sm:w-auto min-w-[180px]">
+                    <input type="text"
+                        name="search"
+                        value="{{ request('search', '') }}"
+                        placeholder="Cari produk..."
+                        class="
+                            w-full
+                            px-4 py-2.5
+                            rounded-full
+                            bg-gray-100
+                            text-sm
+                            outline-none
+                            focus:bg-gray-200
+                            transition
+                        ">
                 </div>
 
                 <!-- ================= FILTER BUTTONS ================= -->

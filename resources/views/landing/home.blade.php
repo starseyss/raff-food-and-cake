@@ -27,12 +27,15 @@
                 semua bisa dipesan dengan gampang, pilihan lengkap, proses cepat, rasa jelas bikin puas
             </p>
 
-            <div class="mt-4 md:mt-6 w-full max-w-[400px] md:max-w-[620px] relative">
+<div class="mt-4 md:mt-6 w-full max-w-[400px] md:max-w-[620px] relative">
                 <input type="text"
+                       id="bannerSearch"
                        placeholder="Cari paket catering atau kue..."
-                       class="w-full h-10 md:h-12 lg:h-[55px] rounded-full px-4 md:px-6 pr-12 md:pr-16 outline-none text-xs md:text-sm shadow">
+                       class="w-full h-10 md:h-12 lg:h-[55px] rounded-full px-4 md:px-6 pr-12 md:pr-16 outline-none text-xs md:text-sm shadow"
+                       onkeyup="filterProducts(this.value)">
 
-                <button class="absolute right-1.5 md:right-2 top-1/2 -translate-y-1/2
+                <button type="button" onclick="filterProducts(document.getElementById('bannerSearch').value)"
+                        class="absolute right-1.5 md:right-2 top-1/2 -translate-y-1/2
                                w-9 md:w-10 lg:w-11 h-9 md:h-10 lg:h-11 rounded-full bg-[#F59A40]
                                flex items-center justify-center text-white text-base md:text-lg">
                     🔍
@@ -64,7 +67,9 @@
 @foreach($produk as $index => $item)
 <div class="product-card block bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-xl md:rounded-2xl p-2 md:p-4
             hover:shadow-lg hover:-translate-y-1
-            transition duration-300 h-full flex flex-col {{ $index >= 12 ? 'hidden' : '' }}">
+            transition duration-300 h-full flex flex-col {{ $index >= 12 ? 'hidden' : '' }}"
+     data-name="{{ $item->nama_produk }}"
+     data-description="{{ $item->deskripsi ?? '' }}">
 
     <!-- Klik card ke detail -->
     <a href="{{ route('landing.details', $item->id) }}" class="flex-1">
@@ -362,8 +367,9 @@
 <section class="max-w-[1320px] mx-auto px-6 mb-24">
     <div class="grid md:grid-cols-4 gap-6">
 
-        @foreach($produk->take(4) as $item)
-        <div class="bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-4 flex flex-col h-full">
+@foreach($produk->take(4) as $item)
+        <div class="four-card-item bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-4 flex flex-col h-full"
+             data-name="{{ $item->nama_produk }}">
 
             <!-- Image -->
             <div class="h-[180px] rounded-xl overflow-hidden bg-gray-100">
@@ -655,6 +661,38 @@
     </div>
 </div>
 <script>
+// ================= BANNER SEARCH - FILTER LANGSUNG DI HALAMAN INI =================
+function filterProducts(query) {
+    query = query.toLowerCase().trim();
+    
+    var cards = document.querySelectorAll('.product-card');
+    var found = false;
+    
+    cards.forEach(function(card) {
+        var name = card.dataset.name || '';
+        var desc = card.dataset.description || '';
+        
+        if (query === '' || name.toLowerCase().includes(query) || desc.toLowerCase().includes(query)) {
+            card.classList.remove('hidden');
+            found = true;
+        } else {
+            card.classList.add('hidden');
+        }
+    });
+    
+    // juga filter produk di section 4 cards terakhir
+    var fourCards = document.querySelectorAll('.four-card-item');
+    fourCards.forEach(function(card) {
+        var name = card.dataset.name || '';
+        
+        if (query === '' || name.toLowerCase().includes(query)) {
+            card.classList.remove('hidden');
+        } else {
+            card.classList.add('hidden');
+        }
+    });
+}
+
 // Get login status from hidden input
 var isLoggedIn = document.getElementById('loginStatus').value === '1';
 

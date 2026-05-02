@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>RAFF Food & Cake</title>
-    <link rel="icon" href="/images/rafflogo.png?v=<?= time(); ?>" type="image/png">
-<link rel="shortcut icon" href="/images/rafflogo.png?v=<?= time(); ?>">
+    <link rel="icon" href="/images/logo-raff.png?v=<?= time(); ?>" type="image/png">
+<link rel="shortcut icon" href="/images/logo-raff.png?v=<?= time(); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Google Font -->
@@ -171,15 +171,17 @@
          class="h-14 lg:h-[60px] w-auto object-contain">
 </div>
 
-            <!-- SEARCH -->
+<!-- SEARCH -->
 <!-- SEARCH + CART WRAPPER -->
 <div class="flex items-center gap-2 md:gap-4 w-full md:flex-1">
 
     <!-- SEARCH -->
-    <div class="flex-1 relative min-w-0">
-
+    <form method="GET" action="{{ route('menu') }}" class="flex-1 relative min-w-0">
+        
         <input type="text"
+               name="search"
                placeholder="Cari makanan..."
+               value="{{ request('search', '') }}"
                class="
                     w-full
                     h-10 md:h-11 lg:h-[50px]
@@ -195,7 +197,7 @@
                ">
 
         <!-- BUTTON -->
-        <button
+        <button type="submit"
             class="
                 absolute
                 right-1.5
@@ -214,7 +216,7 @@
 
         </button>
 
-    </div>
+    </form>
 
     <!-- CART -->
     @auth

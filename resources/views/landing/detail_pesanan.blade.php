@@ -143,6 +143,15 @@
 
     @forelse($cart as $item)
 
+    @php
+        // Ambil kategori dari produk jika ada
+        $productCategory = '';
+        if (!empty($item['id'])) {
+            $produk = \App\Models\Produk::find($item['id']);
+            $productCategory = $produk->kategori ?? '';
+        }
+    @endphp
+
     <div class="flex gap-3 md:gap-4 border-b pb-4 last:border-none">
 
         <!-- IMAGE -->
@@ -163,6 +172,12 @@
                     <p class="text-xs md:text-sm text-gray-500 mt-1">
                         Varian: {{ $item['variant'] ?? '-' }}
                     </p>
+
+                    @if($productCategory)
+                    <p class="text-xs md:text-sm text-gray-500">
+                        Kategori: <span class="font-medium text-[#F59A40]">{{ $productCategory }}</span>
+                    </p>
+                    @endif
 
                     <p class="text-xs md:text-sm text-gray-500">
                         Qty: {{ $item['qty'] ?? 0 }}
@@ -393,11 +408,13 @@
 
             <form action="{{ route('pesanan.rating', $order->id) }}" method="POST">
                 @csrf
+
 @php
 $productId = $order->cart_items[0]['id'] ?? null;
 @endphp
 
 <input type="hidden" name="product_id" value="{{ $productId }}">
+
                 <div class="flex gap-1 text-3xl cursor-pointer">
                     @for($i = 1; $i <= 5; $i++)
                         <span class="star text-gray-300" data-value="{{ $i }}">★</span>
@@ -408,6 +425,7 @@ $productId = $order->cart_items[0]['id'] ?? null;
 
                 <textarea name="comment"
                           class="w-full border rounded-xl p-3 text-sm mt-4"
+                          placeholder="Tulis review kamu..."
                           required></textarea>
 
                 <button type="submit"
@@ -422,6 +440,9 @@ $productId = $order->cart_items[0]['id'] ?? null;
         <!-- SUDAH RATING -->
         @php
             $userRating = $order->rating_data->rating ?? 0;
+            // Ambil info produk yang sudah dirating
+            $ratedProduk = \App\Models\Produk::find($order->rating_data->product_id);
+            $ratedCategory = $ratedProduk->kategori ?? '';
         @endphp
 
         <div class="mt-6 bg-white border rounded-2xl p-5">
@@ -439,9 +460,15 @@ $productId = $order->cart_items[0]['id'] ?? null;
                 @endfor
             </div>
 
-            <p class="text-sm text-gray-600 mt-3">
+            <p class="text-sm text-gray-600 mt-2">
                 {{ $order->rating_data->comment ?? '-' }}
             </p>
+            
+            @if($ratedCategory)
+            <p class="text-xs text-gray-500 mt-2">
+                Kategori: <span class="font-medium text-[#F59A40]">{{ $ratedCategory }}</span>
+            </p>
+            @endif
         </div>
 
     @endif
