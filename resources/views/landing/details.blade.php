@@ -212,13 +212,13 @@
         </p>
 
         <div class="mt-4 text-gray-700 text-sm leading-7">
-            <!-- Jika ada relasi comments/ulasan, tampilkan di sini -->
-@if(isset($produk->comments) && !empty($produk->comments))
+            @if(isset($produk->rating_details) && !empty($produk->rating_details))
                 <div class="space-y-4">
-                    @foreach($produk->comments as $c)
+                    @foreach($produk->rating_details as $r)
                         <div class="border border-gray-200 rounded-xl p-4 bg-gray-50">
-                            <div class="text-gray-600 text-xs mt-1">{{ $c->created_at ?? '' }}</div>
-                            <div class="mt-2">{{ $c->comment ?? '' }}</div>
+                            <div class="font-semibold text-gray-800">{{ $r->user_name ?? 'Pengguna' }}</div>
+                            <div class="text-gray-600 text-xs mt-1">{{ optional($r->created_at)->format('d M Y H:i') }}</div>
+                            <div class="mt-2">{{ $r->comment ?? '-' }}</div>
                         </div>
                     @endforeach
                 </div>
@@ -479,6 +479,9 @@ let qty = 1;
 let modalQty = 1;
 let selectedVariant = '{{ $produk->varian_array[0] ?? '' }}';
 let selectedModalVariant = '-';
+
+
+
 
 // ================= ELEMENT =================
 const qtyValue = document.getElementById('qtyValue');
