@@ -1,6 +1,10 @@
 <x-header />
 
 <!-- ================= DETAIL PRODUCT SECTION ================= -->
+<!--
+    CATATAN: Mulai dari section ini, tambahkan komentar agar mudah ditelusuri.
+    Tujuan: Menampilkan semua bagian (struktur blade/html/js) dengan jelas.
+-->
 <section class="max-w-[1320px] mx-auto px-6 mt-12">
     <div class="grid md:grid-cols-2 gap-16 items-start">
 
@@ -194,6 +198,38 @@
 </section>
 
 <!-- ================= PRODUK LAIN ================= -->
+<!--
+    CATATAN TAMBAHAN:
+    Di bawah ini adalah bagian rating/comment (dimunculkan sebelum produk lain) supaya semua bagian bisa terlihat jelas.
+    Silakan sesuaikan teks rating bila model/atribut yang dipakai berbeda.
+-->
+<!-- ================= RATING COMMENT (DITAMPILKAN SEBELUM PRODUK LAIN) ================= -->
+<section class="max-w-[1320px] mx-auto px-6 mt-8">
+    <div class="bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-6">
+        <h2 class="text-2xl font-bold text-gray-800">Rating & Komentar</h2>
+        <p class="text-sm text-gray-500 mt-1">
+            Rating saat ini: {{ $produk->rating ?? 0 }}
+        </p>
+
+        <div class="mt-4 text-gray-700 text-sm leading-7">
+            <!-- Jika ada relasi comments/ulasan, tampilkan di sini -->
+            @if(isset($produk->comments) && !empty($produk->comments))
+                <div class="space-y-4">
+                    @foreach($produk->comments as $c)
+                        <div class="border border-gray-200 rounded-xl p-4 bg-gray-50">
+                            <div class="font-semibold text-gray-800">{{ $c->user_name ?? 'Pengguna' }}</div>
+                            <div class="text-gray-600 text-xs mt-1">{{ $c->created_at ?? '' }}</div>
+                            <div class="mt-2">{{ $c->comment ?? '' }}</div>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <p class="text-gray-500">Belum ada komentar untuk produk ini.</p>
+            @endif
+        </div>
+    </div>
+</section>
+
 <section class="max-w-[1320px] mx-auto px-6 mt-12 mb-20">
     <div class="flex items-center justify-between mb-6">
         <div>
@@ -233,6 +269,7 @@
 <p class="text-xs text-gray-500 mt-1">
     🔥 {{ $item->total_terjual ?? 0 }} terjual
 </p>
+
                 @if(!empty($item->varian_array) && count($item->varian_array) > 0)
                     <div class="flex flex-wrap gap-2 mt-3">
                         @foreach(array_slice($item->varian_array, 0, 2) as $v)
@@ -451,6 +488,10 @@ const plusQty = document.getElementById('plusQty');
 
 const productModal = document.getElementById('productModal');
 const closeProductModalBtn = document.getElementById('closeProductModal');
+
+
+
+
 
 const modalProductId = document.getElementById('modalProductId');
 const modalProductName = document.getElementById('modalProductName');
