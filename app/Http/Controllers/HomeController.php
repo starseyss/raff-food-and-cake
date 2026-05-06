@@ -90,7 +90,7 @@ $produk->rating_details = DB::table('ratings')
     ->where('ratings.product_id', $produk->id)
     ->select(
         'ratings.*',
-        'users.username as user_name'
+        'users.name as user_name'
     )
     ->orderBy('ratings.created_at', 'desc')
     ->get();
