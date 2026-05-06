@@ -217,8 +217,7 @@
                 <div class="space-y-4">
                     @foreach($produk->comments as $c)
                         <div class="border border-gray-200 rounded-xl p-4 bg-gray-50">
-                            <div class="font-semibold text-gray-800">{{ $c->user_name ?? 'Pengguna' }}</div>
-                            <div class="text-gray-600 text-xs mt-1">{{ $c->created_at ?? '' }}</div>
+<div class="text-gray-600 text-xs mt-1">{{ $c->created_at ?? '' }}</div>
                             <div class="mt-2">{{ $c->comment ?? '' }}</div>
                         </div>
                     @endforeach
