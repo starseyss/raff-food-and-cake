@@ -28,7 +28,7 @@ class ContactController extends Controller
         ]);
 
         // Kirim email ke raff.support@gmail.com
-        Mail::to('raff.support@gmail.com')->send(new ContactMail($data));
+        Mail::to('nabillkysn@gmail.com')->send(new ContactMail($data));
 
         return back()->with('success', 'Pesan berhasil dikirim! Tim kami akan segera menghubungi Anda.');
     }
