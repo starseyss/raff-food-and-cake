@@ -221,15 +221,37 @@
 
                 <div class="border border-gray-200 rounded-xl p-4 bg-gray-50">
 
-                    <div class="font-semibold text-gray-800">
-                        {{ $r->user_name ?? 'Pengguna' }}
+                    <!-- USER -->
+                    <div class="flex items-center justify-between">
+
+                        <div class="font-semibold text-gray-800">
+                            {{ $r->user_name ?? 'Pengguna' }}
+                        </div>
+
+                        <!-- BINTANG -->
+                        <div class="flex items-center gap-1 text-yellow-400 text-sm">
+
+                            @for($i = 1; $i <= 5; $i++)
+
+                                @if($i <= $r->rating)
+                                    ★
+                                @else
+                                    <span class="text-gray-300">★</span>
+                                @endif
+
+                            @endfor
+
+                        </div>
+
                     </div>
 
+                    <!-- TANGGAL -->
                     <div class="text-gray-600 text-xs mt-1">
                         {{ \Carbon\Carbon::parse($r->created_at)->format('d M Y H:i') }}
                     </div>
 
-                    <div class="mt-2">
+                    <!-- KOMENTAR -->
+                    <div class="mt-3 text-gray-700 leading-6">
                         {{ $r->comment ?? '-' }}
                     </div>
 
