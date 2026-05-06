@@ -211,21 +211,43 @@
             Rating saat ini: {{ $produk->rating ?? 0 }}
         </p>
 
-        <div class="mt-4 text-gray-700 text-sm leading-7">
-            @if(isset($produk->rating_details) && !empty($produk->rating_details))
-                <div class="space-y-4">
-                    @foreach($produk->rating_details as $r)
-                        <div class="border border-gray-200 rounded-xl p-4 bg-gray-50">
-                            <div class="font-semibold text-gray-800">{{ $r->user_name ?? 'Pengguna' }}</div>
-                            <div class="text-gray-600 text-xs mt-1">{{ optional($r->created_at)->format('d M Y H:i') }}</div>
-                            <div class="mt-2">{{ $r->comment ?? '-' }}</div>
-                        </div>
-                    @endforeach
+<div class="mt-4 text-gray-700 text-sm leading-7">
+
+    @if($produk->rating_details->count() > 0)
+
+        <div class="space-y-4">
+
+            @foreach($produk->rating_details as $r)
+
+                <div class="border border-gray-200 rounded-xl p-4 bg-gray-50">
+
+                    <div class="font-semibold text-gray-800">
+                        {{ $r->user_name ?? 'Pengguna' }}
+                    </div>
+
+                    <div class="text-gray-600 text-xs mt-1">
+                        {{ \Carbon\Carbon::parse($r->created_at)->format('d M Y H:i') }}
+                    </div>
+
+                    <div class="mt-2">
+                        {{ $r->comment ?? '-' }}
+                    </div>
+
                 </div>
-            @else
-                <p class="text-gray-500">Belum ada komentar untuk produk ini.</p>
-            @endif
+
+            @endforeach
+
         </div>
+
+    @else
+
+        <p class="text-gray-500">
+            Belum ada komentar untuk produk ini.
+        </p>
+
+    @endif
+
+</div>
     </div>
 </section>
 
@@ -475,11 +497,11 @@
 
 <script>
 // ================= GLOBAL =================
-let qty = 1;
+let qty = 1;    
 let modalQty = 1;
 let selectedVariant = '{{ $produk->varian_array[0] ?? '' }}';
 let selectedModalVariant = '-';
-
+    
 
 
 

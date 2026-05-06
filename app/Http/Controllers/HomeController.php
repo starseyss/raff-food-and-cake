@@ -84,8 +84,20 @@ class HomeController extends Controller
         $terjual = $this->getTerjualData();
         $rating = $this->getRatingData();
 
+        // ambil semua komentar untuk produk ini (read-only)
+$produk->rating_details = DB::table('ratings')
+    ->leftJoin('users', 'ratings.user_id', '=', 'users.id')
+    ->where('ratings.product_id', $produk->id)
+    ->select(
+        'ratings.*',
+        'users.username as user_name'
+    )
+    ->orderBy('ratings.created_at', 'desc')
+    ->get();
+
         $produk->total_terjual = $terjual[$produk->id] ?? 0;
         $produk->rating = $rating[$produk->id] ?? 0;
+
 
         $produkLain = Produk::where('id', '!=', $id)
             ->where('is_available', true)
@@ -129,7 +141,7 @@ public function search(Request $request)
     return view('landing.menu', compact('produk', 'q'));
 }
 
-// ================= MENU / FILTER =================
+// ================= MENU / FILTER =================    
 public function menu(Request $request)
 {
     $query = Produk::query()->where('is_available', true);
