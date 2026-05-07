@@ -331,3 +331,246 @@ if (profileBtn && profileDropdown) {
     });
 }
 </script>
+<script>
+// ================= BANNER SEARCH - FILTER LANGSUNG DI HALAMAN INI =================
+function filterProducts(query) {
+    query = query.toLowerCase().trim();
+    
+    var cards = document.querySelectorAll('.product-card');
+    var found = false;
+    
+    cards.forEach(function(card) {
+        var name = card.dataset.name || '';
+        var desc = card.dataset.description || '';
+        
+        if (query === '' || name.toLowerCase().includes(query) || desc.toLowerCase().includes(query)) {
+            card.classList.remove('hidden');
+            found = true;
+        } else {
+            card.classList.add('hidden');
+        }
+    });
+    
+    // juga filter produk di section 4 cards terakhir
+    var fourCards = document.querySelectorAll('.four-card-item');
+    fourCards.forEach(function(card) {
+        var name = card.dataset.name || '';
+        
+        if (query === '' || name.toLowerCase().includes(query)) {
+            card.classList.remove('hidden');
+        } else {
+            card.classList.add('hidden');
+        }
+    });
+}
+
+// Get login status from hidden input
+var isLoggedIn = document.getElementById('loginStatus').value === '1';
+
+var modalQty = 1;
+var selectedVariant = '-';
+
+const productModal = document.getElementById('productModal');
+const closeProductModalBtn = document.getElementById('closeProductModal');
+
+const modalProductId = document.getElementById('modalProductId');
+const modalProductName = document.getElementById('modalProductName');
+const modalProductDescription = document.getElementById('modalProductDescription');
+const modalProductImage = document.getElementById('modalProductImage');
+
+const modalQtyValue = document.getElementById('modalQtyValue');
+const modalMinusQty = document.getElementById('modalMinusQty');
+const modalPlusQty = document.getElementById('modalPlusQty');
+
+const variantContainer = document.getElementById('modalVariantContainer');
+const selectedVariantText = document.getElementById('modalSelectedVariant');
+
+const priceContainer = document.getElementById('modalPriceContainer');
+
+const addToCartBtn = document.getElementById('addToCartBtn');
+const successPopup = document.getElementById('successPopup');
+const closeSuccessPopupBtn = document.getElementById('closeSuccessPopup');
+
+function getImagePath(src) {
+    try {
+        return new URL(src).pathname;
+    } catch (e) {
+        return src;
+    }
+}
+
+// ================= OPEN MODAL =================
+function openProductModalFromButton(btn) {
+    openProductModal(
+        btn.dataset.id,
+        btn.dataset.name,
+        btn.dataset.price,
+        btn.dataset.image,
+        btn.dataset.description,
+        btn.dataset.variant,
+        btn.dataset.isPromo,
+        btn.dataset.diskon
+    );
+}
+
+function openProductModal(
+    id,
+    name,
+    price,
+    image,
+    description,
+    variants = '',
+    isPromo = 0,
+    diskon = 0
+) {
+
+    modalProductId.value = id;
+    modalProductName.textContent = name;
+    modalProductDescription.textContent = description || 'Produk tersedia untuk dipesan.';
+    modalProductImage.src = image;
+
+    modalQty = 1;
+    modalQtyValue.textContent = modalQty;
+
+    // ================= HARGA =================
+    let hargaAsli = Number(price) || 0;
+    let hargaFinal = hargaAsli;
+
+    if (isPromo == 1 && diskon > 0) {
+        hargaFinal = hargaAsli - (hargaAsli * diskon / 100);
+    }
+
+    // simpan harga final ke tombol (INI KUNCI UTAMA 🔥)
+    addToCartBtn.dataset.price = Math.round(hargaFinal);
+
+    // tampilan harga
+    let htmlHarga = '';
+
+    if (isPromo == 1 && diskon > 0) {
+        htmlHarga = `
+            <p class="text-gray-400 line-through text-sm">
+                Rp ${hargaAsli.toLocaleString('id-ID')}
+            </p>
+
+            <p class="text-[#F59A40] font-bold text-xl">
+                Rp ${Math.round(hargaFinal).toLocaleString('id-ID')}
+            </p>
+
+            <p class="text-red-500 text-sm font-semibold">
+                Diskon ${diskon}%
+            </p>
+        `;
+    } else {
+        htmlHarga = `
+            <p class="text-[#F59A40] font-bold text-xl">
+                Rp ${hargaAsli.toLocaleString('id-ID')}
+            </p>
+        `;
+    }
+
+    priceContainer.innerHTML = htmlHarga;
+
+    // ================= VARIAN =================
+    variantContainer.innerHTML = '';
+
+    let variantArray = variants ? variants.split(',') : [];
+
+    selectedVariant = variantArray.length ? variantArray[0].trim() : '-';
+    selectedVariantText.textContent = selectedVariant;
+
+    variantArray.forEach((v, index) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = v.trim();
+
+        btn.className = `px-4 py-1 rounded-full border text-sm transition ${
+            index === 0
+                ? 'border-[#F59A40] bg-[#FFF3E8] text-[#F59A40]'
+                : 'border-gray-300 text-gray-700 hover:border-[#F59A40] hover:text-[#F59A40]'
+        }`;
+
+        btn.onclick = () => {
+            selectedVariant = v.trim();
+            selectedVariantText.textContent = selectedVariant;
+
+            variantContainer.querySelectorAll('button').forEach(b => {
+                b.classList.remove('border-[#F59A40]', 'bg-[#FFF3E8]', 'text-[#F59A40]');
+                b.classList.add('border-gray-300', 'text-gray-700');
+            });
+
+            btn.classList.add('border-[#F59A40]', 'bg-[#FFF3E8]', 'text-[#F59A40]');
+        };
+
+        variantContainer.appendChild(btn);
+    });
+
+    productModal.classList.remove('hidden');
+}
+
+// ================= CLOSE MODAL =================
+function closeProductModal() {
+    productModal.classList.add('hidden');
+}
+
+closeProductModalBtn.addEventListener('click', closeProductModal);
+
+productModal.addEventListener('click', function (e) {
+    if (e.target === productModal) {
+        closeProductModal();
+    }
+});
+
+// ================= QTY =================
+modalMinusQty.addEventListener('click', () => {
+    if (modalQty > 1) {
+        modalQty--;
+        modalQtyValue.textContent = modalQty;
+    }
+});
+
+modalPlusQty.addEventListener('click', () => {
+    modalQty++;
+    modalQtyValue.textContent = modalQty;
+});
+
+// ================= ADD TO CART (FIXED 🔥) =================
+addToCartBtn.addEventListener('click', () => {
+    // Check if user is logged in
+    if (!isLoggedIn) {
+        showLoginRequiredPopup();
+        return;
+    }
+
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    const product = {
+        id: modalProductId.value,
+        name: modalProductName.textContent,
+        price: Number(addToCartBtn.dataset.price),
+        image: getImagePath(modalProductImage.src),
+        qty: modalQty,
+        variant: selectedVariant
+    };
+
+    const existingIndex = cart.findIndex(item =>
+        item.id === product.id && item.variant === product.variant
+    );
+
+    if (existingIndex !== -1) {
+        cart[existingIndex].qty += product.qty;
+    } else {
+        cart.push(product);
+    }
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+
+    closeProductModal();
+
+    // 🔥 INI KUNCI NYA
+    showSuccessPopup(product);
+
+    if (typeof updateCartCount === 'function') {
+        updateCartCount();
+    }
+});
+</script>
