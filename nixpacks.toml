@@ -3,8 +3,8 @@ nixPkgs = [
   "php82",
   "php82Extensions.gd",
   "php82Extensions.pdo_mysql",
-  "nodejs_22",
-  "composer"
+  "php82Packages.composer",
+  "nodejs_22"
 ]
 
 [phases.install]
