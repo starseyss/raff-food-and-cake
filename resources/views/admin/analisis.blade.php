@@ -56,19 +56,21 @@
                 </form>
 
                 <!-- EXPORT -->
-                <button
-                    class="bg-white border border-gray-200
-                           rounded-2xl px-5 py-3
-                           flex items-center gap-3
-                           hover:bg-gray-50 transition shadow-sm">
-
+                <form method="GET" action="{{ route('admin.analisis.export-pdf') }}" class="bg-white border border-gray-200 rounded-2xl px-5 py-3 flex items-center gap-3 shadow-sm hover:bg-gray-50 transition">
                     <span>📥</span>
-
-                    <span class="text-sm font-semibold">
-                        Export Laporan
-                    </span>
-
-                </button>
+                    <select name="month" class="bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-orange-400">
+                        @php
+                            $months = ['01'=>'Januari','02'=>'Februari','03'=>'Maret','04'=>'April','05'=>'Mei','06'=>'Juni','07'=>'Juli','08'=>'Agustus','09'=>'September','10'=>'Oktober','11'=>'November','12'=>'Desember'];
+                        @endphp
+                        @foreach($months as $val => $label)
+                            <option value="{{ $val }}" {{ (request('month')===$val)?'selected':'' }}>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                    <input type="hidden" name="year" value="2026">
+                    <button type="submit" class="text-sm font-semibold text-gray-800 hover:text-orange-600">
+                        Export PDF
+                    </button>
+                </form>
 
 
             </div>
@@ -347,13 +349,14 @@
                     <!-- GRID -->
                     <div class="absolute inset-0 flex flex-col justify-between">
 
-                        <div class="border-b border-dashed border-gray-200"></div>
+                <div class="border-b border-dashed border-gray-200"></div>
                         <div class="border-b border-dashed border-gray-200"></div>
                         <div class="border-b border-dashed border-gray-200"></div>
                         <div class="border-b border-dashed border-gray-200"></div>
                         <div class="border-b border-dashed border-gray-200"></div>
 
                     </div>
+
 
                     <!-- BARS -->
                     <div class="absolute inset-0 flex items-end gap-3">
@@ -362,10 +365,8 @@
 
                         <div class="flex-1 flex flex-col justify-end h-full">
 
-                            <div class="bg-gradient-to-t from-orange-500 to-orange-300
-                                        rounded-t-2xl"
-                                 style="height:
-                                 {{ max($monthlySales) > 0 ? ($sale / max($monthlySales)) * 100 : 0 }}%">
+                            <div class="bg-gradient-to-t from-orange-500 to-orange-300 rounded-t-2xl"
+                                 style="height: {{ max($monthlySales) > 0 ? ($sale / max($monthlySales)) * 100 : 0 }}%">
                             </div>
 
                         </div>
@@ -373,6 +374,7 @@
                         @endforeach
 
                     </div>
+
 
                 </div>
 

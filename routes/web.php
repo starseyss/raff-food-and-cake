@@ -109,6 +109,10 @@ Route::get('/pesanan', [OrderController::class, 'index'])
     Route::post('/orders/{id}/start-delivery', [OrderController::class, 'startDelivery'])->name('admin.start-delivery');
     Route::post('/orders/{id}/mark-delivered', [OrderController::class, 'markDelivered'])->name('admin.mark-delivered');
 Route::get('/analisis', [AnalisisController::class, 'index'])->name('admin.analisis');
+    Route::get('/analisis/export-pdf', [AnalisisController::class, 'exportPdfByMonth'])->name('admin.analisis.export-pdf');
+
+    // Export PDF Analisis (pilih bulan)
+    Route::get('/analisis/export', [AnalisisController::class, 'exportPdfByMonth'])->name('admin.analisis.export-pdf');
     Route::get('/profil', fn() => view('admin.profil'))->name('admin.profil');
     Route::put('/orders/{id}/status', [OrderController::class, 'updateStatus'])
         ->name('admin.updateStatus');

@@ -1,169 +1,129 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Services;
 
-use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\Produk;
 use Carbon\Carbon;
 
-use App\Services\AnalisisExportService;
-
-class AnalisisController extends Controller
+class AnalisisExportService
 {
-    public function index(Request $request)
+    public function getAnalisisDataForMonth(int $year, int $month): array
     {
-        // ================= DATE RANGE =================
-        $validated = $request->validate([
-            'from' => ['nullable', 'date_format:Y-m-d'],
-            'to' => ['nullable', 'date_format:Y-m-d'],
-        ]);
+        $startDate = Carbon::createFromDate($year, $month, 1)->startOfDay();
+        $endDate = Carbon::createFromDate($year, $month, 1)->endOfMonth()->endOfDay();
 
-        $fromInput = $validated['from'] ?? null;
-        $toInput = $validated['to'] ?? null;
-
-        $defaultEndDate = Carbon::now();
-        $defaultStartDate = Carbon::now()->subDays(7);
-
-        $endDate = $toInput ? Carbon::parse($toInput)->endOfDay() : $defaultEndDate->copy()->endOfDay();
-        $startDate = $fromInput ? Carbon::parse($fromInput)->startOfDay() : $defaultStartDate->copy()->startOfDay();
-
-        if ($startDate->greaterThan($endDate)) {
-            // jika user isi dari > to, swap supaya tetap jalan
-            [$startDate, $endDate] = [$endDate, $startDate];
-        }
-
-        // Periode pembanding: panjang sama dengan range utama
-        $days = $startDate->diffInDays($endDate) + 1; // inklusif
+        // Previous period with same length
+        $days = $startDate->diffInDays($endDate) + 1;
         $prevEndDate = $startDate->copy()->subDay()->endOfDay();
         $prevStartDate = $prevEndDate->copy()->subDays($days - 1)->startOfDay();
-
-        // ================= TOTAL SALES =================
 
         $totalSales = Order::whereBetween('created_at', [$startDate, $endDate])
             ->where('payment_status', 'paid')
             ->sum('total');
-            
+
         $prevTotalSales = Order::whereBetween('created_at', [$prevStartDate, $prevEndDate])
             ->where('payment_status', 'paid')
             ->sum('total');
 
-        $salesChange = $prevTotalSales > 0 
-            ? round(($totalSales - $prevTotalSales) / $prevTotalSales * 100, 1) 
+        $salesChange = $prevTotalSales > 0
+            ? round(($totalSales - $prevTotalSales) / $prevTotalSales * 100, 1)
             : 0;
 
-        // ================= TOTAL ORDERS =================
         $totalOrders = Order::whereBetween('created_at', [$startDate, $endDate])
             ->count();
-            
+
         $prevTotalOrders = Order::whereBetween('created_at', [$prevStartDate, $prevEndDate])
             ->count();
 
-        $ordersChange = $prevTotalOrders > 0 
-            ? round(($totalOrders - $prevTotalOrders) / $prevTotalOrders * 100, 1) 
+        $ordersChange = $prevTotalOrders > 0
+            ? round(($totalOrders - $prevTotalOrders) / $prevTotalOrders * 100, 1)
             : 0;
 
-        // ================= AVERAGE ORDER VALUE =================
         $avgOrder = $totalOrders > 0 ? round($totalSales / $totalOrders) : 0;
         $prevAvgOrder = $prevTotalOrders > 0 ? round($prevTotalSales / $prevTotalOrders) : 0;
-        
-        $avgChange = $prevAvgOrder > 0 
-            ? round(($avgOrder - $prevAvgOrder) / $prevAvgOrder * 100, 1) 
+
+        $avgChange = $prevAvgOrder > 0
+            ? round(($avgOrder - $prevAvgOrder) / $prevAvgOrder * 100, 1)
             : 0;
 
-        // ================= COMPLETED ORDERS =================
         $completedOrders = Order::whereBetween('created_at', [$startDate, $endDate])
             ->where('order_status', 'delivered')
             ->count();
-            
+
         $totalDelivered = $totalOrders > 0 ? round($completedOrders / $totalOrders * 100) : 0;
 
-// ================= LATE ORDERS =================
-        // Late = delivered_at > tanggal_penerimaan
         $lateOrders = Order::whereBetween('created_at', [$startDate, $endDate])
             ->whereNotNull('delivered_at')
             ->whereNotNull('tanggal_penerimaan')
             ->get()
-            ->filter(function($order) {
+            ->filter(function ($order) {
                 $deliveredAt = Carbon::parse($order->delivered_at);
                 $tanggalPenerimaan = Carbon::parse($order->tanggal_penerimaan);
                 return $deliveredAt->greaterThan($tanggalPenerimaan);
             })
             ->count();
-            
+
         $prevLateOrders = Order::whereBetween('created_at', [$prevStartDate, $prevEndDate])
             ->whereNotNull('delivered_at')
             ->whereNotNull('tanggal_penerimaan')
             ->get()
-            ->filter(function($order) {
+            ->filter(function ($order) {
                 $deliveredAt = Carbon::parse($order->delivered_at);
                 $tanggalPenerimaan = Carbon::parse($order->tanggal_penerimaan);
                 return $deliveredAt->greaterThan($tanggalPenerimaan);
             })
             ->count();
 
-        $lateChange = $prevLateOrders > 0 
-            ? round(($lateOrders - $prevLateOrders) / $prevLateOrders * 100, 1) 
+        $lateChange = $prevLateOrders > 0
+            ? round(($lateOrders - $prevLateOrders) / $prevLateOrders * 100, 1)
             : 0;
 
-        // ================= MONTHLY SALES CHART DATA =================
-        $monthlySales = [];
-        $chartLabels = [];
-        
-        for ($i = 6; $i >= 0; $i--) {
-            $month = Carbon::now()->subMonths($i);
-            $monthLabel = $month->format('M');
-            $chartLabels[] = $monthLabel;
-            
-            $monthlySales[] = Order::whereMonth('created_at', $month->month)
-                ->whereYear('created_at', $month->year)
-                ->where('payment_status', 'paid')
-                ->sum('total');
-        }
+        $latePercentage = $totalOrders > 0 ? round($lateOrders / $totalOrders * 100) : 0;
 
-        // ================= SALES BY CATEGORY =================
+        // Category sales
         $categorySales = [];
         $categoryNames = ['Masakan', 'Kue Kering', 'Minuman', 'Lainnya'];
-        
-        // Get all paid orders
         $categoryOrders = Order::whereBetween('created_at', [$startDate, $endDate])
             ->where('payment_status', 'paid')
             ->get();
-            
+
         $categoryTotals = [
             'Masakan' => 0,
             'Kue Kering' => 0,
             'Minuman' => 0,
-            'Lainnya' => 0
+            'Lainnya' => 0,
         ];
-        
+
         $totalCategorySales = 0;
-        
+
         foreach ($categoryOrders as $order) {
             $items = json_decode($order->cart_data, true);
             if (!$items) continue;
-            
+
             foreach ($items as $item) {
                 $productName = $item['name'] ?? 'Unknown';
                 $price = $item['price'] ?? 0;
                 $qty = $item['qty'] ?? 1;
                 $subtotal = $price * $qty;
-                
-                // Try to find product category
+
                 $product = Produk::where('nama_produk', $productName)->first();
                 $kategori = $product ? $product->kategori : null;
-                
-                // Fallback: guess category from product name
+
                 if (!$kategori) {
                     if (stripos($productName, 'kue') !== false || stripos($productName, 'cookies') !== false) {
                         $kategori = 'Kue Kering';
-                    } elseif (stripos($productName, 'minum') !== false || stripos($productName, 'es') !== false || stripos($productName, 'jus') !== false) {
+                    } elseif (
+                        stripos($productName, 'minum') !== false ||
+                        stripos($productName, 'es') !== false ||
+                        stripos($productName, 'jus') !== false
+                    ) {
                         $kategori = 'Minuman';
                     } else {
                         $kategori = 'Masakan';
                     }
                 }
-                
+
                 if (isset($categoryTotals[$kategori])) {
                     $categoryTotals[$kategori] += $subtotal;
                 } else {
@@ -172,35 +132,31 @@ class AnalisisController extends Controller
                 $totalCategorySales += $subtotal;
             }
         }
-        
+
         foreach ($categoryNames as $cat) {
             $value = $categoryTotals[$cat] ?? 0;
             $percentage = $totalCategorySales > 0 ? round($value / $totalCategorySales * 100) : 0;
             $categorySales[] = [
                 'name' => $cat,
                 'value' => $value,
-                'percentage' => $percentage
+                'percentage' => $percentage,
             ];
         }
 
-        // ================= SALES BY AREA =================
-        $areaSales = [];
-        
+        // Area sales (top 5)
         $ordersWithAddress = Order::whereBetween('created_at', [$startDate, $endDate])
             ->where('payment_status', 'paid')
             ->whereNotNull('alamat')
             ->get();
-            
+
         $areaTotals = [];
-        
         foreach ($ordersWithAddress as $order) {
             $alamat = $order->alamat;
             $total = $order->total;
-            
-            // Extract area (e.g., "Bogor Tengah" from address)
+
             $area = 'Lainnya';
             $alamatLower = strtolower($alamat);
-            
+
             if (stripos($alamatLower, 'bogor tengah') !== false) {
                 $area = 'Bogor Tengah';
             } elseif (stripos($alamatLower, 'bogor timur') !== false) {
@@ -212,139 +168,190 @@ class AnalisisController extends Controller
             } elseif (stripos($alamatLower, 'bogor selatan') !== false) {
                 $area = 'Bogor Selatan';
             }
-            
+
             if (!isset($areaTotals[$area])) {
                 $areaTotals[$area] = 0;
             }
             $areaTotals[$area] += $total;
         }
-        
-        // Sort by value descending
+
         arsort($areaTotals);
-        
         $areaSales = [];
         foreach (array_slice($areaTotals, 0, 5, true) as $area => $value) {
-            $areaSales[] = [
-                'area' => $area,
-                'value' => $value
-            ];
+            $areaSales[] = ['area' => $area, 'value' => $value];
         }
 
-        // ================= TOP SELLING PRODUCTS =================
+        // Top products
         $productCounts = [];
-        
         foreach ($categoryOrders as $order) {
             $items = json_decode($order->cart_data, true);
             if (!$items) continue;
-            
+
             foreach ($items as $item) {
                 $name = $item['name'] ?? 'Produk';
                 $qty = $item['qty'] ?? 1;
-                
+
                 if (!isset($productCounts[$name])) {
                     $productCounts[$name] = 0;
                 }
                 $productCounts[$name] += $qty;
             }
         }
-        
+
         arsort($productCounts);
-        
         $topProducts = [];
         foreach (array_slice($productCounts, 0, 5, true) as $name => $qty) {
             $product = Produk::where('nama_produk', $name)->first();
             $topProducts[] = [
                 'name' => $name,
                 'qty' => $qty,
-                'image' => $product ? $product->foto : 'default.png'
+                'image' => $product ? $product->foto : 'default.png',
             ];
         }
 
-        // ================= DRIVER PERFORMANCE =================
+        // order detail list (daftar order yang banyak)
+        $orders = Order::whereBetween('created_at', [$startDate, $endDate])
+            ->where('payment_status', 'paid')
+            ->orderBy('created_at', 'desc')
+            ->get(['id','created_at','total','payment_status','order_status']);
+
+        // Driver performance (top 5, rating demo)
+
         $driverPerformance = [];
-        
         $ordersWithDriver = Order::whereBetween('created_at', [$startDate, $endDate])
             ->whereNotNull('driver')
             ->where('order_status', 'delivered')
             ->get();
-            
-        $driverRatings = [];
-        
-        // Since driver field doesn't have rating, we'll use delivery performance
-        // For now, generate sample data or use order count as proxy
+
         $driverCounts = [];
-        
         foreach ($ordersWithDriver as $order) {
             $driver = $order->driver;
             if (!$driver) continue;
-            
-            if (!isset($driverCounts[$driver])) {
-                $driverCounts[$driver] = 0;
-            }
+            if (!isset($driverCounts[$driver])) $driverCounts[$driver] = 0;
             $driverCounts[$driver]++;
         }
-        
+
         arsort($driverCounts);
-        
-        // For demo, we'll show sample driver names with generated ratings
-        // In production, you'd have a driver table with ratings
         $sampleDrivers = array_slice($driverCounts, 0, 5, true);
-        
+
         foreach ($sampleDrivers as $driver => $count) {
-            // Generate random rating for demo (4.0 - 5.0)
             $rating = number_format(4.0 + (lcg_value() * 1.0), 1);
             $driverPerformance[] = [
                 'name' => $driver,
                 'rating' => $rating,
-                'orders' => $count
+                'orders' => $count,
             ];
         }
 
-        // ================= FORMAT DATE RANGE =================
-        $dateRange = $startDate->format('d M') . ' - ' . $endDate->format('d M Y');
-        $prevDateRange = $prevStartDate->format('d M') . ' - ' . $prevEndDate->format('d M Y');
+        $dateRangeLabel = $startDate->format('d M Y') . ' - ' . $endDate->format('d M Y');
 
-        // ================= INSIGHTS =================
+        // Insights
+
         $insights = [];
-        
         if ($salesChange > 0) {
             $insights[] = [
                 'type' => 'success',
                 'title' => 'Penjualan meningkat ' . abs($salesChange) . '%',
-                'desc' => 'Dibandingkan periode lalu...'
+                'desc' => 'Dibandingkan periode lalu...',
             ];
         } elseif ($salesChange < 0) {
             $insights[] = [
                 'type' => 'warning',
                 'title' => 'Penjualan menurun ' . abs($salesChange) . '%',
-                'desc' => 'Dibandingkan periode lalu...'
+                'desc' => 'Dibandingkan periode lalu...',
             ];
         }
-        
+
         if ($lateOrders > 0) {
-            $latePercentage = $totalOrders > 0 ? round($lateOrders / $totalOrders * 100) : 0;
             $insights[] = [
                 'type' => 'warning',
                 'title' => 'Perhatikan order terlambat',
-                'desc' => 'Ada ' . $lateOrders . ' order (' . $latePercentage . '%) yang terlambat.'
+                'desc' => 'Ada ' . $lateOrders . ' order (' . $latePercentage . '%) yang terlambat.',
             ];
         }
-        
+
         if (!empty($topProducts) && $topProducts[0]['qty'] > 10) {
             $insights[] = [
                 'type' => 'info',
                 'title' => $topProducts[0]['name'] . ' paling laris',
-                'desc' => 'Menu ini menyumbang ' . $topProducts[0]['qty'] . ' pesanan.'
+                'desc' => 'Menu ini menyumbang ' . $topProducts[0]['qty'] . ' pesanan.',
             ];
         }
 
-        // ================= COMPACT ALL VARIABLES =================
-        return view('admin.analisis', compact(
-            // Date ranges
-            'dateRange',
-            'prevDateRange',
-            
-            // Summary cards
+        // Payment management (ambil subset untuk PDF)
+        $paymentBaseQuery = Order::whereBetween('created_at', [$startDate, $endDate]);
+
+        $paymentStats = [
+            'total_transaction' => (clone $paymentBaseQuery)->count(),
+            'pending' => (clone $paymentBaseQuery)->where('payment_status', 'pending')->count(),
+            'paid' => (clone $paymentBaseQuery)->where('payment_status', 'paid')->count(),
+            'failed_expired' => (clone $paymentBaseQuery)->whereIn('payment_status', ['expired', 'cancelled', 'refunded'])->count(),
+        ];
+
+        $ordersPayment = (clone $paymentBaseQuery)
+            ->orderBy('created_at', 'desc')
+            ->limit(30)
+            ->get([
+                'id',
+                'midtrans_order_id',
+                'nama_pemesan',
+                'payment_method',
+                'payment_status',
+                'total',
+                'created_at',
+            ]);
+
+        // Product snapshot (ringkas, biar mirip product.blade.php)
+        $productTotal = Produk::count();
+        $productActive = Produk::where('is_available', 1)->count();
+        $productUnavailable = Produk::where('is_available', 0)->count();
+
+        // best seller product (pakai qty dari cart_data pada periode bulan ini)
+        $bestSellerId = null;
+        $productCountsForBest = [];
+        foreach ($categoryOrders as $o) {
+            $items = json_decode($o->cart_data, true);
+            if (!$items) continue;
+            foreach ($items as $it) {
+                $name = $it['name'] ?? null;
+                if (!$name) continue;
+                $productCountsForBest[$name] = ($productCountsForBest[$name] ?? 0) + ($it['qty'] ?? 1);
+            }
+        }
+        arsort($productCountsForBest);
+        if (!empty($productCountsForBest)) {
+            $bestSellerName = array_key_first($productCountsForBest);
+            $bestSellerProduk = Produk::where('nama_produk', $bestSellerName)->first();
+            $bestSellerId = $bestSellerProduk ? $bestSellerProduk->id : null;
+        }
+
+        $bestSellerName = $bestSellerId
+            ? (Produk::find($bestSellerId)?->nama_produk)
+            : (array_key_first($productCountsForBest) ?? '-');
+
+        // Dashboard snapshot yang paling relevan (jumlah transaksi bayar bulan ini)
+        $dashboardMonthlySales = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $dashboardMonthlySales[] = Order::whereYear('created_at', $year)
+                ->whereMonth('created_at', $i)
+                ->where('payment_status', 'paid')
+                ->sum('total');
+        }
+
+        // Order management snapshot (mirip list-order.blade.php)
+        $ordersManagement = Order::whereBetween('created_at', [$startDate, $endDate]);
+        $statsOrders = [
+            'total_orders' => (clone $ordersManagement)->count(),
+            'pending_orders' => (clone $ordersManagement)->where('order_status', 'order_created')->count(),
+            'processing' => (clone $ordersManagement)->where('order_status', 'processing')->count(),
+            'completed' => (clone $ordersManagement)->where('order_status', 'delivered')->count(),
+            'cancelled' => (clone $ordersManagement)->where('order_status', 'cancelled')->count(),
+        ];
+
+        return compact(
+            'startDate',
+            'endDate',
+            'dateRangeLabel',
             'totalSales',
             'salesChange',
             'totalOrders',
@@ -355,57 +362,23 @@ class AnalisisController extends Controller
             'totalDelivered',
             'lateOrders',
             'lateChange',
-            
-            // Chart data
-            'chartLabels',
-            'monthlySales',
-            
-            // Category data
+            'latePercentage',
             'categorySales',
             'totalCategorySales',
-            
-            // Area data
             'areaSales',
-            
-            // Products
             'topProducts',
-            
-            // Driver
             'driverPerformance',
-            
-            // Insights
-            'insights'
-        ));
-    }
-
-    public function exportPdfByMonth(Request $request)
-    {
-        $year = (int) ($request->input('year') ?? 2026);
-        $month = (int) ($request->input('month') ?? 5);
-        if ($month < 1 || $month > 12) {
-            abort(422, 'Bulan tidak valid');
-        }
-
-        $monthName = Carbon::createFromDate($year, $month, 1)->locale('id')->isoFormat('MMMM');
-
-        // gunakan service agar komputasi konsisten
-        $service = app(\App\Services\AnalisisExportService::class);
-        $data = $service->getAnalisisDataForMonth($year, $month);
-
-        // tambahan label
-        $data['monthName'] = $monthName;
-        $data['year'] = $year;
-        $data['printedAt'] = Carbon::now()->format('d M Y H:i');
-
-        // perbaiki dateRangeLabel untuk template PDF
-        $data['dateRangeLabel'] = $data['dateRangeLabel'];
-
-        $pdf = app('dompdf.wrapper');
-        $pdf->loadView('admin.analisis-pdf', $data);
-
-        $filename = 'Laporan-Analisis-' . ucfirst(strtolower($monthName)) . '-' . $year . '.pdf';
-
-        return $pdf->download($filename);
+            'insights',
+            'orders',
+            'paymentStats',
+            'ordersPayment',
+            'productTotal',
+            'productActive',
+            'productUnavailable',
+            'bestSellerName',
+            'statsOrders',
+            'dashboardMonthlySales'
+        );
     }
 }
 
