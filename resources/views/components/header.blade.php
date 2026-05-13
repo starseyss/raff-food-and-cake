@@ -2,332 +2,873 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+
     <title>RAFF Food & Cake</title>
-    <link rel="icon" href="/images/logo-raff.png?v=<?= time(); ?>" type="image/png">
-<link rel="shortcut icon" href="/images/logo-raff.png?v=<?= time(); ?>">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon"
+          href="/images/logo-raff.png?v=<?= time(); ?>"
+          type="image/png">
 
-    <!-- Tailwind -->
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <!-- GOOGLE FONT -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <!-- TAILWIND -->
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        body { font-family: 'Poppins', sans-serif; }
+
+        body{
+            font-family:'Poppins',sans-serif;
+        }
+
+        .menu-category-btn{
+            width:100%;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            text-align:left;
+            padding:14px 16px;
+            border-radius:18px;
+            transition:.2s;
+        }
+
+        .menu-category-btn:hover{
+            background:#FFF7ED;
+        }
+
+        .submenu-item{
+            display:block;
+            padding:10px 14px;
+            border-radius:12px;
+            font-size:14px;
+            color:#374151;
+            transition:.2s;
+        }
+
+        .submenu-item:hover{
+            background:#F3F4F6;
+        }
+
     </style>
+
 </head>
 
 <body class="bg-[#F5F5F5] text-black">
 
-<!-- ================= POPUP LOGIN (HANYA GUEST) ================= -->
-@guest
-<div id="welcomePopup"
-     class="fixed inset-0 bg-black/60 flex items-center justify-center z-[999] p-4">
+<!-- ================= HEADER ================= -->
+<header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-100 shadow-sm">
 
-    <div class="relative">
+    <div class="max-w-[1320px] mx-auto px-4 md:px-6">
 
-        <button id="closePopup"
-                class="absolute -top-2 -right-2 bg-white w-8 h-8 rounded-full
-                       flex items-center justify-center shadow text-black font-bold z-10">
-            ✕
-        </button>
+        <div class="h-[74px] flex items-center justify-between">
 
-        <a href="{{ route('login') }}">
-            <img src="{{ asset('images/welcome.png') }}"
-                 class="w-full max-w-[400px] rounded-2xl shadow-2xl cursor-pointer">
-        </a>
+            <!-- ================= LEFT ================= -->
+            <div class="flex items-center gap-10">
 
-    </div>
-</div>
-@endguest
-<header class="relative z-50 bg-white border-b border-gray-200">
+                <!-- MOBILE MENU BUTTON -->
+                <button id="menuBtn"
+                        class="md:hidden w-11 h-11 rounded-xl
+                               hover:bg-gray-100 transition
+                               flex items-center justify-center text-2xl">
 
-    <div class="max-w-[1320px] mx-auto px-3 md:px-6">
-
-        <!-- ================= BARIS ATAS ================= -->
-<div class="h-14 md:h-[60px] flex items-center justify-between text-[13px] md:text-[14px]">
-
-    <!-- LEFT SIDE -->
-    <div class="flex items-center gap-3">
-
-        <!-- HAMBURGER MOBILE -->
-        <button id="menuBtn"
-            class="md:hidden text-2xl min-w-[44px] min-h-[44px]
-                   flex items-center justify-center">
-            ☰
-        </button>
-
-        <!-- LOGO MOBILE -->
-        <a href="{{ route('home') }}"
-           class="md:hidden flex items-center">
-
-            <img src="{{ asset('images/rafflogo.png') }}"
-                 class="h-9 w-auto object-contain">
-        </a>
-
-        <!-- MENU DESKTOP -->
-        <nav class="hidden md:flex items-center gap-6 lg:gap-10 text-gray-500">
-
-            <a href="{{ route('home') }}" class="hover:text-black">
-                Home
-            </a>
-
-            <a href="{{ route('menu') }}" class="hover:text-black">
-                Menu
-            </a>
-
-            <a href="{{ route('pesanan') }}" class="hover:text-black">
-                Pesanan Saya
-            </a>
-
-            <a href="{{ route('contact') }}" class="hover:text-black">
-                Bantuan
-            </a>
-
-            @auth
-                @if(auth()->user()->role === 'admin')
-                    <a href="{{ route('admin.dashboard') }}"
-                       class="hover:text-blue-500 font-semibold">
-                        Dashboard Admin
-                    </a>
-                @endif
-            @endauth
-
-        </nav>
-
-    </div>
-
-    <!-- RIGHT -->
-    <div class="flex items-center gap-3 md:gap-6">
-
-        @auth
-            <button class="relative text-xl p-2 min-w-[44px] min-h-[44px]
-                           flex items-center justify-center">
-                🔔
-            </button>
-
-            <!-- PROFILE -->
-            <div class="relative">
-
-                <button id="profileBtn"
-                    class="w-8 h-8 md:w-9 md:h-9 bg-[#F59A40]
-                           text-white rounded-full
-                           flex items-center justify-center
-                           text-sm font-semibold">
-
-                    {{ strtoupper(substr(auth()->user()->name,0,1)) }}
+                    ☰
 
                 </button>
 
-                <div id="profileDropdown"
-                    class="hidden absolute right-0 top-full mt-3
-                           w-48 bg-white border border-gray-200
-                           rounded-xl shadow-xl overflow-hidden
-                           text-sm z-[999]">
+                <!-- LOGO -->
+                <a href="{{ route('home') }}"
+                   class="flex items-center shrink-0">
 
-                    <a href="{{ route('landing.profil') }}"
-                       class="block px-4 py-3 hover:bg-gray-50">
-                        👤 Akun Saya
+                    <img src="{{ asset('images/rafflogo.png') }}"
+                         class="h-11 md:h-[52px] object-contain">
+
+                </a>
+
+                <!-- ================= DESKTOP NAV ================= -->
+                <nav class="hidden md:flex items-center gap-8
+                            text-[15px] font-medium text-gray-600">
+
+                    <a href="{{ route('home') }}"
+                       class="hover:text-[#F59A40] transition">
+
+                        Home
+
                     </a>
 
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
+                    <!-- ================= DROPDOWN ================= -->
+                    <div class="relative">
 
-                        <button type="submit"
-                            class="w-full text-left px-4 py-3
-                                   hover:bg-red-50 text-red-500">
+                        <button id="menuDropdownBtn"
+                                class="flex items-center gap-2
+                                       hover:text-[#F59A40] transition">
 
-                            🚪 Logout
+                            Menu
+
+                            <svg id="menuDropdownArrow"
+                                 class="w-4 h-4 transition duration-200"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 viewBox="0 0 24 24">
+
+                                <path stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="M19 9l-7 7-7-7"/>
+
+                            </svg>
 
                         </button>
-                    </form>
+
+                        <!-- DROPDOWN CONTENT -->
+                        <div id="menuDropdown"
+                             class="hidden absolute left-0 top-full mt-4
+                                    w-[340px]
+                                    bg-white border border-gray-100
+                                    rounded-3xl shadow-2xl p-3">
+
+                            <!-- SEMUA MENU -->
+                            <a href="{{ route('menu') }}"
+                               class="block px-4 py-3 rounded-2xl
+                                      hover:bg-orange-50 transition">
+
+                                <p class="font-semibold text-gray-800">
+                                    Semua Menu
+                                </p>
+
+                                <p class="text-xs text-gray-500 mt-1">
+                                    Lihat semua produk
+                                </p>
+
+                            </a>
+
+                            <!-- ================= KUE ================= -->
+                            <div class="mt-2">
+
+                                <button type="button"
+                                        class="menu-category-btn"
+                                        data-cat="kue">
+
+                                    <div>
+
+                                        <p class="font-semibold text-gray-800">
+                                            🍰 Kue & Snack
+                                        </p>
+
+                                        <p class="text-xs text-gray-500 mt-1">
+                                            Kue basah, dessert, pudding
+                                        </p>
+
+                                    </div>
+
+                                </button>
+
+                                <div class="hidden mt-2 grid grid-cols-2 gap-1"
+                                     data-submenu="kue">
+
+                                    <a href="{{ route('menu',['kategori'=>'kue']) }}"
+                                       class="submenu-item">
+                                        Kue
+                                    </a>
+
+                                    <a href="{{ route('menu',['kategori'=>'kue basah']) }}"
+                                       class="submenu-item">
+                                        Kue Basah
+                                    </a>
+
+                                    <a href="{{ route('menu',['kategori'=>'kue kering']) }}"
+                                       class="submenu-item">
+                                        Kue Kering
+                                    </a>
+
+                                    <a href="{{ route('menu',['kategori'=>'dessert']) }}"
+                                       class="submenu-item">
+                                        Dessert
+                                    </a>
+
+                                    <a href="{{ route('menu',['kategori'=>'pudding']) }}"
+                                       class="submenu-item">
+                                        Pudding
+                                    </a>
+
+                                    <a href="{{ route('menu',['kategori'=>'snack kecil']) }}"
+                                       class="submenu-item">
+                                        Snack
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                            <!-- ================= MASAKAN ================= -->
+                            <div class="mt-2">
+
+                                <button type="button"
+                                        class="menu-category-btn"
+                                        data-cat="masakan">
+
+                                    <div>
+
+                                        <p class="font-semibold text-gray-800">
+                                            🍛 Masakan
+                                        </p>
+
+                                        <p class="text-xs text-gray-500 mt-1">
+                                            Lauk, ayam, nasi, sup
+                                        </p>
+
+                                    </div>
+
+                                </button>
+
+                                <div class="hidden mt-2 grid grid-cols-2 gap-1"
+                                     data-submenu="masakan">
+
+                                    <a href="{{ route('menu',['kategori'=>'ayam']) }}"
+                                       class="submenu-item">
+                                        Ayam
+                                    </a>
+
+                                    <a href="{{ route('menu',['kategori'=>'ikan']) }}"
+                                       class="submenu-item">
+                                        Ikan
+                                    </a>
+
+                                    <a href="{{ route('menu',['kategori'=>'daging']) }}"
+                                       class="submenu-item">
+                                        Daging
+                                    </a>
+
+                                    <a href="{{ route('menu',['kategori'=>'nasi']) }}"
+                                       class="submenu-item">
+                                        Nasi
+                                    </a>
+
+                                    <a href="{{ route('menu',['kategori'=>'mie']) }}"
+                                       class="submenu-item">
+                                        Mie
+                                    </a>
+
+                                    <a href="{{ route('menu',['kategori'=>'tumisan']) }}"
+                                       class="submenu-item">
+                                        Tumisan
+                                    </a>
+
+                                    <a href="{{ route('menu',['kategori'=>'sup / kuah']) }}"
+                                       class="submenu-item">
+                                        Sup
+                                    </a>
+
+                                    <a href="{{ route('menu',['kategori'=>'sambal']) }}"
+                                       class="submenu-item">
+                                        Sambal
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                            <!-- ================= GORENGAN ================= -->
+                            <div class="mt-2">
+
+                                <button type="button"
+                                        class="menu-category-btn"
+                                        data-cat="gorengan">
+
+                                    <div>
+
+                                        <p class="font-semibold text-gray-800">
+                                            🥟 Gorengan
+                                        </p>
+
+                                        <p class="text-xs text-gray-500 mt-1">
+                                            Snack & gorengan hangat
+                                        </p>
+
+                                    </div>
+
+                                </button>
+
+                                <div class="hidden mt-2 grid grid-cols-2 gap-1"
+                                     data-submenu="gorengan">
+
+                                    <a href="{{ route('menu',['kategori'=>'gorengan']) }}"
+                                       class="submenu-item">
+                                        Gorengan
+                                    </a>
+
+                                    <a href="{{ route('menu',['kategori'=>'snack kecil']) }}"
+                                       class="submenu-item">
+                                        Snack Kecil
+                                    </a>
+
+                                </div>
+
+                            </div>
+                            <!-- ================= MINUMAN ================= -->
+<div class="mt-2">
+
+    <button type="button"
+            class="menu-category-btn"
+            data-cat="minuman">
+
+        <div>
+
+            <p class="font-semibold text-gray-800">
+                🥤 Minuman & Fresh
+            </p>
+
+            <p class="text-xs text-gray-500 mt-1">
+                Minuman, buah, dessert segar
+            </p>
+
+        </div>
+
+    </button>
+
+    <div class="hidden mt-2 grid grid-cols-2 gap-1"
+         data-submenu="minuman">
+
+        <a href="{{ route('menu',['kategori'=>'minuman']) }}"
+           class="submenu-item">
+            Minuman
+        </a>
+
+        <a href="{{ route('menu',['kategori'=>'buah']) }}"
+           class="submenu-item">
+            Buah
+        </a>
+
+        <a href="{{ route('menu',['kategori'=>'pudding']) }}"
+           class="submenu-item">
+            Pudding
+        </a>
+
+        <a href="{{ route('menu',['kategori'=>'dessert']) }}"
+           class="submenu-item">
+            Dessert
+        </a>
+
+        <a href="{{ route('menu',['kategori'=>'manis']) }}"
+           class="submenu-item">
+            Manis
+        </a>
+
+<a href="{{ route('menu',['kategori'=>'pondoka']) }}"
+                                   class="submenu-item">
+                                    Pondoka
+                                </a>
+
+    </div>
+
+</div>
+
+                        </div>
+
+                    </div>
+
+                    <a href="{{ route('pesanan') }}"
+                       class="hover:text-[#F59A40] transition">
+
+                        Pesanan Saya
+
+                    </a>
+
+                    <a href="{{ route('contact') }}"
+                       class="hover:text-[#F59A40] transition">
+
+                        Bantuan
+
+                    </a>
+
+                    @auth
+                        @if(auth()->user()->role === 'admin')
+
+                            <a href="{{ route('admin.dashboard') }}"
+                               class="text-blue-500 font-semibold">
+
+                                Dashboard Admin
+
+                            </a>
+
+                        @endif
+                    @endauth
+
+                </nav>
+
+            </div>
+
+            <!-- ================= RIGHT ================= -->
+            <div class="flex items-center gap-3">
+
+                <!-- SEARCH -->
+                <form method="GET"
+                      action="{{ route('menu') }}"
+                      class="hidden md:flex relative w-[320px]">
+
+                    <input type="text"
+                           name="search"
+                           placeholder="Cari makanan..."
+                           value="{{ request('search') }}"
+                           class="w-full h-11 rounded-full
+                                  border border-gray-200
+                                  bg-white
+                                  px-5 pr-12
+                                  text-sm outline-none
+                                  focus:border-[#F59A40]">
+
+                    <button type="submit"
+                            class="absolute right-1 top-1/2
+                                   -translate-y-1/2
+                                   w-9 h-9 rounded-full
+                                   bg-[#F59A40]
+                                   flex items-center justify-center">
+
+                        <img src="{{ asset('images/searchbar.png') }}"
+                             class="w-4 h-4">
+
+                    </button>
+
+                </form>
+
+                @auth
+
+                <!-- CART -->
+                <a href="{{ route('landing.cart') }}"
+                   class="relative w-11 h-11 rounded-full
+                          hover:bg-gray-100 transition
+                          flex items-center justify-center">
+
+                    <img src="{{ asset('images/cart.png') }}"
+                         class="w-7">
+
+                </a>
+
+                <!-- PROFILE -->
+                <div class="relative">
+
+                    <button id="profileBtn"
+                            class="w-10 h-10 rounded-full
+                                   bg-[#F59A40]
+                                   text-white font-semibold">
+
+                        {{ strtoupper(substr(auth()->user()->name,0,1)) }}
+
+                    </button>
+
+                    <!-- PROFILE DROPDOWN -->
+                    <div id="profileDropdown"
+                         class="hidden absolute right-0 top-full mt-3
+                                w-52 bg-white border border-gray-100
+                                rounded-2xl shadow-xl overflow-hidden">
+
+                        <a href="{{ route('landing.profil') }}"
+                           class="block px-4 py-3 hover:bg-gray-50">
+
+                            👤 Akun Saya
+
+                        </a>
+
+                        <form method="POST"
+                              action="{{ route('logout') }}">
+
+                            @csrf
+
+                            <button type="submit"
+                                    class="w-full text-left px-4 py-3
+                                           text-red-500 hover:bg-red-50">
+
+                                🚪 Logout
+
+                            </button>
+
+                        </form>
+
+                    </div>
 
                 </div>
 
+                @else
+
+                <!-- LOGIN -->
+                <a href="{{ route('login') }}"
+                   class="px-5 h-11 rounded-full
+                          bg-[#F59A40]
+                          text-white text-sm font-medium
+                          flex items-center">
+
+                    Masuk
+
+                </a>
+
+                @endauth
+
             </div>
-        @endauth
 
-        @guest
-            <a href="{{ route('login') }}"
-               class="px-4 py-2 bg-[#F59A40]
-                      text-white text-sm rounded-full
-                      min-h-[44px] flex items-center">
-
-                Masuk
-
-            </a>
-        @endguest
+        </div>
 
     </div>
 
-</div>
-        <!-- ================= BARIS BAWAH ================= -->
-        <div class="h-20 md:h-[90px] flex flex-col md:flex-row md:items-center md:justify-between gap-2 md:gap-0">
-
-<!-- LOGO -->
-<div class="hidden md:flex items-center gap-4">
-    <img src="{{ asset('images/rafflogo.png') }}"
-         class="h-14 lg:h-[60px] w-auto object-contain">
-</div>
-
-<!-- SEARCH -->
-<!-- SEARCH + CART WRAPPER -->
-<div class="flex items-center gap-2 md:gap-4 w-full md:flex-1">
-
-    <!-- SEARCH -->
-    <form method="GET" action="{{ route('menu') }}" class="flex-1 relative min-w-0">
-        
-        <input type="text"
-               name="search"
-               placeholder="Cari makanan..."
-               value="{{ request('search', '') }}"
-               class="
-                    w-full
-                    h-10 md:h-11 lg:h-[50px]
-                    rounded-full
-                    border border-gray-200
-                    bg-white
-                    px-4 md:px-6
-                    pr-12
-                    text-sm
-                    outline-none
-                    focus:border-[#F59A40]
-                    transition
-               ">
-
-        <!-- BUTTON -->
-        <button type="submit"
-            class="
-                absolute
-                right-1.5
-                top-1/2
-                -translate-y-1/2
-                w-8 h-8
-                md:w-10 md:h-10
-                rounded-full
-                bg-[#F59A40]
-                flex items-center justify-center
-                shrink-0
-            ">
-
-            <img src="{{ asset('images/searchbar.png') }}"
-                 class="w-4 h-4 md:w-5 md:h-5 object-contain">
-
-        </button>
-
-    </form>
-
-    <!-- CART -->
-    @auth
-    <a href="{{ route('landing.cart') }}"
-       class="
-            relative
-            flex items-center justify-center
-            min-w-[44px]
-            min-h-[44px]
-            md:min-w-[48px]
-            md:min-h-[48px]
-            rounded-full
-            hover:bg-gray-100
-            transition
-            shrink-0
-       ">
-
-        <img src="{{ asset('images/cart.png') }}"
-             class="
-                w-7
-                md:w-9
-                object-contain
-                opacity-90
-             ">
-
-        <span id="cartCount"
-              class="
-                absolute
-                -top-1
-                -right-1
-                min-w-[18px]
-                h-[18px]
-                px-1
-                bg-[#F59A40]
-                text-white
-                text-[10px]
-                font-semibold
-                rounded-full
-                flex items-center justify-center
-                hidden
-              ">
-            0
-        </span>
-
-    </a>
-    @endauth
-
-</div>
-    </div>
-
+   <!-- ================= MOBILE MENU ================= -->
 <div id="mobileMenu"
-     class="hidden md:hidden bg-white border-t border-gray-200 px-4 py-3 space-y-1">
+     class="hidden md:hidden bg-white border-t border-gray-100">
 
-    <a href="{{ route('home') }}"
-       class="block py-3 px-2 text-base rounded-xl hover:bg-gray-100 transition">
-        Home
-    </a>
+    <div class="px-4 py-4 space-y-2">
 
-    <a href="{{ route('menu') }}"
-       class="block py-3 px-2 text-base rounded-xl hover:bg-gray-100 transition">
-        Menu
-    </a>
+        <!-- HOME -->
+        <a href="{{ route('home') }}"
+           class="block px-4 py-3 rounded-2xl hover:bg-gray-100">
 
-    <a href="{{ route('pesanan') }}"
-       class="block py-3 px-2 text-base rounded-xl hover:bg-gray-100 transition">
-        Pesanan Saya
-    </a>
+            Home
 
-    <a href="{{ route('contact') }}"
-       class="block py-3 px-2 text-base rounded-xl hover:bg-gray-100 transition">
-        Bantuan
-    </a>
+        </a>
 
-    @auth
-        @if(auth()->user()->role === 'admin')
-            <a href="{{ route('admin.dashboard') }}"
-               class="block py-3 px-2 text-base rounded-xl
-                      bg-blue-50 text-blue-600 font-semibold
-                      hover:bg-blue-100 transition">
+        <!-- SEMUA MENU -->
+        <a href="{{ route('menu') }}"
+           class="block px-4 py-3 rounded-2xl hover:bg-orange-50">
 
-                Dashboard Admin
-            </a>
-        @endif
-    @endauth
+            Semua Menu
+
+        </a>
+
+        <!-- ================= KUE ================= -->
+        <div class="border border-gray-100 rounded-2xl overflow-hidden">
+
+            <button type="button"
+                    class="mobile-category-btn w-full flex items-center justify-between px-4 py-3 bg-white"
+                    data-mobile-cat="kue">
+
+                <span class="font-medium text-gray-800">
+                    🍰 Kue & Snack
+                </span>
+
+                <span>+</span>
+
+            </button>
+
+            <div class="hidden p-2 grid grid-cols-2 gap-1"
+                 data-mobile-submenu="kue">
+
+                <a href="{{ route('menu',['kategori'=>'kue']) }}"
+                   class="submenu-item">
+                    Kue
+                </a>
+
+                <a href="{{ route('menu',['kategori'=>'kue basah']) }}"
+                   class="submenu-item">
+                    Kue Basah
+                </a>
+
+                <a href="{{ route('menu',['kategori'=>'kue kering']) }}"
+                   class="submenu-item">
+                    Kue Kering
+                </a>
+
+                <a href="{{ route('menu',['kategori'=>'dessert']) }}"
+                   class="submenu-item">
+                    Dessert
+                </a>
+
+                <a href="{{ route('menu',['kategori'=>'pudding']) }}"
+                   class="submenu-item">
+                    Pudding
+                </a>
+
+                <a href="{{ route('menu',['kategori'=>'snack kecil']) }}"
+                   class="submenu-item">
+                    Snack
+                </a>
+
+            </div>
+
+        </div>
+
+        <!-- ================= MASAKAN ================= -->
+        <div class="border border-gray-100 rounded-2xl overflow-hidden">
+
+            <button type="button"
+                    class="mobile-category-btn w-full flex items-center justify-between px-4 py-3 bg-white"
+                    data-mobile-cat="masakan">
+
+                <span class="font-medium text-gray-800">
+                    🍛 Masakan
+                </span>
+
+                <span>+</span>
+
+            </button>
+
+            <div class="hidden p-2 grid grid-cols-2 gap-1"
+                 data-mobile-submenu="masakan">
+
+                <a href="{{ route('menu',['kategori'=>'ayam']) }}"
+                   class="submenu-item">
+                    Ayam
+                </a>
+
+                <a href="{{ route('menu',['kategori'=>'ikan']) }}"
+                   class="submenu-item">
+                    Ikan
+                </a>
+
+                <a href="{{ route('menu',['kategori'=>'daging']) }}"
+                   class="submenu-item">
+                    Daging
+                </a>
+
+                <a href="{{ route('menu',['kategori'=>'nasi']) }}"
+                   class="submenu-item">
+                    Nasi
+                </a>
+
+                <a href="{{ route('menu',['kategori'=>'mie']) }}"
+                   class="submenu-item">
+                    Mie
+                </a>
+
+                <a href="{{ route('menu',['kategori'=>'tumisan']) }}"
+                   class="submenu-item">
+                    Tumisan
+                </a>
+
+                <a href="{{ route('menu',['kategori'=>'sup / kuah']) }}"
+                   class="submenu-item">
+                    Sup
+                </a>
+
+                <a href="{{ route('menu',['kategori'=>'sambal']) }}"
+                   class="submenu-item">
+                    Sambal
+                </a>
+
+            </div>
+
+        </div>
+
+        <!-- ================= GORENGAN ================= -->
+        <div class="border border-gray-100 rounded-2xl overflow-hidden">
+
+            <button type="button"
+                    class="mobile-category-btn w-full flex items-center justify-between px-4 py-3 bg-white"
+                    data-mobile-cat="gorengan">
+
+                <span class="font-medium text-gray-800">
+                    🥟 Gorengan
+                </span>
+
+                <span>+</span>
+
+            </button>
+
+            <div class="hidden p-2 grid grid-cols-2 gap-1"
+                 data-mobile-submenu="gorengan">
+
+                <a href="{{ route('menu',['kategori'=>'gorengan']) }}"
+                   class="submenu-item">
+                    Gorengan
+                </a>
+
+                <a href="{{ route('menu',['kategori'=>'snack kecil']) }}"
+                   class="submenu-item">
+                    Snack Kecil
+                </a>
+
+            </div>
+
+        </div>
+
+        <!-- ================= MINUMAN ================= -->
+        <div class="border border-gray-100 rounded-2xl overflow-hidden">
+
+            <button type="button"
+                    class="mobile-category-btn w-full flex items-center justify-between px-4 py-3 bg-white"
+                    data-mobile-cat="minuman">
+
+                <span class="font-medium text-gray-800">
+                    🥤 Minuman & Fresh
+                </span>
+
+                <span>+</span>
+
+            </button>
+
+            <div class="hidden p-2 grid grid-cols-2 gap-1"
+                 data-mobile-submenu="minuman">
+
+                <a href="{{ route('menu',['kategori'=>'minuman']) }}"
+                   class="submenu-item">
+                    Minuman
+                </a>
+
+                <a href="{{ route('menu',['kategori'=>'buah']) }}"
+                   class="submenu-item">
+                    Buah
+                </a>
+
+                <a href="{{ route('menu',['kategori'=>'dessert']) }}"
+                   class="submenu-item">
+                    Dessert
+                </a>
+
+                <a href="{{ route('menu',['kategori'=>'pudding']) }}"
+                   class="submenu-item">
+                    Pudding
+                </a>
+
+                <a href="{{ route('menu',['kategori'=>'manis']) }}"
+                   class="submenu-item">
+                    Manis
+                </a>
+
+                <a href="{{ route('menu',['kategori'=>'pondoka']) }}"
+                   class="submenu-item">
+                    Pondoka
+                </a>
+
+            </div>
+
+        </div>
+
+        <!-- PESANAN -->
+        <a href="{{ route('pesanan') }}"
+           class="block px-4 py-3 rounded-2xl hover:bg-gray-100">
+
+            Pesanan Saya
+
+        </a>
+
+        <!-- BANTUAN -->
+        <a href="{{ route('contact') }}"
+           class="block px-4 py-3 rounded-2xl hover:bg-gray-100">
+
+            Bantuan
+
+        </a>
+
+    </div>
 
 </div>
-
 </header>
+
+<!-- ================= SCRIPT ================= -->
 <script>
+
 const menuBtn = document.getElementById('menuBtn');
 const mobileMenu = document.getElementById('mobileMenu');
 
-if (menuBtn) {
-    menuBtn.addEventListener('click', function () {
+if(menuBtn){
+
+    menuBtn.addEventListener('click', function(){
+
         mobileMenu.classList.toggle('hidden');
+
     });
+
 }
-</script>
-<script>
+
+// DESKTOP DROPDOWN
+const menuDropdownBtn = document.getElementById('menuDropdownBtn');
+const menuDropdown = document.getElementById('menuDropdown');
+const menuDropdownArrow = document.getElementById('menuDropdownArrow');
+
+if(menuDropdownBtn){
+
+    menuDropdownBtn.addEventListener('click', function(e){
+
+        e.stopPropagation();
+
+        menuDropdown.classList.toggle('hidden');
+        menuDropdownArrow.classList.toggle('rotate-180');
+
+    });
+
+    document.addEventListener('click', function(e){
+
+        if(
+            !menuDropdown.contains(e.target) &&
+            !menuDropdownBtn.contains(e.target)
+        ){
+
+            menuDropdown.classList.add('hidden');
+            menuDropdownArrow.classList.remove('rotate-180');
+
+        }
+
+    });
+
+}
+
+// SUBMENU
+// Perilaku yang diinginkan: saat klik kategori (mis. "Kue & Snack"), tampilkan grup submenu yang sesuai.
+// Grup lain ditutup agar tidak bercampur.
+document.querySelectorAll('[data-cat]').forEach(btn => {
+
+    btn.addEventListener('click', function (e) {
+
+        e.stopPropagation();
+
+        const cat = this.dataset.cat;
+
+        // Saat pencet kategori (Kue & Snack), tampilkan SEMUA item di grupnya sekaligus.
+        // Jadi tidak perlu pilih satu-satu: buka grup yang sesuai, tutup grup lain.
+        document.querySelectorAll('[data-submenu]').forEach(el => {
+            if (el.dataset.submenu === cat) {
+                el.classList.remove('hidden');
+            } else {
+                el.classList.add('hidden');
+            }
+        });
+
+    });
+
+});
+// ================= MOBILE SUBMENU =================
+document.querySelectorAll('[data-mobile-cat]').forEach(btn => {
+
+    btn.addEventListener('click', function () {
+
+        const cat = this.dataset.mobileCat;
+
+        document.querySelectorAll('[data-mobile-submenu]').forEach(el => {
+
+            if(el.dataset.mobileSubmenu === cat){
+
+                el.classList.toggle('hidden');
+
+            }else{
+
+                el.classList.add('hidden');
+
+            }
+
+        });
+
+    });
+
+});
+// PROFILE
 const profileBtn = document.getElementById('profileBtn');
 const profileDropdown = document.getElementById('profileDropdown');
 
-if (profileBtn && profileDropdown) {
-    profileBtn.addEventListener('click', function (e) {
+if(profileBtn){
+
+    profileBtn.addEventListener('click', function(e){
+
         e.stopPropagation();
+
         profileDropdown.classList.toggle('hidden');
+
     });
 
-    // klik luar = tutup dropdown
-    document.addEventListener('click', function () {
+    document.addEventListener('click', function(){
+
         profileDropdown.classList.add('hidden');
+
     });
+
 }
+
 </script>

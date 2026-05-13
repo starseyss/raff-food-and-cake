@@ -1,8 +1,8 @@
-# Progress Tracking: Convert Refund Form to Modal in detail_pesanan.blade.php
+# TODO
 
-1. ✅ Analyzed files (detail_pesanan.blade.php, PesananController.php)
-2. ✅ Created & confirmed edit plan
-3. ✅ Created TODO.md for progress tracking
+- [x] Analisis struktur home/menu produk dan sumber data `total_terjual`.
+- [x] Tambahkan badge & efek pembeda untuk produk best seller di `resources/views/landing/home.blade.php`.
+- [x] Rule best seller di home: top 1-3 berdasarkan `total_terjual`.
 
-5. [ ] Test functionality in browser on cancellable order
-6. [ ] Confirm completion
+- [ ] (Setelah edit) cek halaman home: produk terlaris/top muncul dengan efek, tidak merusak modal & button Tambah.
+

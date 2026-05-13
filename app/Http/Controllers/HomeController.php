@@ -190,4 +190,5 @@ public function menu(Request $request)
 
     return view('landing.menu', compact('produk'));
 }
+
 }

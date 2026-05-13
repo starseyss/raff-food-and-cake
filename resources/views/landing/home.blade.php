@@ -1,5 +1,33 @@
 <x-header />
+<style>
+    @keyframes shine {
+    100%{
+        transform: translateX(250%);
+    }
+}
 
+/* glow hover */
+.product-card:hover{
+    transform: translateY(-6px);
+}
+
+/* best seller floating animation */
+@keyframes floatBest {
+    0%{
+        transform: translateY(0px);
+    }
+    50%{
+        transform: translateY(-4px);
+    }
+    100%{
+        transform: translateY(0px);
+    }
+}
+
+.best-seller-card{
+    animation: floatBest 3s ease-in-out infinite;
+}
+</style>
 <!-- Login status for JavaScript -->
 <input type="hidden" id="loginStatus" value="{{ auth()->check() ? '1' : '0' }}" />
 
@@ -64,104 +92,262 @@
 <section class="max-w-[1320px] mx-auto px-3 md:px-6 mt-8 md:mt-12 mb-12 md:mb-20">
     <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6">
 
+@php
+    // Best seller: top 1-3 berdasarkan total_terjual (penjualan tertinggi)
+$bestSellerIds = $produk
+    ->filter(function ($item) {
+        return ($item->total_terjual ?? 0) > 0;
+    })
+    ->sortByDesc('total_terjual')
+    ->take(3)
+    ->pluck('id')
+    ->unique()
+    ->values();
+
+    $bestSellerSet = $bestSellerIds->flip();
+@endphp
+
 @foreach($produk as $index => $item)
-<div class="product-card block bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-xl md:rounded-2xl p-2 md:p-4
-            hover:shadow-lg hover:-translate-y-1
-            transition duration-300 h-full flex flex-col {{ $index >= 12 ? 'hidden' : '' }}"
-     data-name="{{ $item->nama_produk }}"
-     data-description="{{ $item->deskripsi ?? '' }}">
 
-    <!-- Klik card ke detail -->
-    <a href="{{ route('landing.details', $item->id) }}" class="flex-1">
+    @php
+        $isBestSeller = ($bestSellerSet->has($item->id));
+    @endphp
 
-        <!-- Gambar -->
-        <div class="h-[150px] md:h-[180px] lg:h-[220px] rounded-lg md:rounded-xl overflow-hidden bg-gray-100">
-            <img src="{{ $item->foto_url }}"
-                 alt="{{ $item->nama_produk }}"
-                 class="w-full h-full object-cover">
+<!-- 🔥 WRAPPER UTAMA -->
+<div
+    class="
+        relative rounded-2xl transition duration-500
+
+        {{ $isBestSeller
+            ? '
+                p-[2px]
+                bg-gradient-to-br
+                from-yellow-300
+                via-[#F59A40]
+                to-orange-500
+
+                shadow-[0_15px_45px_rgba(245,154,64,0.35)]
+                hover:shadow-[0_20px_60px_rgba(245,154,64,0.45)]
+                hover:-translate-y-2
+
+                overflow-hidden
+              '
+            : ''
+        }}
+
+        {{ $index >= 12 ? 'hidden' : '' }}
+    "
+>
+
+    @if($isBestSeller)
+
+        <!-- GLOW -->
+        <div class="absolute inset-0
+                    bg-gradient-to-br
+                    from-yellow-300/30
+                    via-[#F59A40]/20
+                    to-orange-400/30
+                    blur-2xl scale-110">
         </div>
 
-        <!-- Info -->
-        <div class="mt-2 md:mt-4">
-            <h3 class="text-sm md:text-lg font-bold text-gray-800">
-                {{ $item->nama_produk }}
-            </h3>
+        <!-- BADGE -->
+        <div class="absolute z-30 top-3 left-3">
+
+            <div class="relative overflow-hidden
+                        px-3 py-1.5
+                        rounded-full
+                        bg-white/20
+                        backdrop-blur-xl
+                        border border-white/30
+                        text-white
+                        text-[10px] md:text-xs
+                        font-bold
+                        flex items-center gap-1.5
+                        shadow-xl">
+
+                <span class="text-sm">🔥</span>
+
+                <span>BEST SELLER</span>
+
+                <!-- SHINE -->
+                <div class="absolute inset-0
+                            -translate-x-full
+                            animate-[shine_3s_linear_infinite]
+                            bg-gradient-to-r
+                            from-transparent
+                            via-white/40
+                            to-transparent">
+                </div>
+
+            </div>
+
+        </div>
+
+    @endif
+
+    <!-- 🔥 CARD ASLI -->
+    <div
+        class="
+            product-card relative z-10
+            block bg-white/90 backdrop-blur-sm
+            rounded-2xl
+            p-2 md:p-4
+            h-full flex flex-col
+            transition duration-500
+            hover:bg-white
+        "
+        data-name="{{ $item->nama_produk }}"
+        data-description="{{ $item->deskripsi ?? '' }}"
+    >
+
+        <!-- LINK -->
+        <a href="{{ route('landing.details', $item->id) }}"
+           class="flex-1 relative">
+
+            <!-- IMAGE -->
+            <div class="relative h-[150px] md:h-[180px] lg:h-[220px]
+                        rounded-xl overflow-hidden bg-gray-100">
+
+                <img src="{{ $item->foto_url }}"
+                     alt="{{ $item->nama_produk }}"
+                     class="w-full h-full object-cover transition duration-700 hover:scale-105">
+
+                @if($isBestSeller)
+
+                    <!-- OVERLAY -->
+                    <div class="absolute inset-0
+                                bg-gradient-to-t
+                                from-black/10
+                                via-transparent
+                                to-transparent">
+                    </div>
+
+                @endif
+
+            </div>
+
+            <!-- INFO -->
+            <div class="mt-2 md:mt-4">
+
+                <h3 class="text-sm md:text-lg font-bold text-gray-800">
+                    {{ $item->nama_produk }}
+                </h3>
 
 @if($item->is_promo && $item->diskon > 0)
+
     <p class="text-gray-400 line-through text-xs md:text-sm">
         Rp {{ number_format($item->harga, 0, ',', '.') }}
     </p>
 
-    <p class="text-[#F59A40] font-bold text-sm md:text-lg">
-        Rp {{ number_format($item->harga_diskon, 0, ',', '.') }}
-    </p>
+    <div class="flex items-center gap-2 mt-1">
 
-    <span class="text-[10px] md:text-xs text-red-500 font-semibold">
-        -{{ $item->diskon }}%
-    </span>
+        <p class="text-[#F59A40] font-bold text-sm md:text-lg">
+            Rp {{ number_format($item->harga_diskon, 0, ',', '.') }}
+        </p>
+
+        <span class="px-2 py-0.5 rounded-full
+                     bg-red-100 text-red-500
+                     text-[10px] md:text-xs font-bold">
+            -{{ $item->diskon }}%
+        </span>
+
+    </div>
+
 @else
+
     <p class="text-[#F59A40] font-bold text-sm md:text-lg">
         Rp {{ number_format($item->harga, 0, ',', '.') }}
     </p>
+
 @endif
+
+            </div>
+
+            <!-- TERJUAL -->
+            <p class="text-[10px] md:text-xs text-gray-500 mt-2">
+                🔥 {{ $item->total_terjual ?? 0 }} terjual
+            </p>
+
+            <!-- RATING -->
+            <div class="flex items-center gap-1 mt-1 text-yellow-400 text-xs md:text-sm">
+
+                @php
+                    $rating = $item->rating ?? 0;
+                @endphp
+
+                @for($i = 1; $i <= 5; $i++)
+
+                    @if($i <= floor($rating))
+                        ★
+                    @else
+                        <span class="text-gray-300">★</span>
+                    @endif
+
+                @endfor
+
+                <span class="text-gray-500 text-[10px] md:text-xs ml-1">
+                    ({{ $rating }})
+                </span>
+
+            </div>
+
+        </a>
+
+        <!-- BUTTON -->
+        <div class="mt-2 md:mt-4 flex justify-end">
+
+            <button
+                type="button"
+                data-id="{{ $item->id }}"
+                data-name="{{ $item->nama_produk }}"
+                data-price="{{ $item->harga }}"
+                data-image="{{ $item->foto_url }}"
+                data-description="{{ $item->deskripsi }}"
+                data-variant="{{ implode(',', $item->varian_array ?? []) }}"
+                data-is-promo="{{ $item->is_promo ?? 0 }}"
+                data-diskon="{{ $item->diskon ?? 0 }}"
+                onclick="openProductModalFromButton(this)"
+                class="
+                    px-3 md:px-4 py-1.5 md:py-2
+                    text-xs md:text-sm
+                    rounded-full
+                    border border-[#F59A40]
+                    text-[#F59A40]
+                    hover:bg-[#F59A40]
+                    hover:text-white
+                    transition
+                ">
+
+                Tambah
+
+            </button>
+
         </div>
-<p class="text-[10px] md:text-xs text-gray-500 mt-1">
-    🔥 {{ $item->total_terjual ?? 0 }} terjual
-</p>
-<!-- ================= RATING BINTANG ================= -->
-<div class="flex items-center gap-1 mt-1 text-yellow-400 text-xs md:text-sm">
 
-    @php
-        $rating = $item->rating ?? 0;
-    @endphp
-
-    @for($i = 1; $i <= 5; $i++)
-        @if($i <= floor($rating))
-            ★
-        @else
-            <span class="text-gray-300">★</span>
-        @endif
-    @endfor
-
-    <span class="text-gray-500 text-[10px] md:text-xs ml-1">
-        ({{ $rating }})
-    </span>
-
-</div>
-    </a>
-
-    <!-- 🔥 Tombol di luar link -->
-    <div class="mt-2 md:mt-4 flex justify-end">
-<button
-    type="button"
-    data-id="{{ $item->id }}"
-    data-name="{{ $item->nama_produk }}"
-    data-price="{{ $item->harga }}"
-    data-image="{{ $item->foto_url }}"
-    data-description="{{ $item->deskripsi }}"
-    data-variant="{{ implode(',', $item->varian_array ?? []) }}"
-    data-is-promo="{{ $item->is_promo ?? 0 }}"
-    data-diskon="{{ $item->diskon ?? 0 }}"
-    onclick="openProductModalFromButton(this)"
-    class="px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm border border-[#F59A40]
-           text-[#F59A40] rounded-full
-           hover:bg-[#F59A40] hover:text-white transition">
-    Tambah
-</button>
     </div>
 
 </div>
-        @endforeach
 
-        @if($produk->isEmpty())
-        <div class="col-span-full text-center py-20">
-            <img src="{{ asset('images/box.png') }}" class="w-20 mx-auto opacity-30 mb-4">
-            <h3 class="text-lg font-semibold text-gray-700">Belum ada produk tersedia</h3>
-            <p class="text-sm text-gray-500 mt-2">
-                Produk yang ditambahkan dari admin akan muncul di sini.
-            </p>
-        </div>
-        @endif
+@endforeach
+
+@if($produk->isEmpty())
+
+    <div class="col-span-full text-center py-20">
+
+        <img src="{{ asset('images/box.png') }}"
+             class="w-20 mx-auto opacity-30 mb-4">
+
+        <h3 class="text-lg font-semibold text-gray-700">
+            Belum ada produk tersedia
+        </h3>
+
+        <p class="text-sm text-gray-500 mt-2">
+            Produk yang ditambahkan dari admin akan muncul di sini.
+        </p>
+
+    </div>
+
+@endif
 
     </div>
 </section>

@@ -395,21 +395,31 @@ document.addEventListener('click', function(e) {
                     </h3>
 
 @if($item->is_promo && $item->diskon > 0)
-    <p class="text-gray-400 line-through text-sm">
+
+    <p class="text-gray-400 line-through text-xs md:text-sm">
         Rp {{ number_format($item->harga, 0, ',', '.') }}
     </p>
 
-    <p class="text-[#F59A40] font-bold text-lg">
-        Rp {{ number_format($item->harga_diskon, 0, ',', '.') }}
-    </p>
+    <div class="flex items-center gap-2 mt-1">
 
-    <span class="text-xs text-red-500 font-semibold">
-        -{{ $item->diskon }}%
-    </span>
+        <p class="text-[#F59A40] font-bold text-sm md:text-lg">
+            Rp {{ number_format($item->harga_diskon, 0, ',', '.') }}
+        </p>
+
+        <span class="px-2 py-0.5 rounded-full
+                     bg-red-100 text-red-500
+                     text-[10px] md:text-xs font-bold">
+            -{{ $item->diskon }}%
+        </span>
+
+    </div>
+
 @else
-    <p class="text-[#F59A40] font-bold text-lg">
+
+    <p class="text-[#F59A40] font-bold text-sm md:text-lg">
         Rp {{ number_format($item->harga, 0, ',', '.') }}
     </p>
+
 @endif
                 </div>
 <p class="text-xs text-gray-500 mt-1">
