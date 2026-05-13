@@ -1,8 +1,4 @@
-# TODO: Make Analisis Dynamic
+# TODO_ANALISIS
 
-## Steps to Complete:
-- [x] 1. Create AnalisisController.php with dynamic data logic
-- [x] 2. Update routes/web.php - add route /analisis
-- [x] 3. Update analisis.blade.php - use dynamic data with Blade syntax
+- [ ] Rata-rata Order di `resources/views/admin/analisis.blade.php` diubah menjadi label & value produk terjual.
 
-## Status: COMPLETED

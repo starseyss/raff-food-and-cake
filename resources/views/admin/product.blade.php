@@ -223,6 +223,7 @@
                         <th class="p-4 text-center">Category</th>
                         <th class="p-4 text-center">Price</th>
                         <th class="p-4 text-center">Status</th>
+                        <th class="p-4 text-center">Terjual</th>
                         <th class="p-4 rounded-r-full text-center">Action</th>
                     </tr>
                 </thead>
@@ -272,6 +273,10 @@
 
                             @endif
 
+                        </td>
+
+                        <td class="p-4 text-center font-bold">
+                            {{ $item->terjual ?? 0 }}
                         </td>
 
                         <!-- ACTION -->
@@ -357,6 +362,10 @@
             @foreach($produk as $item)
 
             <div class="border border-gray-100 rounded-3xl p-4 shadow-sm">
+                <div class="flex justify-between items-center gap-3 mb-2">
+                    <span class="text-[10px] text-gray-500">Terjual</span>
+                    <span class="text-sm font-bold text-[#F59A40]">{{ $item->terjual ?? 0 }}</span>
+                </div>
 
                 <div class="flex items-start gap-4">
 
@@ -937,3 +946,4 @@ function closeModal(){
 </script>
 
 <x-scripts-admin />
+

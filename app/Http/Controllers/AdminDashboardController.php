@@ -19,7 +19,7 @@ class AdminDashboardController extends Controller
         // ================= TOTAL CUSTOMER =================
         $totalCustomers = Order::distinct('nama_pemesan')->count('nama_pemesan');
 
-        // ================= BEST SELLER =================
+        // ================= BEST SELLER (SAMAKAN DENGAN HomeController) =================
         $productCounts = [];
 
         $orders = Order::where('payment_status', 'paid')->get();
@@ -30,13 +30,17 @@ class AdminDashboardController extends Controller
             if (!$items) continue;
 
             foreach ($items as $item) {
-                $name = $item['name'] ?? 'Produk';
+                // HomeController pakai: $item['id'] untuk total_terjual
+                $productId = $item['id'] ?? null;
+                $qty = $item['qty'] ?? 1;
 
-                if (!isset($productCounts[$name])) {
-                    $productCounts[$name] = 0;
+                if ($productId === null) continue;
+
+                if (!isset($productCounts[$productId])) {
+                    $productCounts[$productId] = 0;
                 }
 
-                $productCounts[$name] += $item['qty'] ?? 1;
+                $productCounts[$productId] += $qty;
             }
         }
 
@@ -44,12 +48,11 @@ class AdminDashboardController extends Controller
 
         $bestProducts = [];
 
-        foreach (array_slice($productCounts, 0, 5, true) as $name => $qty) {
-
-            $product = Produk::where('nama_produk', $name)->first();
+        foreach (array_slice($productCounts, 0, 5, true) as $productId => $qty) {
+            $product = Produk::find($productId);
 
             $bestProducts[] = [
-                'name' => $name,
+                'name' => $product ? $product->nama_produk : 'Produk',
                 'qty' => $qty,
                 'image' => $product ? $product->foto : 'default.png'
             ];

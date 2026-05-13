@@ -22,6 +22,10 @@ class ProdukController extends Controller
         })->count();
         // =====================================================================
 
+        foreach ($produk as $p) {
+            $p->terjual = $terjual[$p->id] ?? 0;
+        }
+
         $editMode = false;
         $editData = null;
 
