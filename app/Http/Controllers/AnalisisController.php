@@ -12,13 +12,32 @@ class AnalisisController extends Controller
     public function index(Request $request)
     {
         // ================= DATE RANGE =================
-        $endDate = Carbon::now();
-        $startDate = Carbon::now()->subDays(7);
-        
-        $prevEndDate = $startDate->copy()->subDay();
-        $prevStartDate = $prevEndDate->copy()->subDays(6);
+        $validated = $request->validate([
+            'from' => ['nullable', 'date_format:Y-m-d'],
+            'to' => ['nullable', 'date_format:Y-m-d'],
+        ]);
+
+        $fromInput = $validated['from'] ?? null;
+        $toInput = $validated['to'] ?? null;
+
+        $defaultEndDate = Carbon::now();
+        $defaultStartDate = Carbon::now()->subDays(7);
+
+        $endDate = $toInput ? Carbon::parse($toInput)->endOfDay() : $defaultEndDate->copy()->endOfDay();
+        $startDate = $fromInput ? Carbon::parse($fromInput)->startOfDay() : $defaultStartDate->copy()->startOfDay();
+
+        if ($startDate->greaterThan($endDate)) {
+            // jika user isi dari > to, swap supaya tetap jalan
+            [$startDate, $endDate] = [$endDate, $startDate];
+        }
+
+        // Periode pembanding: panjang sama dengan range utama
+        $days = $startDate->diffInDays($endDate) + 1; // inklusif
+        $prevEndDate = $startDate->copy()->subDay()->endOfDay();
+        $prevStartDate = $prevEndDate->copy()->subDays($days - 1)->startOfDay();
 
         // ================= TOTAL SALES =================
+
         $totalSales = Order::whereBetween('created_at', [$startDate, $endDate])
             ->where('payment_status', 'paid')
             ->sum('total');

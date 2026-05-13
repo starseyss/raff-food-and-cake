@@ -33,20 +33,27 @@
             <!-- RIGHT -->
             <div class="flex flex-col sm:flex-row gap-3">
 
-                <!-- DATE -->
-                <div class="bg-white border border-gray-200
+                <!-- DATE (FILTER) -->
+                <form method="GET" action="{{ route('admin.analisis') }}" class="bg-white border border-gray-200
                             rounded-2xl px-5 py-3
                             flex items-center gap-3 shadow-sm">
 
                     <span class="text-lg">📅</span>
 
-                    <span class="text-sm font-semibold text-gray-700">
-                        {{ $dateRange }}
-                    </span>
+                    <input type="date" name="from" value="{{ request('from') }}"
+                        class="bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-orange-400">
 
-                    <span class="text-xs text-gray-400">▼</span>
+                    <span class="text-xs text-gray-400">sampai</span>
 
-                </div>
+                    <input type="date" name="to" value="{{ request('to') }}"
+                        class="bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-orange-400">
+
+                    <span class="text-xs text-gray-400">▾</span>
+
+                    <button type="submit" class="ml-2 px-4 py-2 bg-orange-100 text-orange-600 rounded-xl text-sm font-semibold hover:bg-orange-200 transition">
+                        Terapkan
+                    </button>
+                </form>
 
                 <!-- EXPORT -->
                 <button
@@ -62,6 +69,7 @@
                     </span>
 
                 </button>
+
 
             </div>
 
