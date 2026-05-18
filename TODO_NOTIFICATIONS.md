@@ -1,25 +1,11 @@
-# NOTIFICATION BADGE IMPLEMENTATION - FIXED
-## Status: ✅ CRITICAL HTTPS/CLOUDFLARE ISSUES RESOLVED
+# TODO - Notifikasi
 
-### Step 1: ✅ Create TODO.md  
-### Step 2: ✅ Update admin-header.blade.php - Added data-notif-badge  
-### Step 3: ✅ FIXED scripts-admin.blade.php:
-   - ✅ Fixed mixed content (HTTPS Cloudflare tunnel) with `window.location.origin`
-   - ✅ Added console debug logs
-   - ✅ Force immediate badge update on DOM ready
-   - ✅ Null checks for sidebarBadge
+- [x] Tabel notifikasi user: `user_order_notifications`
+- [x] Model: `UserOrderNotification`
+- [x] Controller: `UserOrderNotificationController`
+- [x] Halaman user: `resources/views/landing/notifikasi.blade.php`
+- [x] Tombol notifikasi di header user: `resources/views/components/header.blade.php`
+- [x] Route user notifikasi: `/notifikasi`
+- [ ] Integrasi notifikasi saat admin update status order (update `app/Http/Controllers/Admin/OrderController.php`)
 
-### Changes Made:
-```
-1. resources/views/components/admin-header.blade.php ✅ 
-2. resources/views/components/scripts-admin.blade.php ✅ (Fixed AJAX URLs)
-```
-
-**Now Works**:
-✅ Real-time unread count via AJAX
-✅ HTTPS compatible (Cloudflare tunnel)
-✅ Auto polls every 30s
-✅ Console logs for debugging
-
-**Test**: Refresh admin page → check browser console → see "Unread count: X" → badge visible!
 

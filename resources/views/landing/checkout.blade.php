@@ -103,9 +103,13 @@
                         <span class="text-xs md:text-sm">GoSend Instant</span>
                     </div>
 
-                    <span class="text-[#F59A40] font-semibold text-xs md:text-sm">
+                    <span id="gosendPrice" class="text-[#F59A40] font-semibold text-xs md:text-sm">
                         Rp15.000
                     </span>
+                    <span id="gosendFreeBadge" class="hidden text-[#F59A40] font-semibold text-xs md:text-sm">
+                        (Gratis ongkir)
+                    </span>
+
 
                 </div>
             </label>
@@ -660,11 +664,29 @@ function updateTotal(total = null, totalItem = null) {
     let ongkir = 0;
     let selectedShipping = document.querySelector('input[name="shipping_method"]:checked');
 
+    const FREE_ONGKIR_THRESHOLD = 100000; // subtotal produk (sebelum ongkir)
+
+    // gratis ongkir GoSend jika subtotal produk >= 100.000
     if (selectedShipping && selectedShipping.value === 'gosend') {
-        ongkir = 15000;
+        ongkir = total >= FREE_ONGKIR_THRESHOLD ? 0 : 15000;
+
+        // UI info gratis ongkir (optional)
+        // (Harga Rp15.000 tetap ada di markup, kita coret/disable di updateTotal)
+        const gosendPriceEl = document.getElementById('gosendPrice');
+        const gosendFreeBadgeEl = document.getElementById('gosendFreeBadge');
+        if (gosendPriceEl) {
+            if (ongkir === 0) {
+                gosendPriceEl.classList.add('line-through', 'opacity-60');
+                gosendFreeBadgeEl && gosendFreeBadgeEl.classList.remove('hidden');
+            } else {
+                gosendPriceEl.classList.remove('line-through', 'opacity-60');
+                gosendFreeBadgeEl && gosendFreeBadgeEl.classList.add('hidden');
+            }
+        }
     }
 
     let totalBayar = total + ongkir;
+
 
     document.getElementById('totalItem').textContent = totalItem;
     document.getElementById('totalHargaAtas').textContent = 'Rp ' + formatRupiah(total);
@@ -712,8 +734,27 @@ document.addEventListener('DOMContentLoaded', function () {
             total += Number(item.price) * item.qty;
         });
 
-        let ongkir = selectedShipping.value === 'gosend' ? 15000 : 0;
+        const FREE_ONGKIR_THRESHOLD = 100000; // subtotal produk (sebelum ongkir)
+        let ongkir = 0;
+        if (selectedShipping.value === 'gosend') {
+            ongkir = total >= FREE_ONGKIR_THRESHOLD ? 0 : 15000;
+
+            // trigger UI coret/free badge
+            const gosendPriceEl = document.getElementById('gosendPrice');
+            const gosendFreeBadgeEl = document.getElementById('gosendFreeBadge');
+            if (gosendPriceEl) {
+                if (ongkir === 0) {
+                    gosendPriceEl.classList.add('line-through', 'opacity-60');
+                    gosendFreeBadgeEl && gosendFreeBadgeEl.classList.remove('hidden');
+                } else {
+                    gosendPriceEl.classList.remove('line-through', 'opacity-60');
+                    gosendFreeBadgeEl && gosendFreeBadgeEl.classList.add('hidden');
+                }
+            }
+        }
+
         let totalBayar = total + ongkir;
+
 
         try {
 

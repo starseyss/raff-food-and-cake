@@ -5,10 +5,72 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\UserOrderNotification;
 
 class OrderController extends Controller
 {
+
+    private function createUserNotificationIfNeeded($orderId, $title, $message): void
+    {
+        $order = DB::table('orders')->where('id', $orderId)->first();
+
+        if (!$order || empty($order->user_id)) {
+            return;
+        }
+
+        $exists = UserOrderNotification::where('order_id', $orderId)
+            ->where('title', $title)
+            ->exists();
+
+        if ($exists) {
+            return;
+        }
+
+        UserOrderNotification::create([
+            'user_id' => $order->user_id,
+            'order_id' => $orderId,
+            'title' => $title,
+            'message' => $message,
+            'is_read' => false,
+        ]);
+    }
+
+    private function statusToNotification($orderStatus): array
+    {
+        return match ($orderStatus) {
+            'processing' => [
+                'title' => 'Pesanan diproses',
+                'message' => 'Pesanan anda sedang diproses mohon tunggu.',
+            ],
+            'packed' => [
+                'title' => 'Pesanan dikemas',
+                'message' => 'Pesanan anda sedang di kemas mohon tunggu.',
+            ],
+            'shipped' => [
+                'title' => 'Pesanan dikirim',
+                'message' => 'Pesanan anda sedang di kirim mohon tunggu.',
+            ],
+            'delivered' => [
+                'title' => 'Pesanan sampai',
+                'message' => 'Pesanan anda sampai mohon tunggu konfirmasi.',
+            ],
+            'completed' => [
+                'title' => 'Pesanan selesai',
+                'message' => 'Pesanan anda selesai. Terima kasih!',
+            ],
+            'cancelled' => [
+                'title' => 'Pesanan dibatalkan',
+                'message' => 'Pesanan anda dibatalkan.',
+            ],
+            default => [
+                'title' => 'Update pesanan',
+                'message' => 'Pesanan anda mengalami pembaruan status.',
+            ],
+        };
+    }
+
     /**
+
      * =========================
      * LIST ORDER + STATISTIK
      * =========================
@@ -84,12 +146,22 @@ class OrderController extends Controller
             'order_status' => 'required|in:order_created,processing,packed,shipped,delivered,completed,cancelled'
         ]);
 
+        // Ambil status lama agar tidak buat notifikasi berulang saat status sama
+        $oldOrder = DB::table('orders')->where('id', $id)->first();
+        $oldStatus = $oldOrder?->order_status;
+
         DB::table('orders')
             ->where('id', $id)
             ->update([
                 'order_status' => $request->order_status,
                 'updated_at'   => now()
             ]);
+
+        // Buat notifikasi ke user saat status berubah
+        if ($oldStatus !== $request->order_status) {
+            $notif = $this->statusToNotification($request->order_status);
+            $this->createUserNotificationIfNeeded($id, $notif['title'], $notif['message']);
+        }
 
         return back()->with('success', 'Status berhasil diupdate');
     }
@@ -243,6 +315,7 @@ class OrderController extends Controller
     {
         $order = DB::table('orders')->where('id', $id)->first();
 
+
         if (!$order) {
             return back()->with('error', 'Order tidak ditemukan');
         }
@@ -257,8 +330,13 @@ class OrderController extends Controller
             'updated_at' => now(),
         ]);
 
+        // notifikasi untuk shipped
+        $notif = $this->statusToNotification('shipped');
+        $this->createUserNotificationIfNeeded($id, $notif['title'], $notif['message']);
+
         return back()->with('success', 'Pengiriman dimulai - Order berstatus Shipped');
     }
+
 
     /**
      * =========================
@@ -283,8 +361,13 @@ class OrderController extends Controller
             'updated_at' => now(),
         ]);
 
+        // notifikasi untuk delivered
+        $notif = $this->statusToNotification('delivered');
+        $this->createUserNotificationIfNeeded($id, $notif['title'], $notif['message']);
+
         return back()->with('success', 'Pesanan berhasil ditandai sebagai Delivered');
     }
+
 
     /**
      * =========================

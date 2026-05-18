@@ -436,6 +436,30 @@
 
                 @auth
 
+                <!-- NOTIFIKASI -->
+                <a href="{{ route('notifikasi.index') }}"
+                   class="relative w-11 h-11 rounded-full
+                          hover:bg-gray-100 transition
+                          flex items-center justify-center">
+
+                    <img src="{{ asset('images/notif.png') }}"
+                         class="w-6">
+
+
+                    @php
+                        $unreadCount = \App\Models\UserOrderNotification::where('user_id', auth()->id())
+                            ->unread()
+                            ->count();
+                    @endphp
+
+                    @if($unreadCount > 0)
+                        <span class="absolute -top-1 -right-1 min-w-[18px] h-5 px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                            {{ $unreadCount }}
+                        </span>
+                    @endif
+
+                </a>
+
                 <!-- CART -->
                 <a href="{{ route('landing.cart') }}"
                    class="relative w-11 h-11 rounded-full
@@ -447,6 +471,7 @@
 
                 </a>
 
+
                 <!-- PROFILE -->
                 <div class="relative">
 
@@ -454,6 +479,7 @@
                             class="w-10 h-10 rounded-full
                                    bg-[#F59A40]
                                    text-white font-semibold">
+
 
                         {{ strtoupper(substr(auth()->user()->name,0,1)) }}
 
@@ -491,7 +517,7 @@
 
                 </div>
 
-                @else
+            @else
 
                 <!-- LOGIN -->
                 <a href="{{ route('login') }}"
@@ -511,6 +537,7 @@
         </div>
 
     </div>
+
 
    <!-- ================= MOBILE MENU ================= -->
 <div id="mobileMenu"

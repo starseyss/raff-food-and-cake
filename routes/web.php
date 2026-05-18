@@ -146,6 +146,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/pesanan/{id}/rating', [PesananController::class, 'rating'])->name('pesanan.rating');
     Route::post('/pesanan/{id}/refund', [PesananController::class, 'requestRefund'])
     ->name('pesanan.refund');
+
+    // ================= NOTIFIKASI PESANAN (USER) =================
+    Route::get('/notifikasi', [\App\Http\Controllers\UserOrderNotificationController::class, 'index'])
+        ->name('notifikasi.index');
+    Route::post('/notifikasi/read-all', [\App\Http\Controllers\UserOrderNotificationController::class, 'markAllAsRead'])
+        ->name('notifikasi.read-all');
+    Route::post('/notifikasi/{id}/read', [\App\Http\Controllers\UserOrderNotificationController::class, 'markAsRead'])
+        ->name('notifikasi.read');
+
         // ================= ALAMAT =================
 Route::get('/alamat', [AddressController::class, 'index']);
 Route::post('/alamat', [AddressController::class, 'store']);

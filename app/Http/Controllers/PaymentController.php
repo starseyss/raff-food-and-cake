@@ -112,7 +112,9 @@ class PaymentController extends Controller
         }
 
         $ongkir = 0;
-        if ($request->shipping_method === 'gosend') {
+        $FREE_ONGKIR_THRESHOLD = 100000; // subtotal produk (sebelum ongkir)
+
+        if ($request->shipping_method === 'gosend' && $subtotal < $FREE_ONGKIR_THRESHOLD) {
             $ongkir = 15000;
             $items[] = [
                 'id' => 'ONGKIR',
@@ -121,6 +123,7 @@ class PaymentController extends Controller
                 'name' => 'Ongkir GoSend'
             ];
         }
+
 
         $total = $subtotal + $ongkir;
         $order_id = 'ODR-' . time() . '-' . rand(1000, 9999);
