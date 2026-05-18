@@ -35,8 +35,20 @@
 <section class="max-w-[1320px] mx-auto mt-6 md:mt-8 px-3 md:px-6">
     <div class="relative h-[280px] md:h-[320px] lg:h-[360px] rounded-[20px] md:rounded-[30px] overflow-hidden">
 
-        <img src="{{ asset('images/banner.png') }}"
-             class="absolute inset-0 w-full h-full object-cover">
+        <!-- HERO SLIDER (gambar) -->
+        <div id="heroSlider" class="absolute inset-0 w-full h-full overflow-hidden">
+            <div id="heroSliderTrack" class="flex w-full h-full transition-transform duration-500 ease-in-out">
+                <div class="min-w-full h-full">
+                    <img src="{{ asset('images/banner.png') }}" class="w-full h-full object-cover" alt="Banner 1">
+                </div>
+                <div class="min-w-full h-full">
+                    <img src="{{ asset('images/banner2.png') }}" class="w-full h-full object-cover" alt="Banner 2">
+                </div>
+                <div class="min-w-full h-full">
+                    <img src="{{ asset('images/banner.png') }}" class="w-full h-full object-cover" alt="Banner 3">
+                </div>
+            </div>
+        </div>
 
 <div class="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 md:px-6">
             <!-- LOGO DI ATAS JUDUL -->
@@ -1144,6 +1156,107 @@ function startAutoPlay() {
         updateSlider();
     }, 4000);
 }
+
+// ================= HERO SLIDER =================
+let heroSlide = 0;
+let heroAutoPlayTimer;
+
+function getTotalHeroSlides() {
+    return document.querySelectorAll('#heroSliderTrack > div').length;
+}
+
+function updateHeroSlider() {
+    const track = document.getElementById('heroSliderTrack');
+    if (!track) return;
+    track.style.transform = `translateX(-${heroSlide * 100}%)`;
+    updateHeroDots();
+}
+
+function updateHeroDots() {
+    const dots = document.querySelectorAll('#heroDots > button');
+    dots.forEach((dot, index) => {
+        if (index === heroSlide) {
+            dot.classList.remove('bg-gray-300');
+            dot.classList.add('bg-[#F59A40]');
+        } else {
+            dot.classList.remove('bg-[#F59A40]');
+            dot.classList.add('bg-gray-300');
+        }
+    });
+}
+
+function goToHero(index) {
+    const total = getTotalHeroSlides();
+    heroSlide = (index + total) % total;
+    updateHeroSlider();
+    resetHeroAutoPlay();
+}
+
+function nextHero() {
+    const total = getTotalHeroSlides();
+    heroSlide = (heroSlide + 1) % total;
+    updateHeroSlider();
+    resetHeroAutoPlay();
+}
+
+function prevHero() {
+    const total = getTotalHeroSlides();
+    heroSlide = (heroSlide - 1 + total) % total;
+    updateHeroSlider();
+    resetHeroAutoPlay();
+}
+
+function startHeroAutoPlay() {
+    heroAutoPlayTimer = setInterval(() => {
+        const total = getTotalHeroSlides();
+        heroSlide = (heroSlide + 1) % total;
+        updateHeroSlider();
+    }, 4000);
+}
+
+function resetHeroAutoPlay() {
+    clearInterval(heroAutoPlayTimer);
+    startHeroAutoPlay();
+}
+
+(function () {
+    const container = document.getElementById('heroSlider');
+    if (!container) return;
+
+    let startX = 0;
+    let isDragging = false;
+    let dragThreshold = 50;
+
+    function handleStart(x) {
+        startX = x;
+        isDragging = true;
+    }
+
+    function handleEnd(x) {
+        if (!isDragging) return;
+        isDragging = false;
+
+        const diff = startX - x;
+        if (Math.abs(diff) > dragThreshold) {
+            if (diff > 0) nextHero();
+            else prevHero();
+        }
+    }
+
+    container.addEventListener('mousedown', (e) => handleStart(e.clientX));
+    container.addEventListener('touchstart', (e) => handleStart(e.touches[0].clientX), { passive: true });
+    container.addEventListener('mouseup', (e) => handleEnd(e.clientX));
+    container.addEventListener('mouseleave', () => {
+        isDragging = false;
+    });
+    container.addEventListener('touchend', (e) => handleEnd(e.changedTouches[0].clientX), { passive: true });
+})();
+
+// init hero
+(function initHero() {
+    updateHeroSlider();
+    startHeroAutoPlay();
+})();
 
 function resetAutoPlay() {
     clearInterval(autoPlayTimer);

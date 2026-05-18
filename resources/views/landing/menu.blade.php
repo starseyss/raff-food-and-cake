@@ -5,18 +5,63 @@
 
 <!-- ================= HERO ================= -->
 <section class="max-w-[1320px] mx-auto mt-8 px-6">
-    <div class="relative h-[360px] rounded-[30px] overflow-hidden">
-        <img src="{{ asset('images/banner-menu.png') }}"
-             class="absolute inset-0 w-full h-full object-cover">
 
-        <div class="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
-            <img src="{{ asset('images/rc-login.png') }}"
-                 class="w-[75px] mb-4 object-contain mt-6">
+    <div class="relative h-[360px]">
 
-            <h1 class="text-white text-5xl font-extrabold">Temukan Aneka Kue</h1>
-            <p class="text-white/90 text-sm mt-4">Cari menu favoritmu sekarang</p>
+        <!-- WRAPPER BULAT -->
+        <div class="relative w-full h-full rounded-[30px] overflow-hidden">
+
+            <!-- Dots -->
+            <div id="menuHeroDots"
+                 class="absolute -bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 z-[30] pointer-events-auto">
+            </div>
+
+            <!-- Slider -->
+            <div id="menuHeroSlider"
+                 class="absolute inset-0 w-full h-full overflow-hidden">
+
+                <div id="menuHeroSliderTrack"
+                     class="flex w-full h-full transition-transform duration-500 ease-in-out">
+
+                    <div class="min-w-full h-full">
+                        <img src="{{ asset('images/banner-menu.png') }}"
+                             class="w-full h-full object-cover"
+                             alt="Banner menu 1">
+                    </div>
+
+                    <div class="min-w-full h-full">
+                        <img src="{{ asset('images/banner-menu2.png') }}"
+                             class="w-full h-full object-cover"
+                             alt="Banner menu 2">
+                    </div>
+
+                    <div class="min-w-full h-full">
+                        <img src="{{ asset('images/banner-menu3.png') }}"
+                             class="w-full h-full object-cover"
+                             alt="Banner menu 3">
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Overlay Content -->
+            <div class="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
+                <img src="{{ asset('images/rc-login.png') }}"
+                     class="w-[75px] mb-4 object-contain mt-6">
+
+                <h1 class="text-white text-5xl font-extrabold">
+                    Temukan Aneka Kue
+                </h1>
+
+                <p class="text-white/90 text-sm mt-4">
+                    Cari menu favoritmu sekarang
+                </p>
+            </div>
+
         </div>
+
     </div>
+
 </section>
 
 <!-- ================= FILTER ================= -->
@@ -923,6 +968,118 @@ window.addEventListener('click', function (e) {
 });
 </script>
 <script>
+// ================= MENU HERO SLIDER =================
+let menuHeroSlide = 0;
+let menuHeroAutoPlayTimer;
+
+function getTotalMenuHeroSlides() {
+    return document.querySelectorAll('#menuHeroSliderTrack > div').length;
+}
+
+function updateMenuHeroSlider() {
+    const track = document.getElementById('menuHeroSliderTrack');
+    if (!track) return;
+    track.style.transform = `translateX(-${menuHeroSlide * 100}%)`;
+    updateMenuHeroDots();
+}
+
+function updateMenuHeroDots() {
+    const dots = document.querySelectorAll('#menuHeroDots > button');
+    dots.forEach((dot, index) => {
+        if (index === menuHeroSlide) {
+            dot.classList.remove('bg-gray-300');
+            dot.classList.add('bg-[#F59A40]');
+        } else {
+            dot.classList.remove('bg-[#F59A40]');
+            dot.classList.add('bg-gray-300');
+        }
+    });
+}
+
+function goToMenuHero(index) {
+    const total = getTotalMenuHeroSlides();
+    menuHeroSlide = (index + total) % total;
+    updateMenuHeroSlider();
+    resetMenuHeroAutoPlay();
+}
+
+function nextMenuHero() {
+    const total = getTotalMenuHeroSlides();
+    menuHeroSlide = (menuHeroSlide + 1) % total;
+    updateMenuHeroSlider();
+    resetMenuHeroAutoPlay();
+}
+
+function prevMenuHero() {
+    const total = getTotalMenuHeroSlides();
+    menuHeroSlide = (menuHeroSlide - 1 + total) % total;
+    updateMenuHeroSlider();
+    resetMenuHeroAutoPlay();
+}
+
+function startMenuHeroAutoPlay() {
+    menuHeroAutoPlayTimer = setInterval(() => {
+        const total = getTotalMenuHeroSlides();
+        menuHeroSlide = (menuHeroSlide + 1) % total;
+        updateMenuHeroSlider();
+    }, 4000);
+}
+
+function resetMenuHeroAutoPlay() {
+    clearInterval(menuHeroAutoPlayTimer);
+    startMenuHeroAutoPlay();
+}
+
+(function () {
+    const container = document.getElementById('menuHeroSlider');
+    if (!container) return;
+
+    let startX = 0;
+    let isDragging = false;
+    let dragThreshold = 50;
+
+    function handleStart(x) {
+        startX = x;
+        isDragging = true;
+    }
+
+    function handleEnd(x) {
+        if (!isDragging) return;
+        isDragging = false;
+
+        const diff = startX - x;
+        if (Math.abs(diff) > dragThreshold) {
+            if (diff > 0) nextMenuHero();
+            else prevMenuHero();
+        }
+    }
+
+    container.addEventListener('mousedown', (e) => handleStart(e.clientX));
+    container.addEventListener('touchstart', (e) => handleStart(e.touches[0].clientX), { passive: true });
+    container.addEventListener('mouseup', (e) => handleEnd(e.clientX));
+    container.addEventListener('touchend', (e) => handleEnd(e.changedTouches[0].clientX), { passive: true });
+})();
+
+(function initMenuHeroDots() {
+    const dotsWrap = document.getElementById('menuHeroDots');
+    if (!dotsWrap) return;
+
+    const total = getTotalMenuHeroSlides();
+    dotsWrap.innerHTML = '';
+
+    for (let i = 0; i < total; i++) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.onclick = () => goToMenuHero(i);
+        btn.className = `w-2.5 h-2.5 md:w-3 md:h-3 rounded-full transition ${i === 0 ? 'bg-[#F59A40]' : 'bg-gray-300'}`;
+        dotsWrap.appendChild(btn);
+    }
+
+    updateMenuHeroSlider();
+    startMenuHeroAutoPlay();
+})();
+
+// ================= PROMO (menu page) =================
 const promos = [
     {
         image: "{{ asset('images/promo-catering-murah.jpg') }}",
