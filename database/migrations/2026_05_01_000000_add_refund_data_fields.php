@@ -8,11 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Add to orders
-        Schema::table('orders', function (Blueprint $table) {
-            $table->string('refund_bank_no')->nullable()->after('refund_reason');
-            $table->string('refund_owner_name')->nullable()->after('refund_bank_no');
-        });
+Schema::table('orders', function (Blueprint $table) {
+    $table->string('refund_bank_no')->nullable();
+    $table->string('refund_owner_name')->nullable();
+});
 
         // Add to admin_notifications
         Schema::table('admin_notifications', function (Blueprint $table) {
