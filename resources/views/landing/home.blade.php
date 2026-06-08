@@ -45,7 +45,7 @@
                     <img src="{{ asset('images/banner2.png') }}" class="w-full h-full object-cover" alt="Banner 2">
                 </div>
                 <div class="min-w-full h-full">
-                    <img src="{{ asset('images/banner.png') }}" class="w-full h-full object-cover" alt="Banner 3">
+                    <img src="{{ asset('images/banner3.png') }}" class="w-full h-full object-cover" alt="Banner 3">
                 </div>
             </div>
         </div>
